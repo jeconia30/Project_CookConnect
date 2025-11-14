@@ -1,0 +1,17 @@
+/* src/pages/Footer.css */
+
+/*
+  Catatan:
+  Diasumsikan variabel --text-light sudah didefinisikan 
+  di file CSS yang lebih tinggi (misalnya src/App.css).
+*/
+
+footer {
+  text-align: center;
+  padding: 20px 0;
+  border-top: 1px solid #eee;
+  background-color: #ffffff;
+  /* Menggunakan variabel warna jika sudah didefinisikan */
+  color: var(--text-light, #777); 
+  font-size: 0.9rem;
+}
