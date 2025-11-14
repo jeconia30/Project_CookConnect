@@ -2,7 +2,7 @@ import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
 // Import Halaman yang sudah di-migrasi
-import LandingPage from './pages/landingpage.jsx';
+import LandingPage from './pages/LandingPage.jsx';
 import Profile from './pages/Profile.jsx';
 import CreateRecipe from './pages/CreateRecipe.jsx';
 
