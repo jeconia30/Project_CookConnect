@@ -7,7 +7,7 @@ import Profile from './pages/Profile.jsx';
 import CreateRecipe from './pages/CreateRecipe.jsx';
 
 // Asumsi: Halaman ini akan segera dibuat dari file login.html
-const LoginPage = () => <div>Halaman Login (Belum dibuat)</div>; 
+const LoginPage = () => <div>aman Login (Belum dibuat)</div>; 
 // Asumsi: Halaman ini akan segera dibuat dari file feed.html
 const FeedPage = () => <div>Halaman Feed (Belum dibuat)</div>; 
 // Asumsi: Halaman ini akan segera dibuat dari file recipe-detail.html
