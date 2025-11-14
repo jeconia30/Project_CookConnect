@@ -1,58 +1,186 @@
-import React from "react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+// src/pages/CreateRecipe.jsx
 
-export default function ResepSederhana() {
-  const resep = [
-    {
-      nama: "Nasi Goreng Sederhana",
-      bahan: ["Nasi", "Telur", "Kecap", "Garam", "Minyak", "Bawang Putih"],
-      langkah: [
-        "Panaskan minyak dan tumis bawang putih.",
-        "Masukkan telur lalu orak‑arik.",
-        "Masukkan nasi dan aduk rata.",
-        "Tambahkan kecap & garam.",
-        "Aduk hingga merata dan sajikan."
-      ]
-    },
-    {
-      nama: "Indomie Telur", 
-      bahan: ["Mie Instan", "Telur", "Air", "Cabe (opsional)"],
-      langkah: [
-        "Rebus mie hingga setengah matang.",
-        "Masukkan telur ke rebusan mie.",
-        "Sajikan hangat."
-      ]
-    }
-  ];
+import React, { useState } from 'react';
+import '../css/CreateRecipe.css'; // Sesuaikan path jika perlu
 
-  return (
-    <div className="min-h-screen p-6 bg-gray-100">
-      <h1 className="text-3xl font-bold mb-6 text-center">Resep Makanan Sederhana</h1>
-      <div className="grid md:grid-cols-2 gap-6">
-        {resep.map((r, index) => (
-          <Card key={index} className="rounded-2xl shadow-lg p-3">
-            <CardContent>
-              <h2 className="text-xl font-semibold mb-2">{r.nama}</h2>
-              <h3 className="font-medium">Bahan:</h3>
-              <ul className="list-disc ml-6 mb-3">
-                {r.bahan.map((b, i) => (
-                  <li key={i}>{b}</li>
-                ))}
-              </ul>
+// Komponen Reusable: Input untuk Bahan dan Langkah
+const DynamicInput = ({ label, placeholder, items, setItems }) => {
+    const handleAdd = () => setItems([...items, '']);
+    const handleChange = (index, value) => {
+        const newItems = items.map((item, i) => i === index ? value : item);
+        setItems(newItems);
+    };
+    const handleRemove = (index) => {
+        setItems(items.filter((_, i) => i !== index));
+    };
 
-              <h3 className="font-medium">Langkah:</h3>
-              <ol className="list-decimal ml-6 mb-4">
-                {r.langkah.map((l, i) => (
-                  <li key={i}>{l}</li>
-                ))}
-              </ol>
+    return (
+        <div className="dynamic-group">
+            <label>{label}</label>
+            {items.map((item, index) => (
+                <div key={index} className="dynamic-input-row">
+                    <input
+                        type="text"
+                        placeholder={placeholder}
+                        value={item}
+                        onChange={(e) => handleChange(index, e.target.value)}
+                    />
+                    <button type="button" onClick={() => handleRemove(index)} className="remove-btn">
+                        <i className="fas fa-times"></i>
+                    </button>
+                </div>
+            ))}
+            <button type="button" onClick={handleAdd} className="cta-button small add-more-btn">
+                <i className="fas fa-plus"></i> Tambah {label}
+            </button>
+        </div>
+    );
+};
 
-              <Button className="w-full mt-2">Lihat Detail</Button>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-    </div>
-  );
-}
+
+const CreateRecipe = () => {
+    // State untuk menyimpan data formulir
+    const [title, setTitle] = useState('');
+    const [description, setDescription] = useState('');
+    const [prepTime, setPrepTime] = useState('');
+    const [cookTime, setCookTime] = useState('');
+    const [servings, setServings] = useState('');
+    const [ingredients, setIngredients] = useState(['']); // Array untuk Bahan
+    const [steps, setSteps] = useState(['']); // Array untuk Langkah
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        // Logika untuk mengirim data (menggunakan API atau Context)
+        const recipeData = {
+            title,
+            description,
+            prepTime,
+            cookTime,
+            servings,
+            ingredients: ingredients.filter(i => i.trim() !== ''), // Bersihkan item kosong
+            steps: steps.filter(s => s.trim() !== ''),
+        };
+        console.log('Data Resep Siap Dikirim:', recipeData);
+        alert('Resep berhasil dibuat! (Simulasi)');
+        // Redirect ke halaman detail resep atau feed
+    };
+
+    return (
+        <div className="create-recipe-container">
+            <button className="back-button" onClick={() => window.history.back()}>
+                <i className="fas fa-arrow-left"></i>
+            </button>
+            <h2 className="form-title"><i className="fas fa-utensils"></i> Unggah Resep Baru</h2>
+            <p className="form-subtitle">Bagikan kreasi masakan Anda kepada komunitas CookConnect!</p>
+
+            <form onSubmit={handleSubmit} className="recipe-form">
+                {/* Bagian 1: Informasi Dasar */}
+                <section className="form-section">
+                    <h3>1. Info Dasar</h3>
+                    <div className="form-group">
+                        <label htmlFor="title">Judul Resep *</label>
+                        <input
+                            type="text"
+                            id="title"
+                            value={title}
+                            onChange={(e) => setTitle(e.target.value)}
+                            placeholder="Contoh: Ayam Geprek Sambal Matah"
+                            required
+                        />
+                    </div>
+                    <div className="form-group">
+                        <label htmlFor="description">Deskripsi Singkat</label>
+                        <textarea
+                            id="description"
+                            value={description}
+                            onChange={(e) => setDescription(e.target.value)}
+                            rows="3"
+                            placeholder="Ceritakan mengapa resep ini spesial..."
+                        ></textarea>
+                    </div>
+
+                    <div className="form-row-half">
+                        <div className="form-group">
+                            <label htmlFor="servings">Porsi (Servings)</label>
+                            <input
+                                type="number"
+                                id="servings"
+                                value={servings}
+                                onChange={(e) => setServings(e.target.value)}
+                                min="1"
+                                placeholder="4"
+                            />
+                        </div>
+                        <div className="form-group">
+                            <label htmlFor="prepTime">Waktu Persiapan (menit)</label>
+                            <input
+                                type="number"
+                                id="prepTime"
+                                value={prepTime}
+                                onChange={(e) => setPrepTime(e.target.value)}
+                                min="0"
+                                placeholder="15"
+                            />
+                        </div>
+                        <div className="form-group">
+                            <label htmlFor="cookTime">Waktu Memasak (menit)</label>
+                            <input
+                                type="number"
+                                id="cookTime"
+                                value={cookTime}
+                                onChange={(e) => setCookTime(e.target.value)}
+                                min="0"
+                                placeholder="30"
+                            />
+                        </div>
+                    </div>
+                </section>
+
+                {/* Bagian 2: Bahan-bahan */}
+                <section className="form-section">
+                    <h3>2. Bahan-bahan *</h3>
+                    <DynamicInput
+                        label="Bahan"
+                        placeholder="Contoh: 250 gram tepung terigu protein sedang"
+                        items={ingredients}
+                        setItems={setIngredients}
+                    />
+                </section>
+
+                {/* Bagian 3: Langkah Memasak */}
+                <section className="form-section">
+                    <h3>3. Langkah Memasak *</h3>
+                    <DynamicInput
+                        label="Langkah"
+                        placeholder="Contoh: Ulek kasar cabai dan bawang"
+                        items={steps}
+                        setItems={setSteps}
+                    />
+                </section>
+
+                {/* Bagian 4: Gambar */}
+                <section className="form-section">
+                    <h3>4. Unggah Gambar</h3>
+                    <div className="form-group image-upload-group">
+                        <label htmlFor="recipe-image" className="image-upload-label">
+                             <i className="fas fa-cloud-upload-alt"></i> Pilih Foto Utama Resep
+                        </label>
+                        <input
+                            type="file"
+                            id="recipe-image"
+                            accept="image/*"
+                            className="hidden-file-input"
+                        />
+                        <p className="upload-tip">Pilih foto hasil masakan terbaik Anda (maks 5MB).</p>
+                    </div>
+                </section>
+
+                <button type="submit" className="cta-button auth-button large-button">
+                    <i className="fas fa-paper-plane"></i> Publikasikan Resep
+                </button>
+            </form>
+        </div>
+    );
+};
+
+export default CreateRecipe;
