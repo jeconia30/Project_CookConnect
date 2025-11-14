@@ -1,9 +1,3 @@
-
-/* src/pages/LandingPage.css 
-   (Dibuat dari index.css, menggunakan kelas HTML langsung)
-*/
-
-/* GLOBAL UTILITIES & BASE */
 .container {
   max-width: 1200px;
   margin: 0 auto;
@@ -58,9 +52,7 @@
   font-weight: 500;
   padding: 5px 0;
 }
-/* END GLOBAL */
 
-/* --- HERO SECTION --- */
 .hero-section {
   display: flex;
   align-items: center;
@@ -88,7 +80,6 @@
   opacity: 0.8;
 }
 
-/* --- PREVIEW SECTION --- */
 .preview-section {
   background-color: #f9f9f9;
 }
@@ -160,7 +151,6 @@
   margin-right: 5px;
 }
 
-/* --- CONTACT SECTION --- */
 .contact-section {
   padding: 80px 20px 40px 20px;
 }
@@ -222,7 +212,6 @@
   border-bottom-color: #38761d;
 }
 
-/* --- TEAM SECTION --- */
 .team-section {
   padding: 70px 20px 40px 20px;
   text-align: center;
@@ -257,7 +246,6 @@
   font-size: 0.9rem;
 }
 
-/* --- FOOTER --- */
 footer {
   background-color: #f7f7f7;
   padding: 20px 0;
@@ -269,8 +257,6 @@ footer p {
   font-size: 0.9rem;
 }
 
-
-/* --- MEDIA QUERIES --- */
 @media (max-width: 992px) {
   .hero-section {
     flex-direction: column;
