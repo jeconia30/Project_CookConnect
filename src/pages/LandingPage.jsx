@@ -21,7 +21,7 @@ const LandingPageHeader = () => {
         <nav className="navbar">
           <ul className="nav-links">
             <li><a href="#home">Home</a></li>
-            <li><a href="#preview">Featured Recipes</a></li>
+            <li><a href="#preview">Featured resep</a></li>
             <li><a href="#contact">Contact</a></li>
             <li><a href="#team">Team</a></li>
           </ul>
