@@ -21,7 +21,6 @@ export default function ResepSederhana() {
       langkah: [
         "Rebus mie hingga setengah matang.",
         "Masukkan telur ke rebusan mie.",
-        "Tiriskan dan campurkan bumbu.",
         "Sajikan hangat."
       ]
     }
