@@ -9,7 +9,7 @@ function LandingPage() {
         <div className="landing-page-container">
             <header className="main-header">
                 <nav className="navbar">
-                    <div className="logo">CookConnect</div>
+                    <div className="logo">masak</div>
                 </nav>
             </header>
 
