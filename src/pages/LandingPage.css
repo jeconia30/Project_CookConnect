@@ -1,1 +1,311 @@
 
+/* src/pages/LandingPage.css 
+   (Dibuat dari index.css, menggunakan kelas HTML langsung)
+*/
+
+/* GLOBAL UTILITIES & BASE */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+.section {
+  padding: 80px 20px 60px 20px;
+  margin: 0 auto;
+}
+.cta-button {
+  background-color: #38761d;
+  color: #ffffff;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: 600;
+  text-decoration: none;
+  display: inline-block;
+  transition: background-color 0.2s, transform 0.2s;
+}
+.cta-button:hover {
+  background-color: #2e5c17;
+  transform: translateY(-2px);
+}
+.main-header {
+  background-color: #ffffff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 0;
+}
+.logo {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #38761d;
+}
+.nav-links {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  gap: 20px;
+}
+.nav-links a {
+  text-decoration: none;
+  color: #555;
+  font-weight: 500;
+  padding: 5px 0;
+}
+/* END GLOBAL */
+
+/* --- HERO SECTION --- */
+.hero-section {
+  display: flex;
+  align-items: center;
+  padding: 80px 20px 60px 20px;
+  gap: 50px;
+}
+.hero-text-content {
+  flex: 1;
+}
+.hero-text-content h1 {
+  font-size: 3.5rem;
+  margin-bottom: 5px;
+}
+.hero-text-content h2 {
+  font-size: 1.5rem;
+  color: #777;
+  font-weight: 500;
+  margin-bottom: 20px;
+}
+.hero-illustration {
+  flex: 1;
+  height: 200px;
+  background: linear-gradient(135deg, #a7e997, #38761d);
+  border-radius: 10px;
+  opacity: 0.8;
+}
+
+/* --- PREVIEW SECTION --- */
+.preview-section {
+  background-color: #f9f9f9;
+}
+.recipe-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 30px;
+}
+.recipe-card {
+  background-color: #fcfcfc;
+  border-radius: 15px;
+  padding: 20px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+.recipe-image {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 10px;
+  margin-bottom: 15px;
+}
+.recipe-title {
+  font-size: 1.4rem;
+  color: #38761d;
+  margin-bottom: 5px;
+}
+.recipe-meta {
+  font-size: 0.9rem;
+  color: #888;
+  margin-bottom: 10px;
+}
+.recipe-teaser {
+  font-style: italic;
+  color: #666;
+  margin-bottom: 10px;
+  border-left: 3px solid #8fbc8f;
+  padding-left: 10px;
+}
+.read-more {
+  text-decoration: none;
+  color: #ffffff;
+  background-color: #38761d;
+  font-weight: 600;
+  display: inline-block;
+  padding: 8px 15px;
+  border-radius: 5px;
+  margin-top: auto;
+}
+.recipe-like-badge {
+  position: absolute;
+  top: 30px;
+  left: 30px;
+  background-color: rgba(255, 255, 255, 0.95);
+  padding: 5px 10px;
+  border-radius: 20px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+  font-size: 0.85rem;
+  font-weight: 600;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+}
+.icon-like {
+  color: #e74c3c;
+  margin-right: 5px;
+}
+
+/* --- CONTACT SECTION --- */
+.contact-section {
+  padding: 80px 20px 40px 20px;
+}
+.contact-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  align-items: flex-start;
+}
+.contact-details h2 {
+  font-size: 2.5rem;
+  margin-bottom: 15px;
+}
+.contact-sub-text {
+  font-size: 1.1rem;
+  color: #555;
+  margin-bottom: 30px;
+}
+.contact-info-block.social-icons {
+  display: flex;
+  gap: 25px;
+  margin-top: 20px;
+}
+.contact-info-block.social-icons a {
+  color: #38761d;
+  font-size: 2.2rem;
+  text-decoration: none;
+}
+.form-row {
+  display: flex;
+  gap: 20px;
+  width: 100%;
+}
+.form-row .form-group {
+  width: 50%;
+}
+.form-group {
+  margin-bottom: 25px;
+  width: 100%;
+}
+.form-group label {
+  display: block;
+  font-size: 0.9rem;
+  color: #555;
+  margin-bottom: 8px;
+}
+.form-group input,
+.form-group textarea {
+  width: 100%;
+  border: none;
+  border-bottom: 2px solid #ccc;
+  padding: 10px 0;
+  font-size: 1rem;
+  background-color: transparent;
+}
+.form-group input:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-bottom-color: #38761d;
+}
+
+/* --- TEAM SECTION --- */
+.team-section {
+  padding: 70px 20px 40px 20px;
+  text-align: center;
+}
+.team-member-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 30px;
+  margin-top: 40px;
+}
+.team-member-card {
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+}
+.member-photo {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  display: block;
+}
+.member-card-content {
+  padding: 20px;
+}
+.team-member-card h4 {
+  font-size: 1.2rem;
+  margin-bottom: 5px;
+}
+.role {
+  color: #888;
+  font-size: 0.9rem;
+}
+
+/* --- FOOTER --- */
+footer {
+  background-color: #f7f7f7;
+  padding: 20px 0;
+  text-align: center;
+  border-top: 1px solid #eee;
+}
+footer p {
+  color: #777;
+  font-size: 0.9rem;
+}
+
+
+/* --- MEDIA QUERIES --- */
+@media (max-width: 992px) {
+  .hero-section {
+    flex-direction: column;
+    text-align: center;
+  }
+  .hero-illustration {
+    width: 80%;
+    margin-top: 30px;
+  }
+  .contact-layout {
+    grid-template-columns: 1fr;
+    gap: 50px;
+  }
+  .team-member-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .nav-links {
+    display: none; 
+  }
+  .navbar {
+    justify-content: space-around;
+  }
+}
+@media (max-width: 576px) {
+  .hero-section {
+    padding: 50px 20px;
+  }
+  .form-row {
+    flex-direction: column;
+    gap: 25px;
+  }
+  .form-row .form-group {
+    width: 100%;
+  }
+  .team-member-grid {
+    grid-template-columns: 1fr;
+  }
+}
