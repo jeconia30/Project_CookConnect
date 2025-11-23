@@ -24,10 +24,17 @@ a:hover {
 
 body {
   margin: 0;
-  display: flex;
-  place-items: center;
+  /* Hapus display: flex; dan place-items: center; */
   min-width: 320px;
   min-height: 100vh;
+  /* Tambahkan warna latar belakang yang seragam (putih di light mode) */
+  background-color: #ffffff; 
+}
+
+/* Juga perbaiki root agar mengambil lebar penuh layar agar konten bisa terpusat di dalamnya */
+#root {
+  width: 100%;
+  /* Hapus max-width dari index.css jika ada, atau pastikan #root di App.css yang berlaku */
 }
 
 h1 {
