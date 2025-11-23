@@ -1,0 +1,103 @@
+.recipe-grid {
+    padding: 0 20px; 
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+}
+
+
+.recipe-card {
+  background-color: var(--card-bg); 
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  overflow: visible; 
+  border: 1px solid #eee; 
+}
+
+.recipe-image {
+  width: calc(100% - 40px); 
+  height: 220px; 
+  object-fit: cover;
+  
+  border-radius: 8px; 
+  border: 1px solid #ddd; 
+  margin: 20px 20px 0 20px; 
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+  
+  display: block; 
+}
+
+.recipe-title {
+  font-size: 1.3rem;
+  color: var(--primary-color);
+  margin-top: 15px;
+  margin-bottom: 5px;
+  padding: 0 20px;
+}
+.recipe-meta {
+  font-size: 0.9rem;
+  color: var(--text-color-light);
+  margin-bottom: 15px;
+  padding: 0 20px;
+}
+.recipe-teaser {
+  font-style: italic;
+  color: var(--text-color-light);
+  margin-bottom: 20px;
+  padding: 0 20px 0 35px;
+  border-left: 3px solid var(--primary-color); 
+}
+
+.read-more {
+  text-decoration: none;
+  background-color: var(--primary-color);
+  font-weight: 600;
+  
+  display: inline-block; 
+  text-align: center;
+  padding: 10px 20px; 
+  border-radius: 5px; 
+  
+  margin-top: auto;
+  
+  margin-left: 20px; 
+  margin-bottom: 20px; 
+  
+  transition: background-color 0.2s;
+
+  color: #ffffff !important; 
+  text-decoration: none !important;
+}
+
+
+.read-more:hover {
+    background-color: var(--primary-hover-color);
+}
+
+.read-more:visited, .read-more:active {
+    color: #ffffff !important;
+}
+
+.recipe-like-badge {
+  position: absolute;
+  top: 30px;
+  left: 30px;
+  background-color: white;
+  color: var(--text-color-dark);
+  padding: 5px 10px;
+  border-radius: 30px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+  font-size: 0.85rem;
+  font-weight: 500;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+}
+.icon-like {
+  color: red;
+  margin-right: 5px;
+}
