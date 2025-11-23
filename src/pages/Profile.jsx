@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import styles from './Profile.css'; 
+import './Profile.css'; 
 
 function Profile({ isMyProfile = false, initialFollowers = 1200 }) {
   const [isFollowing, setIsFollowing] = useState(false);
