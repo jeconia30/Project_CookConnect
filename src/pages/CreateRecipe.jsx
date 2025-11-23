@@ -1,8 +1,8 @@
 // src/pages/CreateRecipe.jsx
 
 import React, { useState } from 'react';
-import '../css/CreateRecipe.css'; 
-import '../css/app.css'; 
+import './CreateRecipe.css'; 
+
 
 const DynamicInput = ({ label, placeholder, items, setItems }) => {
     const handleAdd = () => setItems([...items, '']);
