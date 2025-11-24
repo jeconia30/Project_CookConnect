@@ -1,164 +1,227 @@
-src/css/CreateRecipe.css
-
-.create-recipe-wrapper {
-    padding: 50px 0;
+.form-container {
+  width: 420px;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
-.create-recipe-container {
-    background-color: #ffffff;
-    padding: 40px;
-    border-radius: 16px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-    width: 100%;
-    max-width: 750px; 
-    margin: 0 auto;
-    position: relative;
+/* Styling untuk header navigasi (panah kembali dan judul) */
+.form-header {
+  display: flex;
+  align-items: center;
+  gap: 10px; 
+  margin-bottom: 20px; 
+  padding-bottom: 10px; 
+  border-bottom: 1px solid #eee; 
 }
 
-.form-title {
-    font-size: 2rem;
-    color: #38761d; 
-    text-align: center;
-    margin-top: 0;
-    margin-bottom: 5px;
-}
-.form-subtitle {
-    text-align: center;
-    color: #777;
-    margin-bottom: 40px;
+.back-arrow {
+  /* REVISI: Ukuran font panah diperbesar */
+  font-size: 28px; 
+  cursor: pointer;
+  font-weight: bold;
+  color: #38761d; 
 }
 
-.form-section {
-    border: 1px solid #eee;
-    padding: 25px;
-    border-radius: 10px;
-    margin-bottom: 30px;
-}
-.form-section h3 {
-    font-size: 1.4rem;
-    color: #222;
-    border-bottom: 2px solid #8fbc8f; 
-    display: inline-block;
-    padding-bottom: 5px;
-    margin-top: 0;
-    margin-bottom: 20px;
-}
-
-.create-recipe-container .back-button {
-    position: absolute;
-    top: 20px;
-    left: 20px;
-    font-size: 1.5rem;
-    color: #555;
-    background: none;
-    border: none;
-    cursor: pointer;
-}
-
-.form-row-info {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 20px;
-}
-
-.form-group {
-    margin-bottom: 20px;
-}
-.form-group label {
-    display: block;
-    font-size: 0.9rem;
-    color: #555;
-    margin-bottom: 5px;
-}
-.form-group input,
-.form-group textarea {
-    width: 100%;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    padding: 12px;
-    font-size: 1rem;
-    background-color: #f9f9f9;
-    font-family: inherit;
-}
-.form-group input:focus,
-.form-group textarea:focus {
-    outline: none;
-    border-color: #38761d;
-    box-shadow: 0 0 5px rgba(56, 118, 29, 0.3);
-}
-
-.dynamic-group label {
-    font-weight: 600; 
-    display: block;
-    margin-bottom: 10px;
-    color: #333;
-}
-.dynamic-input-row {
+.header-text-container {
     display: flex;
-    gap: 10px;
-    margin-bottom: 10px;
-    align-items: center;
+    flex-direction: column;
 }
-.dynamic-input-row input {
-    flex-grow: 1;
+
+.header-title {
+  font-size: 20px;
+  font-weight: bold;
+  color: #000;
+  margin: 0;
 }
-.dynamic-input-row .remove-btn {
-    background: none;
-    border: none;
-    color: #e74c3c; 
-    cursor: pointer;
-    font-size: 1.2rem;
+
+.header-subtitle {
+  font-size: 12px;
+  color: #555;
+  margin: 0;
+}
+
+.title {
+  text-align: center;
+  font-size: 22px;
+  font-weight: bold;
+  color: #000;
+}
+
+.label {
+  font-weight: bold;
+  color: #000;
+}
+
+.sub-header {
+  margin-top: 10px;
+  border-bottom: 1px solid #ccc;
+  padding-bottom: 5px;
+}
+
+.sub-label {
+    font-size: 16px; 
+    color: #555;
+    margin-bottom: 5px;
+    font-weight: 500;
+}
+
+.input {
+  width: 100%;
+  padding: 10px;
+  border: 2px solid #38761d;
+  border-radius: 10px;
+  font-size: 16px; 
+  color: #000; 
+  box-sizing: border-box; 
+}
+
+.input::placeholder {
+    color: #a0a0a0;
+    opacity: 1; 
+}
+
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px; 
+}
+
+.detail-col {
+  display: flex;
+  flex-direction: column;
+  flex: 1; 
+}
+
+.select-input {
+    height: 44px; 
+    line-height: normal;
+    appearance: none; 
+    background: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23000%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13%205.1L146.2%20209.7%2018.8%2074.5a17.6%2017.6%200%200%200-13-5.1%2017.6%2017.6%200%200%200-13%205.1l-10.8%2011.6a17.6%2017.6%200%200%200%200%2024.8l128%20129a17.6%2017.6%200%200%200%2024.8%200l128-129a17.6%2017.6%200%200%200%200-24.8L287%2069.4z%22%2F%3E%3C%2Fsvg%3E') no-repeat right 10px center;
+    background-size: 10px;
+    padding-right: 30px; 
+}
+
+.select-input:required:invalid {
+    color: #a0a0a0;
+}
+
+.select-input option {
+    font-size: 18px; 
     padding: 5px;
-    line-height: 1;
-}
-.add-more-btn {
-    margin-top: 5px;
-    background-color: #8fbc8f; 
-    color: #ffffff;
-    font-weight: 600;
+    color: #000;
 }
 
-.image-upload-label {
-    display: block;
-    background-color: #f0f0f0;
-    color: #38761d;
-    text-align: center;
-    padding: 30px;
-    border: 2px dashed #8fbc8f;
-    border-radius: 10px;
-    cursor: pointer;
-    font-weight: 600;
-    font-size: 1.1rem;
-    transition: background-color 0.2s;
-}
-.image-upload-label:hover {
-    background-color: #e0e0e0;
-}
-.image-upload-label .fas {
-    display: block;
-    font-size: 2.5rem;
-    margin-bottom: 10px;
-}
-.upload-tip {
-    font-size: 0.85rem;
-    color: #777;
-    text-align: center;
-    margin-top: 10px;
+.select-input option:first-child {
+    color: #a0a0a0;
 }
 
-.large-button {
-    font-size: 1.2rem;
-    padding: 15px 30px;
-    margin-top: 20px;
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
-@media (max-width: 768px) {
-    .create-recipe-container {
-        max-width: 95%;
-        margin: 20px auto;
-        padding: 20px;
-    }
-    .form-row-info {
-        grid-template-columns: 1fr;
-    }
+.row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.flex-grow {
+  flex: 1;
+}
+
+.trash-box {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #38761d;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.add-btn {
+  padding: 8px 12px; 
+  background: #38761d;
+  color: white;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  font-size: 14px; 
+  align-self: flex-start; 
+}
+
+.button-row {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+
+.cancel-btn {
+  background: #000;
+  color: white;
+  padding: 10px;
+  border-radius: 10px;
+  border: none;
+  width: 48%;
+}
+
+.save-btn {
+  background: #38761d;
+  color: white;
+  padding: 10px;
+  border-radius: 10px;
+  border: none;
+  width: 48%;
+}
+
+.image-upload-box {
+  border: 2px dashed #cccccc;
+  border-radius: 10px;
+  padding: 20px;
+  text-align: center;
+  cursor: pointer;
+  background-color: #f9f9f9;
+  min-height: 150px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.hidden-file-input {
+  display: none;
+}
+
+.upload-label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
+  color: #888;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.camera-icon {
+  font-size: 48px;
+  margin-bottom: 10px;
+  color: #a0a0a0;
+}
+
+.upload-label p {
+  margin: 5px 0;
+}
+
+.selected-image-name {
+  font-weight: bold;
+  color: #38761d;
+  margin-top: 10px;
 }
