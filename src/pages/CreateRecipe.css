@@ -1,12 +1,65 @@
+/* Styling Utama Form */
 .form-container {
   width: 420px;
   margin: auto;
   display: flex;
   flex-direction: column;
   gap: 16px;
+  /* 🌟 BARU: Mengatur warna dasar kontainer utama */
+  background-color: white !important; /* Latar selalu putih */
+  color: black !important; /* Teks utama selalu hitam */
 }
 
-/* Styling untuk header navigasi (panah kembali dan judul) */
+/* Styling Input Dasar */
+.input {
+  width: 100%;
+  padding: 10px;
+  border: 2px solid #38761d;
+  border-radius: 10px;
+  font-size: 16px; 
+  color: black !important; /* Teks di dalam input selalu hitam */
+  background-color: white !important; /* Latar input selalu putih */
+  box-sizing: border-box; 
+}
+
+/* Mengatur teks placeholder input */
+.input::placeholder {
+    color: #a0a0a0 !important; /* Placeholder tetap abu-abu konsisten */
+    opacity: 1 !important; 
+}
+
+/* Styling Label */
+.label, .sub-label, .header-title {
+  color: black !important;
+}
+
+.header-subtitle {
+  color: #555 !important; /* Subtitle tetap abu-abu gelap */
+}
+
+/* Styling tombol Batal (hitam) */
+.cancel-btn {
+  background: #000 !important;
+  color: white !important;
+  padding: 10px;
+  border-radius: 10px;
+  border: none;
+  width: 48%;
+}
+
+/* Styling tombol Simpan (hijau) */
+.save-btn {
+  background: #38761d !important;
+  color: white !important;
+  padding: 10px;
+  border-radius: 10px;
+  border: none;
+  width: 48%;
+}
+
+
+/* --- Gabungan CSS Final --- */
+
 .form-header {
   display: flex;
   align-items: center;
@@ -17,11 +70,10 @@
 }
 
 .back-arrow {
-  /* REVISI: Ukuran font panah diperbesar */
   font-size: 28px; 
   cursor: pointer;
   font-weight: bold;
-  color: #38761d; 
+  color: #38761d !important; 
 }
 
 .header-text-container {
@@ -32,13 +84,11 @@
 .header-title {
   font-size: 20px;
   font-weight: bold;
-  color: #000;
   margin: 0;
 }
 
 .header-subtitle {
   font-size: 12px;
-  color: #555;
   margin: 0;
 }
 
@@ -46,12 +96,6 @@
   text-align: center;
   font-size: 22px;
   font-weight: bold;
-  color: #000;
-}
-
-.label {
-  font-weight: bold;
-  color: #000;
 }
 
 .sub-header {
@@ -62,24 +106,8 @@
 
 .sub-label {
     font-size: 16px; 
-    color: #555;
     margin-bottom: 5px;
     font-weight: 500;
-}
-
-.input {
-  width: 100%;
-  padding: 10px;
-  border: 2px solid #38761d;
-  border-radius: 10px;
-  font-size: 16px; 
-  color: #000; 
-  box-sizing: border-box; 
-}
-
-.input::placeholder {
-    color: #a0a0a0;
-    opacity: 1; 
 }
 
 .detail-row {
@@ -104,17 +132,17 @@
 }
 
 .select-input:required:invalid {
-    color: #a0a0a0;
+    color: #a0a0a0 !important;
 }
 
 .select-input option {
     font-size: 18px; 
     padding: 5px;
-    color: #000;
+    color: black !important;
 }
 
 .select-input option:first-child {
-    color: #a0a0a0;
+    color: #a0a0a0 !important;
 }
 
 .list {
@@ -147,8 +175,8 @@
 
 .add-btn {
   padding: 8px 12px; 
-  background: #38761d;
-  color: white;
+  background: #38761d !important;
+  color: white !important;
   border-radius: 10px;
   border: none;
   cursor: pointer;
@@ -162,31 +190,13 @@
   margin-top: 10px;
 }
 
-.cancel-btn {
-  background: #000;
-  color: white;
-  padding: 10px;
-  border-radius: 10px;
-  border: none;
-  width: 48%;
-}
-
-.save-btn {
-  background: #38761d;
-  color: white;
-  padding: 10px;
-  border-radius: 10px;
-  border: none;
-  width: 48%;
-}
-
 .image-upload-box {
   border: 2px dashed #cccccc;
   border-radius: 10px;
   padding: 20px;
   text-align: center;
   cursor: pointer;
-  background-color: #f9f9f9;
+  background-color: #f9f9f9 !important;
   min-height: 150px;
   display: flex;
   flex-direction: column;
@@ -205,7 +215,7 @@
   justify-content: center;
   height: 100%;
   width: 100%;
-  color: #888;
+  color: #888 !important;
   font-size: 14px;
   cursor: pointer;
 }
@@ -213,7 +223,7 @@
 .camera-icon {
   font-size: 48px;
   margin-bottom: 10px;
-  color: #a0a0a0;
+  color: #a0a0a0 !important;
 }
 
 .upload-label p {
@@ -222,6 +232,6 @@
 
 .selected-image-name {
   font-weight: bold;
-  color: #38761d;
+  color: #38761d !important;
   margin-top: 10px;
 }
