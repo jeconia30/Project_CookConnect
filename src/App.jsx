@@ -5,6 +5,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import LandingPage from './pages/landingpage.jsx';
 import Profile from './pages/Profile.jsx';
 import CreateRecipe from './pages/CreateRecipe.jsx';
+import AuthPage from './pages/AuthPage.jsx';
 
 // Asumsi: Halaman ini akan segera dibuat dari file login.html
 const LoginPage = () => <div>Halaman Login (Belum dibuat)</div>; 
@@ -23,7 +24,7 @@ function App() {
         
         {/* Rute Halaman Autentikasi (login.html, forgot-password.html, setup-profile.html) */}
         {/* Kita menggunakan satu komponen Login/Auth untuk menangani semua flow ini nanti */}
-        <Route path="/login" element={<LoginPage />} /> 
+        <Route path="/login" element={<AuthPage />} /> 
 
         {/* Rute Halaman Utama Setelah Login (feed.html) */}
         <Route path="/feed" element={<FeedPage />} /> 
