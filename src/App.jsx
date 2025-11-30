@@ -6,6 +6,8 @@ import LandingPage from './pages/landingpage.jsx';
 import Profile from './pages/Profile.jsx';
 import CreateRecipe from './pages/CreateRecipe.jsx';
 import AuthPage from './pages/AuthPage.jsx';
+import ForgotPassword from './pages/ForgotPassword.jsx';
+import ResetPassword from './pages/ResetPassword';
 import MyProfile from './pages/My-profile.jsx';
 
 // Asumsi: Halaman ini akan segera dibuat dari file login.html
@@ -26,6 +28,10 @@ function App() {
         {/* Rute Halaman Autentikasi (login.html, forgot-password.html, setup-profile.html) */}
         <Route path="/login" element={<AuthPage />} /> 
 
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+
+        <Route path="/reset-password" element={<ResetPassword />} />
+        
         {/* Rute Halaman Utama Setelah Login (feed.html) */}
         <Route path="/feed" element={<FeedPage />} /> 
         
