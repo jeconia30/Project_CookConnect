@@ -794,235 +794,307 @@ footer p {
   margin-bottom: 15px;
 }
 
+/* ============================================
+  PENAMBAHAN STYLE FOKUS (ON CLICK/TAB)
+  ============================================ */
+
+/* Style Fokus untuk Input Field (termasuk Judul, Deskripsi, Waktu, Porsi, Bahan, Langkah, Link Video) */
+.input:focus {
+    outline: none !important; /* Menghilangkan border default browser (biasanya biru) */
+    border: 1px solid var(--primary-color) !important; /* Border tebal 2px warna primary */
+}
+
+/* Style Fokus untuk Select Input (Dropdown Kesulitan) */
+.select-input:focus {
+    outline: none !important;
+    border: 1px solid var(--primary-color) !important;
+}
+
+/* KOREKSI: Karena semua input memiliki border 1px solid #ccc, 
+   pastikan fokus di atas menimpa border yang ada */
 
 /* ============================================
    CREATE RECIPE PAGE STYLES
    ============================================ */
-.form-container {
-  width: 420px;
-  margin: auto;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  background-color: white !important;
-  color: black !important;
+
+/* Style untuk Wrapper Halaman (Latar Belakang Abu-abu) */
+.form-body {
+      background-color: #f0f0f0; /* Warna abu-abu muda */
+      min-height: 100vh; 
+      width: 100%;
+      padding: 20px 0;
 }
 
+/* Kontainer Utama Formulir (Kotak Putih) */
+.form-container {
+   /* Lebar di layar laptop */
+   width: 90%; 
+   max-width: 800px; 
+   margin: auto;
+   display: flex;
+   flex-direction: column;
+   gap: 16px;
+   background-color: white !important;
+   color: black !important;
+   padding: 30px; 
+   border-radius: 15px; 
+   /* Shadow yang diperbaiki agar lebih terlihat */
+   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); 
+   font-family: "Inter", sans-serif;
+}
+
+/* Input Field Umum */
 .input {
-  width: 100%;
-  padding: 10px;
-  border: 2px solid var(--primary-color);
-  border-radius: 10px;
-  font-size: 16px;
-  color: black !important;
-  background-color: white !important;
-  box-sizing: border-box;
+   width: 100%;
+   padding: 10px;
+   border: 1px solid #ccc; /* Border abu-abu tipis untuk semua input */
+   border-radius: 10px;
+   font-size: 16px;
+   color: black !important;
+   background-color: white !important;
+   box-sizing: border-box;
 }
 
 .input::placeholder {
-  color: #a0a0a0 !important;
-  opacity: 1 !important;
+   color: #a0a0a0 !important;
+   opacity: 1 !important;
 }
 
+/* Label dan Judul */
 .label,
 .sub-label,
 .header-title {
-  color: black !important;
-}
-
-.header-subtitle {
-  color: #555 !important;
-}
-
-.cancel-btn {
-  background: #000 !important;
-  color: white !important;
-  padding: 10px;
-  border-radius: 10px;
-  border: none;
-  width: 48%;
-}
-
-.save-btn {
-  background: var(--primary-color) !important;
-  color: white !important;
-  padding: 10px;
-  border-radius: 10px;
-  border: none;
-  width: 48%;
-}
-
-.form-header {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 20px;
-  padding-bottom: 10px;
-  border-bottom: 1px solid #eee;
-}
-
-.back-arrow {
-  font-size: 28px;
-  cursor: pointer;
-  font-weight: bold;
-  color: var(--primary-color) !important;
-}
-
-.header-text-container {
-  display: flex;
-  flex-direction: column;
-}
-
-.header-title {
-  font-size: 20px;
-  font-weight: bold;
-  margin: 0;
-}
-
-.header-subtitle {
-  font-size: 12px;
-  margin: 0;
-}
-
-.title {
-  text-align: center;
-  font-size: 22px;
-  font-weight: bold;
-}
-
-.sub-header {
-  margin-top: 10px;
-  border-bottom: 1px solid #ccc;
-  padding-bottom: 5px;
+   color: black !important;
+   font-weight: bold; 
 }
 
 .sub-label {
-  font-size: 16px;
-  margin-bottom: 5px;
-  font-weight: 500;
+   font-weight: 500;
+   font-size: 14px; 
+   margin-bottom: 5px;
 }
 
+.header-subtitle {
+   color: #555 !important;
+}
+
+/* Header Form */
+.form-header {
+   display: flex;
+   align-items: center;
+   gap: 10px;
+   margin-bottom: 20px;
+   padding-bottom: 10px;
+   border-bottom: 1px solid #eee;
+  background-color: white !important; /* Memastikan header solid putih */
+}
+
+.back-arrow {
+   font-size: 28px;
+   cursor: pointer;
+   font-weight: bold;
+   color: var(--primary-color) !important;
+}
+
+.header-text-container {
+   display: flex;
+   flex-direction: column;
+}
+
+.header-title {
+   font-size: 20px;
+   font-weight: bold;
+   margin: 0;
+}
+
+.header-subtitle {
+   font-size: 12px;
+   margin: 0;
+}
+
+.sub-header {
+   margin-top: 10px;
+   padding-bottom: 0;
+}
+
+/* Detail Resep (Total Waktu, Porsi, Kesulitan) */
 .detail-row {
-  display: flex;
-  justify-content: space-between;
-  gap: 20px;
+   display: flex;
+   justify-content: space-between;
+   gap: 10px;
 }
 
 .detail-col {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
+   display: flex;
+   flex-direction: column;
+   flex: 1;
 }
 
+/* Select Input (Dropdown Kesulitan) */
 .select-input {
-  height: 44px;
-  line-height: normal;
-  appearance: none;
-  background: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23000%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13%205.1L146.2%20209.7%2018.8%2074.5a17.6%2017.6%200%200%200-13-5.1%2017.6%2017.6%200%200%200-13%205.1l-10.8%2011.6a17.6%2017.6%200%200%200%200%2024.8l128%20129a17.6%2017.6%200%200%200%2024.8%200l128-129a17.6%2017.6%200%200%200%200-24.8L287%2069.4z%22%2F%3E%3C%2Fsvg%3E') no-repeat right 10px center;
-  background-size: 10px;
-  padding-right: 30px;
+   height: 44px;
+   line-height: normal;
+   appearance: none;
+   /* Ikon panah ke bawah */
+   background: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%22292.4%22%3E%3Cpath%20fill%3D%22%23000%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13%205.1L146.2%20209.7%2018.8%2074.5a17.6%2017.6%200%200%200-13-5.1%2017.6%2017.6%200%200%200-13%205.1l-10.8%2011.6a17.6%2017.6%200%200%200%200%2024.8l128%20129a17.6%2017.6%200%200%200%2024.8%200l128-129a17.6%2017.6%200%200%200%200-24.8L287%2069.4z%22%2F%3E%3C%2Fsvg%3E') no-repeat right 10px center;
+   background-size: 10px;
+   padding-right: 30px;
 }
 
 .select-input:required:invalid {
-  color: #a0a0a0 !important;
+   color: #a0a0a0 !important;
 }
 
 .select-input option {
-  font-size: 18px;
-  padding: 5px;
-  color: black !important;
+   font-size: 16px;
+   padding: 5px;
+   color: black !important;
 }
 
 .select-input option:first-child {
-  color: #a0a0a0 !important;
+   color: #a0a0a0 !important;
 }
 
+/* List Bahan dan Langkah */
 .list {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+   display: flex;
+   flex-direction: column;
+   gap: 10px;
 }
 
 .row {
-  display: flex;
-  align-items: center;
-  gap: 10px;
+   display: flex;
+   align-items: center;
+   gap: 10px;
 }
 
 .flex-grow {
-  flex: 1;
+   flex: 1;
 }
 
+/* Ikon Hapus (Tempat Sampah) */
 .trash-box {
-  width: 32px;
-  height: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 2px solid var(--primary-color);
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 16px;
+   min-width: 32px;
+   height: 42px;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   border: 1px solid #ccc; /* Border abu-abu */
+   border-radius: 10px;
+   cursor: pointer;
+   font-size: 16px;
 }
 
+/* Tombol Tambah Bahan/Langkah */
 .add-btn {
-  padding: 8px 12px;
-  background: var(--primary-color) !important;
-  color: white !important;
-  border-radius: 10px;
-  border: none;
-  cursor: pointer;
-  font-size: 14px;
-  align-self: flex-start;
+   padding: 8px 12px;
+   background: var(--primary-color) !important;
+   color: white !important;
+   border-radius: 10px;
+   border: none;
+   cursor: pointer;
+   font-size: 14px;
+   align-self: flex-start; /* Tidak melebar */
+   font-weight: bold;
 }
 
+/* Tombol Aksi Batal dan Terbitkan Resep */
 .button-row {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 10px;
+   display: flex;
+   justify-content: flex-end; 
+   gap: 10px; 
+   margin-top: 20px;
+}
+
+.button-row .cancel-btn {
+      width: auto; 
+      padding: 10px 20px;
+      border: none;
+      background: transparent !important;
+      color: #555 !important;
+      font-size: 16px;
+}
+
+.button-row .save-btn {
+    width: auto; 
+    padding: 10px 20px;
+    font-size: 16px;
+    background: var(--primary-color) !important; /* Gunakan !important di sini */
+    color: white !important; 
+}
+
+/* Image Upload Box (Pengganti Button File) */
+.hidden-file-input {
+      width: 0.1px;
+      height: 0.1px;
+      opacity: 0;
+      overflow: hidden;
+      position: absolute;
+      z-index: -1;
 }
 
 .image-upload-box {
-  border: 2px dashed #cccccc;
-  border-radius: 10px;
-  padding: 20px;
-  text-align: center;
-  cursor: pointer;
-  background-color: #f9f9f9 !important;
-  min-height: 150px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+   border: 2px dashed #cccccc;
+   border-radius: 10px;
+   padding: 20px;
+   text-align: center;
+   cursor: pointer;
+   background-color: #f9f9f9 !important;
+   min-height: 150px;
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+   justify-content: center;
 }
 
 .upload-label {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-  width: 100%;
-  color: #888 !important;
-  font-size: 14px;
-  cursor: pointer;
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+   justify-content: center;
+   height: 100%;
+   width: 100%;
+   color: #888 !important;
+   font-size: 14px;
+   cursor: pointer;
 }
 
 .camera-icon {
-  font-size: 48px;
-  margin-bottom: 10px;
-  color: #a0a0a0 !important;
+   font-size: 48px;
+   margin-bottom: 10px;
+   color: #a0a0a0 !important;
 }
 
 .upload-label p {
-  margin: 5px 0;
+   margin: 5px 0;
 }
 
 .selected-image-name {
-  font-weight: bold;
-  color: var(--primary-color) !important;
-  margin-top: 10px;
+   font-weight: bold;
+   color: var(--primary-color) !important;
+   margin-top: 10px;
 }
+
+/* Style untuk Input Link Video dengan Ikon */
+.link-input-wrapper {
+   position: relative; 
+   margin-bottom: 10px; 
+}
+
+.link-icon {
+   position: absolute;
+   left: 10px; 
+   top: 50%; 
+   transform: translateY(-50%);
+   font-size: 20px;
+   color: #8d8d8d; /* Warna ikon abu-abu */
+   pointer-events: none; 
+}
+
+.link-input {
+   padding-left: 45px; /* Memberi ruang untuk ikon */
+}
+
 
 
 /* ============================================

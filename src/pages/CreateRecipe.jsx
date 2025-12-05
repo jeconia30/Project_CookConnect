@@ -33,6 +33,18 @@ function CreateRecipe() {
     }));
   };
 
+  const handleIngredientChange = (index, value) => {
+    const newIngredients = [...ingredients];
+    newIngredients[index] = value;
+    setIngredients(newIngredients);
+  };
+
+  const handleStepChange = (index, value) => {
+    const newSteps = [...steps];
+    newSteps[index] = value;
+    setSteps(newSteps);
+  };
+
   const handleAddIngredient = () => {
     setIngredients([...ingredients, ""]);
   };
@@ -63,149 +75,190 @@ function CreateRecipe() {
   };
 
   return (
-    <div className="form-container">
-      {/* 🌟 BARU: Header dengan tombol kembali */}
-      <div className="form-header">
-        <span className="back-arrow">←</span> {/* Panah kembali */}
-        <div className="header-text-container">
-          <h2 className="header-title">Buat Resep Baru Anda</h2>
-          <p className="header-subtitle">Bagikan resep terbaik Anda kepada dunia dan inspirasi para CookConnectors lainnya!</p>
-        </div>
-      </div>
-      {/* Akhir Header */}
-
-      {/* h2 lama dihapus karena sudah ada di header-title */}
-      {/* <h2 className="title">Form Tambah Resep</h2> */} 
-
-      <label className="label">Foto Utama Resep</label>
-      <div className="image-upload-box">
-        <input 
-          type="file" 
-          id="recipe-image-upload" 
-          className="hidden-file-input" 
-          onChange={handleImageChange} 
-          accept=".jpg, .jpeg, .png" 
-        />
-        <label htmlFor="recipe-image-upload" className="upload-label">
-          <span className="camera-icon">📸</span> 
-          <p>Klik untuk mengunggah foto [cth: .jpg, .png]</p>
-          {recipeImage && <p className="selected-image-name">{recipeImage.name}</p>}
-        </label>
-      </div>
-
-      <label className="label">Judul Resep</label>
-      <input 
-        className="input" 
-        type="text" 
-        name="title"
-        value={recipeInfo.title}
-        onChange={handleRecipeInfoChange}
-        placeholder="Masukkan judul resep..." 
-      />
-
-      <label className="label">Deskripsi Singkat (Caption)</label>
-      <input 
-        className="input" 
-        type="text" 
-        name="shortDescription"
-        value={recipeInfo.shortDescription}
-        onChange={handleRecipeInfoChange}
-        placeholder="Masukkan deskripsi singkat..." 
-      />
-
-      {/* DETAIL RESEP (Horizontal) */}
-      <label className="label sub-header">Detail Resep</label>
-      <div className="detail-row">
+    <div className="form-body"> {/* Pembungkus paling luar (latar belakang abu-abu) */}
+      <div className="form-container"> {/* Kontainer utama form (latar belakang putih) */}
         
-        <div className="detail-col"> 
-          <label className="sub-label">Total Waktu</label>
+        {/* 🌟 Header dengan tombol kembali */}
+        <div className="form-header">
+          <span className="back-arrow">←</span> 
+          <div className="header-text-container">
+            <h2 className="header-title">Buat Resep Baru Anda</h2>
+            <p className="header-subtitle">Bagikan resep terbaik Anda kepada dunia dan inspirasi para CookConnectors lainnya!</p>
+          </div>
+        </div>
+        {/* Akhir Header */}
+
+        <label className="label">Foto Utama Resep</label>
+        <div className="image-upload-box">
           <input 
-            className="input" 
-            type="text" 
-            name="totalTime"
-            value={details.totalTime}
-            onChange={handleDetailChange}
-            placeholder="Cth: 30 Menit" 
+            type="file" 
+            id="recipe-image-upload" 
+            className="hidden-file-input" 
+            onChange={handleImageChange} 
+            accept=".jpg, .jpeg, .png" 
+          />
+          <label htmlFor="recipe-image-upload" className="upload-label">
+            <span className="camera-icon">📸</span> 
+            <p>Klik untuk mengunggah foto [cth: .jpg, .png]</p>
+            {recipeImage && <p className="selected-image-name">{recipeImage.name}</p>}
+          </label>
+        </div>
+
+        <label className="label">Judul Resep</label> 
+        <input 
+          className="input" 
+          type="text" 
+          name="title"
+          value={recipeInfo.title}
+          onChange={handleRecipeInfoChange}
+          placeholder="Cth: Ayam Geprek Sambal Matah" 
+        />
+
+        <label className="label">Deskripsi Singkat (Caption)</label>
+        <input 
+          className="input" 
+          type="text" 
+          name="shortDescription"
+          value={recipeInfo.shortDescription}
+          onChange={handleRecipeInfoChange}
+          placeholder="Cth: Resep andalan keluarga yang pedasnya nagih!" 
+        />
+
+        {/* DETAIL RESEP (Horizontal) */}
+        <label className="label sub-header">Detail Resep</label> 
+        <div className="detail-row">
+          
+          <div className="detail-col"> 
+            <label className="sub-label">Total Waktu</label>
+            <input 
+              className="input" 
+              type="text" 
+              name="totalTime"
+              value={details.totalTime}
+              onChange={handleDetailChange}
+              placeholder="Cth: 30 Menit" 
+            />
+          </div>
+
+          <div className="detail-col">
+            <label className="sub-label">Porsi</label>
+            <input 
+              className="input" 
+              type="text" 
+              name="servingSize"
+              value={details.servingSize}
+              onChange={handleDetailChange}
+              placeholder="Cth: 2 orang" 
+            />
+          </div>
+
+          <div className="detail-col">
+            <label className="sub-label">Kesulitan</label>
+            <select 
+              className="input select-input" 
+              name="difficulty"
+              value={details.difficulty}
+              onChange={handleDetailChange}
+              required
+            >
+              <option value="" disabled hidden>Pilih tingkat kesulitan</option>
+              <option value="Mudah">Mudah</option>
+              <option value="Sedang">Sedang</option>
+              <option value="Sulit">Sulit</option>
+            </select>
+          </div>
+        </div>
+        
+        {/* BAHAN-BAHAN */}
+        <label className="label">Bahan-Bahan</label> 
+        <div className="list">
+          {ingredients.map((item, index) => (
+            <div className="row" key={index}>
+              <input
+                className="input flex-grow"
+                type="text"
+                value={item}
+                onChange={(e) => handleIngredientChange(index, e.target.value)}
+                placeholder={index === 0 ? "Cth: 200gr Daging Ayam" : `Bahan ${index + 1}`} 
+              />
+              {/* Tampilkan trash-box hanya jika ada lebih dari 1 bahan */}
+              {ingredients.length > 1 && (
+                <div className="trash-box" onClick={() => handleDeleteIngredient(index)}>
+                  🗑️
+                </div>
+              )}
+            </div>
+          ))}
+          <button className="add-btn" onClick={handleAddIngredient}>+ Tambah Bahan</button> 
+        </div>
+
+        {/* LANGKAH MEMASAK */}
+        <label className="label">Langkah-Langkah</label> 
+        <div className="list">
+          {steps.map((step, index) => (
+            <div className="row" key={index}>
+              <input
+                className="input flex-grow"
+                type="text"
+                value={step}
+                onChange={(e) => handleStepChange(index, e.target.value)}
+                placeholder={index === 0 ? "Cth: Panaskan minyak di wajan" : `Langkah ${index + 1}`} 
+              />
+              {/* Tampilkan trash-box hanya jika ada lebih dari 1 langkah */}
+              {steps.length > 1 && (
+                <div className="trash-box" onClick={() => handleDeleteStep(index)}>
+                  🗑️
+                </div>
+              )}
+            </div>
+          ))}
+          <button className="add-btn" onClick={handleAddStep}>+ Tambah Langkah</button>
+        </div>
+
+        {/* LINK VIDEO OPSIONAL */}
+        <label className="label">Link Video (Opsional)</label>
+        
+        {/* Wrapper untuk Input YouTube */}
+        <div className="link-input-wrapper"> 
+          {/* Menggunakan Font Awesome untuk logo YouTube */}
+          <i className="fab fa-youtube link-icon youtube-icon"></i> 
+          <input 
+              className="input link-input" 
+              type="text" 
+              placeholder="Cth: https://youtube.com/watch?v=..." 
           />
         </div>
 
-        <div className="detail-col">
-          <label className="sub-label">Porsi</label>
+        {/* Wrapper untuk Input TikTok */}
+        <div className="link-input-wrapper">
+          {/* Menggunakan Font Awesome untuk logo TikTok */}
+          <i className="fab fa-tiktok link-icon tiktok-icon"></i> 
           <input 
-            className="input" 
-            type="text" 
-            name="servingSize"
-            value={details.servingSize}
-            onChange={handleDetailChange}
-            placeholder="Cth: 2 orang" 
+              className="input link-input" 
+              type="text" 
+              placeholder="Cth: https://tiktok.com/@username/video/..." 
           />
         </div>
 
-        <div className="detail-col">
-          <label className="sub-label">Kesulitan</label>
-          <select 
-            className="input select-input" 
-            name="difficulty"
-            value={details.difficulty}
-            onChange={handleDetailChange}
-            required
-          >
-            <option value="" disabled hidden>Pilih tingkat kesulitan</option>
-            <option value="Mudah">Mudah</option>
-            <option value="Sedang">Sedang</option>
-            <option value="Sulit">Sulit</option>
-          </select>
+        {/* Wrapper untuk Input Instagram */}
+        <div className="link-input-wrapper">
+          {/* Menggunakan Font Awesome untuk logo Instagram */}
+          <i className="fab fa-instagram link-icon instagram-icon"></i> 
+          <input 
+              className="input link-input" 
+              type="text" 
+              placeholder="Cth: https://instagram.com/p/..." 
+          />
         </div>
-      </div>
-      
-      <label className="label">Bahan-Bahan</label>
-      <div className="list">
-        {ingredients.map((item, index) => (
-          <div className="row" key={index}>
-            <input
-              className="input flex-grow"
-              type="text"
-              placeholder={`Bahan ${index + 1}`}
-            />
-            {ingredients.length > 1 && (
-              <div className="trash-box" onClick={() => handleDeleteIngredient(index)}>
-                🗑️
-              </div>
-            )}
-          </div>
-        ))}
-        <button className="add-btn" onClick={handleAddIngredient}>+ Tambah Bahan</button>
-      </div>
 
-      <label className="label">Langkah Memasak</label>
-      <div className="list">
-        {steps.map((step, index) => (
-          <div className="row" key={index}>
-            <input
-              className="input flex-grow"
-              type="text"
-              placeholder={`Langkah ${index + 1}`}
-            />
-            {steps.length > 1 && (
-              <div className="trash-box" onClick={() => handleDeleteStep(index)}>
-                🗑️
-              </div>
-            )}
-          </div>
-        ))}
-        <button className="add-btn" onClick={handleAddStep}>+ Tambah Langkah</button>
-      </div>
+        {/* TOMBOL AKSI */}
+        <div className="button-row">
+          <button className="cancel-btn">Batal</button>
+          <button className="save-btn">Terbitkan Resep</button> 
+        </div>
 
-      <label className="label">Link Video (Opsional)</label>
-      <input className="input" type="text" placeholder="Link Video YouTube..." />
-      <input className="input" type="text" placeholder="Link Video TikTok..." />
-      <input className="input" type="text" placeholder="Link Video Instagram Reels..." />
-
-      <div className="button-row">
-        <button className="cancel-btn">Batal</button>
-        <button className="save-btn">Simpan Resep</button>
-      </div>
-    </div>
+      </div> {/* <-- TAG PENUTUP .form-container DIPINDAHKAN KE SINI */}
+    </div>/* <-- TAG PENUTUP .form-body DIPINDAHKAN KE SINI */
   );
 }
 
