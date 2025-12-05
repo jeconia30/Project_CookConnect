@@ -7,6 +7,7 @@ import profilePic from "../assets/geprek.jpeg";
 const MyProfile = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("resep");
+  const [menuOpen, setMenuOpen] = useState(false);
 
   return (
     <div className="myprofile-page">
@@ -19,14 +20,13 @@ const MyProfile = () => {
 
         <div className="myprofile-header-text">
           <strong>Profil Saya</strong>
-          
         </div>
       </div>
 
       {/* COVER */}
       <div className="myprofile-cover"></div>
 
-      {/* MAIN PROFILE SECTION */}
+      {/* MAIN PROFILE */}
       <div className="myprofile-main">
         <img src={profilePic} alt="Profile" className="myprofile-photo" />
 
@@ -40,14 +40,28 @@ const MyProfile = () => {
           </p>
         </div>
 
+        {/* BUTTONS */}
         <div className="myprofile-buttons">
-          <button className="myprofile-edit-btn">Edit Profil</button>
-          <button className="myprofile-link-btn">Buat Resep</button>
-          <button className="myprofile-logout-btn">Logout</button>
+          <button className="myprofile-create-btn">Buat Resep</button>
+
+          {/* DOT MENU */}
+          <button
+            className="myprofile-dot-btn"
+            onClick={() => setMenuOpen(!menuOpen)}
+          >
+            ⋮
+          </button>
+
+          {/* DROPDOWN */}
+          <div className={`myprofile-dropdown ${menuOpen ? "show" : ""}`}>
+            <button>Edit Profil</button>
+            <button>Logout</button>
+            <button className="danger">Hapus Akun</button>
+          </div>
         </div>
       </div>
 
-      {/* SOCIAL LINKS */}
+      {/* SOCIAL */}
       <div className="myprofile-social">
         <a href="#"><i className="fab fa-tiktok"></i> TikTok</a>
         <a href="#"><i className="fab fa-instagram"></i> Instagram</a>
@@ -57,7 +71,6 @@ const MyProfile = () => {
 
       {/* TABS */}
       <div className="myprofile-tabs">
-
         <div
           className={`tab ${activeTab === "resep" ? "active" : ""}`}
           onClick={() => setActiveTab("resep")}
@@ -71,7 +84,6 @@ const MyProfile = () => {
         >
           <i className="fas fa-bookmark"></i> Disimpan
         </div>
-
       </div>
 
       <div className="myprofile-tab-line"></div>
@@ -92,11 +104,8 @@ const MyProfile = () => {
           </div>
         )}
       </div>
-
     </div>
   );
 };
 
 export default MyProfile;
-
-
