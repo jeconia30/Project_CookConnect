@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import "./my-profile.css";
+import "../styles/app.css";
 import { useNavigate } from "react-router-dom";
 
 import profilePic from "../assets/geprek.jpeg";

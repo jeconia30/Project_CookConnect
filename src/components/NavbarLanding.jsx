@@ -1,4 +1,5 @@
 import React from 'react';
+import '../styles/components/NavbarLandingcss';
 // Asumsi gaya untuk .main-header, .navbar, .logo, .nav-links, .cta-button 
 // sudah diimpor di App.css atau index.css.
 

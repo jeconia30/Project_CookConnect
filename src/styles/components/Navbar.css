@@ -1,13 +1,12 @@
-/* src/pages/Navbar.css */
+/* ============================================
+   NAVBAR COMPONENT STYLES
+   ============================================ */
 
-/* --- Variabel Warna (Jika belum ada di App.css) --- 
 :root {
   --primary-color: #38761d;
   --text-medium: #555;
-} 
-*/
+}
 
-/* --- Header & Navbar Styles (General) --- */
 .main-header {
   position: sticky;
   top: 0;
@@ -18,7 +17,6 @@
   transition: box-shadow 0.3s;
 }
 
-/* Gaya saat di-scroll (dari global.js) */
 .main-header.scrolled {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
@@ -39,7 +37,6 @@
   text-decoration: none;
 }
 
-/* --- NavbarLanding Styles (.nav-links) --- */
 .nav-links {
   list-style: none;
   padding: 0;
@@ -59,21 +56,23 @@
   color: var(--primary-color, #38761d);
 }
 
-/* --- NavbarLoggedin Styles (.user-actions) --- */
 .user-actions {
   display: flex;
   align-items: center;
   gap: 20px;
 }
+
 .action-icon {
   font-size: 1.4rem;
   color: var(--text-medium, #555);
   text-decoration: none;
   position: relative;
 }
+
 .profile-dropdown-wrapper {
   position: relative;
 }
+
 .user-actions .profile-pic {
   width: 40px;
   height: 40px;
@@ -82,6 +81,7 @@
   border: 2px solid var(--primary-color, #38761d);
   display: block;
 }
+
 .profile-dropdown-menu {
   display: none;
   position: absolute;
@@ -96,25 +96,28 @@
   padding: 5px 0;
   padding-top: 10px;
 }
+
 .profile-dropdown-wrapper:hover .profile-dropdown-menu,
 .profile-dropdown-menu:hover {
   display: block;
 }
+
 .profile-dropdown-menu a {
   display: block;
   padding: 10px 15px;
   color: #333;
   text-decoration: none;
 }
+
 .profile-dropdown-menu a:hover {
   background-color: #f0f0f0;
 }
 
-/* --- Responsive (Diambil dari index.css) --- */
 @media (max-width: 992px) {
   .nav-links {
     display: none;
   }
+
   .navbar {
     justify-content: space-around;
   }

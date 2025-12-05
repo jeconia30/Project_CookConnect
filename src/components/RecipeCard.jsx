@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import './RecipeCard.css'; 
+import '../styles/components/RecipeCard.css'; 
 
 const RecipeCard = ({ title, meta, teaser, likes, imageSrc, altText }) => {
   return (

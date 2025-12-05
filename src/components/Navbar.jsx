@@ -1,7 +1,5 @@
 import React from 'react';
-// Asumsi gaya untuk .main-header, .navbar, .logo-link, .user-actions, 
-// .action-icon, .profile-dropdown-wrapper, .profile-pic, dll.
-// sudah diimpor dari App.css.
+import '../styles/components/Navbar.css';
 
 const NavbarLoggedin = () => {
   return (

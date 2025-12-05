@@ -1,6 +1,5 @@
 import React from 'react';
-
-import './MemberCard.css'; 
+import '../styles/components/MemberCard.css'; 
 const MemberCard = ({ name, role, photoSrc, altText }) => {
   return (
     <div className="team-member-card">

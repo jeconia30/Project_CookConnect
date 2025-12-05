@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-// Anda harus memastikan path impor ini benar sesuai lokasi file CSS
-import './ResetPassword.css'; 
+import '../styles/app.css'; 
 // Import useNavigate jika Anda menggunakan React Router DOM
 import { useNavigate } from 'react-router-dom'; 
 
