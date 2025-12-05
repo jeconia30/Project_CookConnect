@@ -8,7 +8,7 @@
 
 /* HEADER */
 .myprofile-header {
-  position: absolute;         /* BUKAN fixed — biar nempel cover */
+  position: absolute;
   top: 0;
   left: 1;
   width: 100%;
@@ -19,7 +19,6 @@
   color: white;
 }
 
-
 .myprofile-back-btn {
   background: none;
   border: none;
@@ -27,14 +26,9 @@
   font-size: 22px;
   cursor: pointer;
 }
-.myprofile-header-text strong,
-.myprofile-header-text span {
-  color: white;   
-}
 
-.myprofile-header-text {
-  display: flex;
-  flex-direction: column;
+.myprofile-header-text strong {
+  color: white;
 }
 
 /* COVER */
@@ -42,12 +36,11 @@
   background: linear-gradient(to bottom, #2e7d32, #1d5d23);
   height: 190px;
   width: 100%;
-  margin-top: 0;              /* PENTING: HILANGKAN JARAK PUTIH DI ATAS */
-  padding-top: 0;             /* AMANKAN SUPAYA IJO FULL */
+  margin-top: 0;
+  padding-top: 0;
 }
 
-
-/* MAIN PROFILE SECTION */
+/* MAIN PROFILE */
 .myprofile-main {
   background: white;
   padding: 25px;
@@ -58,7 +51,7 @@
   border-bottom: 1px solid #ddd;
 }
 
-/* PROFILE PHOTO */
+/* PHOTO */
 .myprofile-photo {
   width: 120px;
   height: 120px;
@@ -68,7 +61,7 @@
   margin-top: -60px;
 }
 
-/* PROFILE INFO TEXT */
+/* TEXT INFO */
 .myprofile-info {
   flex: 1;
   margin-left: 10px;
@@ -102,60 +95,118 @@
   line-height: 1.4;
 }
 
-/* BUTTONS ON THE RIGHT */
+/* BUTTONS RIGHT */
 .myprofile-buttons {
   display: flex;
-  flex-direction: column;
-  gap: 6px;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
   position: absolute;
   right: 25px;
   top: 25px;
 }
 
-.myprofile-edit-btn {
-  padding: 6px 12px;
-  background: #eee;
-  border: 1px solid #bbb;
-  border-radius: 6px;
+/* BUAT RESEP BTN - GREEN */
+.myprofile-create-btn {
+  padding: 8px 16px;
+  background: #2e7d32;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-weight: 600;
   cursor: pointer;
+  font-size: 15px;
+  transition: 0.2s;
 }
 
-.myprofile-link-btn {
-  background: none;
+.myprofile-create-btn:hover {
+  background: #256628;
+}
+
+/* DOT BTN */
+.myprofile-dot-btn {
+  background: white;
+  border: 2px solid #ccc;
+  padding: 4px 10px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.myprofile-dot-btn:hover {
+  background: #f2f2f2;
+}
+
+/* DROPDOWN */
+.myprofile-dropdown {
+  position: absolute;
+  top: 55px;
+  right: 0;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  width: 150px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  display: none;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.myprofile-dropdown.show {
+  display: flex;
+}
+
+.myprofile-dropdown button {
+  padding: 12px;
+  background: white;
   border: none;
-  color: blue;
+  text-align: left;
+  width: 100%;
   cursor: pointer;
   font-size: 15px;
 }
 
-.myprofile-logout-btn {
-  background: none;
-  border: none;
+.myprofile-dropdown button:hover {
+  background: #f5f5f5;
+}
+
+.myprofile-dropdown .danger {
   color: red;
-  cursor: pointer;
-  font-size: 15px;
+  font-weight: 600;
 }
 
-/* SOCIAL LINKS */
+/* SOCIAL — GREEN BOXES */
 .myprofile-social {
   background: white;
   display: flex;
-  justify-content: space-evenly;
-  padding: 15px 0;
+  justify-content: center;
+  gap: 25px;
+  padding: 20px 0;
   border-bottom: 1px solid #ddd;
 }
 
 .myprofile-social a {
-  color: #444;
-  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 2px solid #2e7d32;
+  padding: 10px 22px;
+  border-radius: 14px;
+  color: #2e7d32;
+  font-weight: 600;
   text-decoration: none;
+  transition: 0.2s;
 }
 
-/* ============= TABS ============= */
+.myprofile-social a:hover {
+  background: #e8f5e9;
+}
+
+/* TABS */
 .myprofile-tabs {
   display: flex;
-  justify-content: center;   /* CENTER TABS */
-  align-items: center;
+  justify-content: center;
   gap: 70px;
   background: white;
   padding: 15px 0 5px;
@@ -181,16 +232,15 @@
   color: #2e7d32;
 }
 
-/* Green underline */
 .myprofile-tab-line {
   width: 200px;
   height: 4px;
   background: #2e7d32;
-  margin: 0 auto;     /* CENTER THE GREEN LINE */
+  margin: 0 auto;
   border-radius: 6px;
 }
 
-/* EMPTY BOX */
+/* EMPTY SECTION */
 .myprofile-empty-section {
   padding: 40px 25px;
 }
@@ -220,3 +270,4 @@
   color: #777;
   font-size: 16px;
 }
+
