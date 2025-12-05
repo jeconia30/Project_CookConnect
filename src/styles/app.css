@@ -827,22 +827,22 @@ footer p {
 
 /* Kontainer Utama Formulir (Kotak Putih) */
 .form-container {
-   /* Lebar di layar laptop */
-   width: 90%; 
-   max-width: 800px; 
-   margin: auto;
-   display: flex;
-   flex-direction: column;
-   gap: 16px;
-   background-color: white !important;
-   color: black !important;
-   padding: 30px; 
-   border-radius: 15px; 
-   /* Shadow yang diperbaiki agar lebih terlihat */
-   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); 
-   font-family: "Inter", sans-serif;
+   background-color: #ffffff;
+  max-width: 800px;        /* Lebar maksimal agar enak dibaca */
+  width: 90%;              /* Responsif di HP */
+  margin: 40px auto;       /* 40px jarak Atas/Bawah, Auto Kiri/Kanan (Tengah) */
+  padding: 40px;           /* Jarak isi konten ke pinggir kotak */
+  border-radius: 12px;     /* Sudut melengkung */
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08); /* Bayangan halus */
 }
 
+/* Pastikan body belakangnya warnanya beda supaya kotaknya kontras */
+.form-body {
+  background-color: #f8f9fa; /* Abu-abu muda */
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
 /* Input Field Umum */
 .input {
    width: 100%;

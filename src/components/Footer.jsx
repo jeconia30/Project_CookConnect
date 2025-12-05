@@ -1,4 +1,6 @@
 import React from 'react';
+// Pastikan path ini sesuai dengan lokasi penyimpanan CSS kamu
+import '../styles/components/Footer.css'; 
 
 const Footer = () => {
   return (

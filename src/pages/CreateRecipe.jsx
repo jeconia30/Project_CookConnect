@@ -1,5 +1,8 @@
 import React, { useState } from "react";
 import "../styles/app.css";
+// Pastikan path import ini benar sesuai folder kamu
+import NavbarLoggedin from "../components/Navbar"; 
+import Footer from "../components/Footer"; 
 
 function CreateRecipe() {
   const [ingredients, setIngredients] = useState([""]);
@@ -75,10 +78,13 @@ function CreateRecipe() {
   };
 
   return (
-    <div className="form-body"> {/* Pembungkus paling luar (latar belakang abu-abu) */}
-      <div className="form-container"> {/* Kontainer utama form (latar belakang putih) */}
+    <div className="form-body">
+      {/* 1. Navbar di Atas */}
+      <NavbarLoggedin />
+
+      <div className="form-container">
         
-        {/* 🌟 Header dengan tombol kembali */}
+        {/* Header dengan tombol kembali */}
         <div className="form-header">
           <span className="back-arrow">←</span> 
           <div className="header-text-container">
@@ -86,8 +92,8 @@ function CreateRecipe() {
             <p className="header-subtitle">Bagikan resep terbaik Anda kepada dunia dan inspirasi para CookConnectors lainnya!</p>
           </div>
         </div>
-        {/* Akhir Header */}
 
+        {/* Input Foto */}
         <label className="label">Foto Utama Resep</label>
         <div className="image-upload-box">
           <input 
@@ -104,6 +110,7 @@ function CreateRecipe() {
           </label>
         </div>
 
+        {/* Input Judul & Deskripsi */}
         <label className="label">Judul Resep</label> 
         <input 
           className="input" 
@@ -124,10 +131,9 @@ function CreateRecipe() {
           placeholder="Cth: Resep andalan keluarga yang pedasnya nagih!" 
         />
 
-        {/* DETAIL RESEP (Horizontal) */}
+        {/* Detail Resep */}
         <label className="label sub-header">Detail Resep</label> 
         <div className="detail-row">
-          
           <div className="detail-col"> 
             <label className="sub-label">Total Waktu</label>
             <input 
@@ -169,7 +175,7 @@ function CreateRecipe() {
           </div>
         </div>
         
-        {/* BAHAN-BAHAN */}
+        {/* Bahan-Bahan */}
         <label className="label">Bahan-Bahan</label> 
         <div className="list">
           {ingredients.map((item, index) => (
@@ -181,7 +187,6 @@ function CreateRecipe() {
                 onChange={(e) => handleIngredientChange(index, e.target.value)}
                 placeholder={index === 0 ? "Cth: 200gr Daging Ayam" : `Bahan ${index + 1}`} 
               />
-              {/* Tampilkan trash-box hanya jika ada lebih dari 1 bahan */}
               {ingredients.length > 1 && (
                 <div className="trash-box" onClick={() => handleDeleteIngredient(index)}>
                   🗑️
@@ -192,7 +197,7 @@ function CreateRecipe() {
           <button className="add-btn" onClick={handleAddIngredient}>+ Tambah Bahan</button> 
         </div>
 
-        {/* LANGKAH MEMASAK */}
+        {/* Langkah Memasak */}
         <label className="label">Langkah-Langkah</label> 
         <div className="list">
           {steps.map((step, index) => (
@@ -204,7 +209,6 @@ function CreateRecipe() {
                 onChange={(e) => handleStepChange(index, e.target.value)}
                 placeholder={index === 0 ? "Cth: Panaskan minyak di wajan" : `Langkah ${index + 1}`} 
               />
-              {/* Tampilkan trash-box hanya jika ada lebih dari 1 langkah */}
               {steps.length > 1 && (
                 <div className="trash-box" onClick={() => handleDeleteStep(index)}>
                   🗑️
@@ -215,50 +219,36 @@ function CreateRecipe() {
           <button className="add-btn" onClick={handleAddStep}>+ Tambah Langkah</button>
         </div>
 
-        {/* LINK VIDEO OPSIONAL */}
+        {/* Link Video */}
         <label className="label">Link Video (Opsional)</label>
         
-        {/* Wrapper untuk Input YouTube */}
         <div className="link-input-wrapper"> 
-          {/* Menggunakan Font Awesome untuk logo YouTube */}
           <i className="fab fa-youtube link-icon youtube-icon"></i> 
-          <input 
-              className="input link-input" 
-              type="text" 
-              placeholder="Cth: https://youtube.com/watch?v=..." 
-          />
+          <input className="input link-input" type="text" placeholder="Cth: https://youtube.com/watch?v=..." />
         </div>
 
-        {/* Wrapper untuk Input TikTok */}
         <div className="link-input-wrapper">
-          {/* Menggunakan Font Awesome untuk logo TikTok */}
           <i className="fab fa-tiktok link-icon tiktok-icon"></i> 
-          <input 
-              className="input link-input" 
-              type="text" 
-              placeholder="Cth: https://tiktok.com/@username/video/..." 
-          />
+          <input className="input link-input" type="text" placeholder="Cth: https://tiktok.com/@username/video/..." />
         </div>
 
-        {/* Wrapper untuk Input Instagram */}
         <div className="link-input-wrapper">
-          {/* Menggunakan Font Awesome untuk logo Instagram */}
           <i className="fab fa-instagram link-icon instagram-icon"></i> 
-          <input 
-              className="input link-input" 
-              type="text" 
-              placeholder="Cth: https://instagram.com/p/..." 
-          />
+          <input className="input link-input" type="text" placeholder="Cth: https://instagram.com/p/..." />
         </div>
 
-        {/* TOMBOL AKSI */}
+        {/* Tombol Aksi */}
         <div className="button-row">
           <button className="cancel-btn">Batal</button>
           <button className="save-btn">Terbitkan Resep</button> 
         </div>
 
-      </div> {/* <-- TAG PENUTUP .form-container DIPINDAHKAN KE SINI */}
-    </div>/* <-- TAG PENUTUP .form-body DIPINDAHKAN KE SINI */
+      </div>
+
+      {/* 2. Footer di Bawah */}
+      <Footer />
+      
+    </div>
   );
 }
 

@@ -4,9 +4,14 @@
 
 footer {
   text-align: center;
-  padding: 20px 0;
-  border-top: 1px solid #eee;
+  padding: 25px 0;
+  border-top: 1px solid #e1e1e1;
   background-color: #ffffff;
-  color: var(--text-light, #777);
+  color: #777;
   font-size: 0.9rem;
+  width: 100%;
+  
+  /* PENTING: Agar footer tidak menimpa konten */
+  margin-top: auto; 
+  position: relative; 
 }
