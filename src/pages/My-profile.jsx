@@ -1,12 +1,13 @@
 import React, { useState } from "react";
-import "../styles/app.css";
 import { useNavigate } from "react-router-dom";
 
 import profilePic from "../assets/geprek.jpeg";
 
+
 const MyProfile = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("resep");
+  const [menuOpen, setMenuOpen] = useState(false);
 
   return (
     <div className="myprofile-page">
@@ -19,14 +20,13 @@ const MyProfile = () => {
 
         <div className="myprofile-header-text">
           <strong>Profil Saya</strong>
-          
         </div>
       </div>
 
       {/* COVER */}
       <div className="myprofile-cover"></div>
 
-      {/* MAIN PROFILE SECTION */}
+      {/* MAIN PROFILE */}
       <div className="myprofile-main">
         <img src={profilePic} alt="Profile" className="myprofile-photo" />
 
@@ -40,41 +40,82 @@ const MyProfile = () => {
           </p>
         </div>
 
+        {/* BUTTONS */}
         <div className="myprofile-buttons">
-          <button className="myprofile-edit-btn">Edit Profil</button>
-          <button className="myprofile-link-btn">Buat Resep</button>
-          <button className="myprofile-logout-btn">Logout</button>
+          <button className="myprofile-create-btn">Buat Resep</button>
+
+          {/* DOT MENU */}
+          <button
+            className="myprofile-dot-btn"
+            onClick={() => setMenuOpen(!menuOpen)}
+          >
+            ⋮
+          </button>
+
+          {/* DROPDOWN */}
+          <div className={`myprofile-dropdown ${menuOpen ? "show" : ""}`}>
+            <button>Edit Profil</button>
+            <button>Logout</button>
+            <button className="danger">Hapus Akun</button>
+          </div>
         </div>
       </div>
 
-      {/* SOCIAL LINKS */}
-      <div className="myprofile-social">
-        <a href="#"><i className="fab fa-tiktok"></i> TikTok</a>
-        <a href="#"><i className="fab fa-instagram"></i> Instagram</a>
-        <a href="#"><i className="fab fa-linkedin"></i> LinkedIn</a>
-        <a href="#"><i className="fas fa-link"></i> Website</a>
-      </div>
+      {/* SOSIAL MEDIA FINAL */}
+<div className="social-box-area">
 
-      {/* TABS */}
-      <div className="myprofile-tabs">
+  <a href="#" className="social-item">
+    <span>🎵</span> TikTok
+  </a>
 
-        <div
-          className={`tab ${activeTab === "resep" ? "active" : ""}`}
-          onClick={() => setActiveTab("resep")}
-        >
-          <i className="fas fa-book-open"></i> Resep Saya
-        </div>
+  <a href="#" className="social-item">
+    <span>📸</span> Instagram
+  </a>
 
-        <div
-          className={`tab ${activeTab === "saved" ? "active" : ""}`}
-          onClick={() => setActiveTab("saved")}
-        >
-          <i className="fas fa-bookmark"></i> Disimpan
-        </div>
+  <a href="#" className="social-item">
+    <span>💼</span> LinkedIn
+  </a>
 
-      </div>
+  <a href="#" className="social-item">
+    <span>🌐</span> Website
+  </a>
 
-      <div className="myprofile-tab-line"></div>
+</div>
+
+
+{/* TAB MENU */}
+<div className="tab-menu">
+
+  {/* Resep Saya */}
+  <div
+    className={`tab-item ${activeTab === "resep" ? "active" : ""}`}
+    onClick={() => setActiveTab("resep")}
+  >
+    📘 Resep Saya
+  </div>
+
+  {/* Disimpan */}
+  <div
+    className={`tab-item ${activeTab === "saved" ? "active" : ""}`}
+    onClick={() => setActiveTab("saved")}
+  >
+    🔖 Disimpan
+  </div>
+
+  {/* Garis bawah (bergerak) */}
+  <div
+    className="tab-underline"
+    style={{
+      // Tidak perlu ngatur width dinamis lagi karena di CSS sudah 50%
+      // Cukup mainkan posisi 'left'
+      left: activeTab === "resep" ? "0%" : "50%",
+    }}
+  ></div>
+
+</div>
+
+
+
 
       {/* CONTENT */}
       <div className="myprofile-empty-section">
@@ -92,11 +133,8 @@ const MyProfile = () => {
           </div>
         )}
       </div>
-
     </div>
   );
 };
 
 export default MyProfile;
-
-

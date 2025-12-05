@@ -1232,19 +1232,43 @@ footer p {
   font-size: 14px;
 }
 
-.tab-header {
-  text-align: center;
-  margin-top: 25px;
+/* Container utama */
+.tab-menu {
+  display: flex;
+  width: 100%;      /* Wajib full width */
+  position: relative;
+  border-bottom: 1px solid #ddd;
+  /* Hapus gap jika ada, agar kalkulasi 50% akurat */
 }
 
-.tab-active {
-  color: #2e7d32;
-  font-weight: bold;
-  padding-bottom: 6px;
-  border-bottom: 3px solid #2e7d32;
-  font-size: 17px;
+/* Item Tab */
+.tab-item {
+  flex: 1;          /* KUNCI: Ini bikin item melar membagi rata (50:50) */
+  display: flex;
+  justify-content: center; /* Bikin teks/icon di tengah */
+  align-items: center;
+  padding: 12px 0;  /* Jarak atas bawah */
+  cursor: pointer;
+  transition: 0.3s;
+  font-weight: 600;
+  color: #555;
 }
 
+.tab-item.active {
+  color: #2e7d32;   /* Warna hijau saat aktif */
+}
+
+/* Garis Bawah */
+.tab-underline {
+  position: absolute;
+  bottom: 0;
+  height: 4px;
+  background: #2e7d32;
+  border-radius: 4px 4px 0 0;
+  transition: left 0.3s ease-in-out; /* Animasi gerak */
+  
+  width: 50%; /* Setel lebar garis selalu 50% dari container */
+}
 /* FIX SPESIFISITAS: Menambahkan .profile-container agar aturan 3-kolom menang */
 .profile-container .recipe-grid {
   display: grid;
@@ -1269,11 +1293,6 @@ footer p {
 }
 
 
-/* ============================================
-   MY PROFILE PAGE STYLES (My-profile.jsx)
-   ============================================ */
-
-/* Styles dari src/pages/My-profile.css */
 .myprofile-page {
   max-width: 1000px;
   margin: 0 auto;
@@ -1295,7 +1314,6 @@ footer p {
   color: white;
 }
 
-
 .myprofile-back-btn {
   background: none;
   border: none;
@@ -1303,14 +1321,9 @@ footer p {
   font-size: 22px;
   cursor: pointer;
 }
-.myprofile-header-text strong,
-.myprofile-header-text span {
-  color: white;
-}
 
-.myprofile-header-text {
-  display: flex;
-  flex-direction: column;
+.myprofile-header-text strong {
+  color: white;
 }
 
 /* COVER */
@@ -1322,8 +1335,7 @@ footer p {
   padding-top: 0;
 }
 
-
-/* MAIN PROFILE SECTION */
+/* MAIN PROFILE */
 .myprofile-main {
   background: white;
   padding: 25px;
@@ -1334,7 +1346,7 @@ footer p {
   border-bottom: 1px solid #ddd;
 }
 
-/* PROFILE PHOTO */
+/* PHOTO */
 .myprofile-photo {
   width: 120px;
   height: 120px;
@@ -1344,7 +1356,7 @@ footer p {
   margin-top: -60px;
 }
 
-/* PROFILE INFO TEXT */
+/* TEXT INFO */
 .myprofile-info {
   flex: 1;
   margin-left: 10px;
@@ -1378,60 +1390,118 @@ footer p {
   line-height: 1.4;
 }
 
-/* BUTTONS ON THE RIGHT */
+/* BUTTONS RIGHT */
 .myprofile-buttons {
   display: flex;
-  flex-direction: column;
-  gap: 6px;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
   position: absolute;
   right: 25px;
   top: 25px;
 }
 
-.myprofile-edit-btn {
-  padding: 6px 12px;
-  background: #eee;
-  border: 1px solid #bbb;
-  border-radius: 6px;
+/* BUAT RESEP BTN - GREEN */
+.myprofile-create-btn {
+  padding: 8px 16px;
+  background: #2e7d32;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-weight: 600;
   cursor: pointer;
+  font-size: 15px;
+  transition: 0.2s;
 }
 
-.myprofile-link-btn {
-  background: none;
+.myprofile-create-btn:hover {
+  background: #256628;
+}
+
+/* DOT BTN */
+.myprofile-dot-btn {
+  background: white;
+  border: 2px solid #ccc;
+  padding: 4px 10px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.myprofile-dot-btn:hover {
+  background: #f2f2f2;
+}
+
+/* DROPDOWN */
+.myprofile-dropdown {
+  position: absolute;
+  top: 55px;
+  right: 0;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  width: 150px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  display: none;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.myprofile-dropdown.show {
+  display: flex;
+}
+
+.myprofile-dropdown button {
+  padding: 12px;
+  background: white;
   border: none;
-  color: blue;
+  text-align: left;
+  width: 100%;
   cursor: pointer;
   font-size: 15px;
 }
 
-.myprofile-logout-btn {
-  background: none;
-  border: none;
+.myprofile-dropdown button:hover {
+  background: #f5f5f5;
+}
+
+.myprofile-dropdown .danger {
   color: red;
-  cursor: pointer;
-  font-size: 15px;
+  font-weight: 600;
 }
 
-/* SOCIAL LINKS */
+/* SOCIAL — GREEN BOXES */
 .myprofile-social {
   background: white;
   display: flex;
-  justify-content: space-evenly;
-  padding: 15px 0;
+  justify-content: center;
+  gap: 25px;
+  padding: 20px 0;
   border-bottom: 1px solid #ddd;
 }
 
 .myprofile-social a {
-  color: #444;
-  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 2px solid #2e7d32;
+  padding: 10px 22px;
+  border-radius: 14px;
+  color: #2e7d32;
+  font-weight: 600;
   text-decoration: none;
+  transition: 0.2s;
 }
 
-/* ============= TABS ============= */
+.myprofile-social a:hover {
+  background: #e8f5e9;
+}
+
+/* TABS */
 .myprofile-tabs {
   display: flex;
   justify-content: center;
-  align-items: center;
   gap: 70px;
   background: white;
   padding: 15px 0 5px;
@@ -1457,7 +1527,6 @@ footer p {
   color: #2e7d32;
 }
 
-/* Green underline */
 .myprofile-tab-line {
   width: 200px;
   height: 4px;
@@ -1466,7 +1535,7 @@ footer p {
   border-radius: 6px;
 }
 
-/* EMPTY BOX */
+/* EMPTY SECTION */
 .myprofile-empty-section {
   padding: 40px 25px;
 }
@@ -1495,6 +1564,50 @@ footer p {
 .empty-box p {
   color: #777;
   font-size: 16px;
+}
+
+/* ============================== */
+/* SOSIAL MEDIA BOX - FINAL       */
+/* ============================== */
+.social-box-area {
+  margin-top: 20px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+.social-item {
+  border: 1px solid #2e7d32;
+  padding: 10px 0;
+  border-radius: 10px;
+  text-align: center;
+  text-decoration: none;
+  color: #2e7d32;
+  font-weight: 600;
+  font-size: 14px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+}
+
+/* HOVER */
+.social-item:hover {
+  background: #e9f7ed;
+}
+
+/* MOBILE (2 kolom) */
+@media (max-width: 768px) {
+  .social-box-area {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* MOBILE (1 kolom) */
+@media (max-width: 480px) {
+  .social-box-area {
+    grid-template-columns: 1fr;
+  }
 }
 
 
