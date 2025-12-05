@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import '../styles/App.css';
+import '../styles/app.css';
 
 const LoginForm = ({ onToggle }) => {
   // Dalam proyek React sesungguhnya, state untuk input form akan di handle di sini

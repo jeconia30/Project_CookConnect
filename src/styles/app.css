@@ -1,8 +1,8 @@
 /* ============================================
-   APP.CSS - GLOBAL STYLES FOR ALL PAGES
+   FINAL src/styles/app.css (Konsolidasi Total & FIX Profile.jsx)
    ============================================ */
 
-/* --- ROOT VARIABLES --- */
+/* --- ROOT VARIABLES (Global) --- */
 :root {
   --primary-color: #38761d;
   --primary-hover-color: #2e5c17;
@@ -11,6 +11,13 @@
   --text-color-dark: #333;
   --text-color-light: #777;
   --text-medium: #555;
+
+  /* Global font setting dari index.css */
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  color: #333;
+  background-color: #ffffff;
 }
 
 /* --- GLOBAL RESET & BASE STYLES --- */
@@ -30,6 +37,13 @@ html {
   background-color: #ffffff;
   color: #333;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+  width: 100%;
+  min-height: 100vh;
 }
 
 /* --- CONTAINER & LAYOUT --- */
@@ -99,16 +113,44 @@ html {
   transform: translateY(-2px);
 }
 
+
 /* ============================================
-   LANDING PAGE STYLES
+   NAVBAR STYLES (General & Logged-in Navbar)
    ============================================ */
 
 .main-header {
-  background-color: #ffffff;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
   position: sticky;
   top: 0;
+  width: 100%;
+  background-color: #ffffff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
   z-index: 1000;
+  transition: box-shadow 0.3s;
+}
+
+/* Navbar Landing (HIJAU + Logo Putih) */
+.header-landing-green {
+  background-color: var(--primary-color);
+  box-shadow: none;
+}
+
+.header-landing-green .logo {
+  color: #ffffff;
+  font-size: 1.6rem;
+}
+
+.header-landing-green .nav-links a {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.header-landing-green .nav-links a:hover {
+  color: #ffffff;
+}
+/* End Navbar Landing Fix */
+
+/* Tambahan untuk Logged-in Navbar saat scroll */
+.main-header.scrolled {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .navbar {
@@ -116,12 +158,15 @@ html {
   justify-content: space-between;
   align-items: center;
   padding: 15px 20px;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 .logo {
-  font-size: 1.6rem;
+  font-size: 1.5rem;
   font-weight: 700;
   color: var(--primary-color);
+  text-decoration: none;
 }
 
 .nav-links {
@@ -129,19 +174,81 @@ html {
   padding: 0;
   margin: 0;
   display: flex;
-  gap: 30px;
+  gap: 25px;
 }
 
 .nav-links a {
   text-decoration: none;
-  color: var(--text-color-light);
+  color: var(--text-medium);
   font-weight: 500;
-  padding: 5px 0;
+  transition: color 0.2s;
 }
 
 .nav-links a:hover {
   color: var(--primary-color);
 }
+
+.user-actions {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.action-icon {
+  font-size: 1.4rem;
+  color: var(--text-medium);
+  text-decoration: none;
+  position: relative;
+}
+
+.profile-dropdown-wrapper {
+  position: relative;
+}
+
+.user-actions .profile-pic {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #ccc;
+  border: 2px solid var(--primary-color);
+  display: block;
+}
+
+.profile-dropdown-menu {
+  display: none;
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+  min-width: 150px;
+  overflow: hidden;
+  z-index: 1001;
+  padding: 5px 0;
+  padding-top: 10px;
+}
+
+.profile-dropdown-wrapper:hover .profile-dropdown-menu,
+.profile-dropdown-menu:hover {
+  display: block;
+}
+
+.profile-dropdown-menu a {
+  display: block;
+  padding: 10px 15px;
+  color: #333;
+  text-decoration: none;
+}
+
+.profile-dropdown-menu a:hover {
+  background-color: #f0f0f0;
+}
+
+
+/* ============================================
+   LANDING PAGE STYLES (Hero, Contact, Team)
+   ============================================ */
 
 .hero-section {
   background-color: #ffffff;
@@ -193,13 +300,6 @@ html {
 .preview-section {
   background-color: var(--secondary-bg);
   padding: 50px 0;
-}
-
-.recipe-grid {
-  padding: 0 20px;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 30px;
 }
 
 .contact-section {
@@ -318,6 +418,144 @@ html {
   margin-top: 50px;
 }
 
+
+/* ============================================
+   COMPONENT STYLES (RecipeCard, MemberCard, Footer)
+   ============================================ */
+
+/* RecipeCard */
+.recipe-grid {
+  padding: 0 20px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 30px;
+}
+
+.recipe-card {
+  background-color: var(--card-bg);
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  overflow: visible;
+  border: 1px solid #eee;
+}
+
+.recipe-image {
+  width: calc(100% - 40px);
+  height: 220px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  margin: 20px 20px 0 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  display: block;
+}
+
+.recipe-title {
+  font-size: 1.3rem;
+  color: var(--primary-color);
+  margin-top: 15px;
+  margin-bottom: 5px;
+  padding: 0 20px;
+}
+
+.recipe-meta {
+  font-size: 0.9rem;
+  color: var(--text-color-light);
+  margin-bottom: 15px;
+  padding: 0 20px;
+}
+
+.recipe-teaser {
+  font-style: italic;
+  color: var(--text-color-light);
+  margin-bottom: 20px;
+  padding: 0 20px 0 35px;
+  border-left: 3px solid var(--primary-color);
+}
+
+.read-more {
+  text-decoration: none;
+  background-color: var(--primary-color);
+  font-weight: 600;
+  display: inline-block;
+  text-align: center;
+  padding: 10px 20px;
+  border-radius: 5px;
+  margin-top: auto;
+  margin-left: 20px;
+  margin-bottom: 20px;
+  transition: background-color 0.2s;
+  color: #ffffff !important;
+  text-decoration: none !important;
+}
+
+.read-more:hover {
+  background-color: var(--primary-hover-color);
+}
+
+.read-more:visited,
+.read-more:active {
+  color: #ffffff !important;
+}
+
+.recipe-like-badge {
+  position: absolute;
+  top: 30px;
+  left: 30px;
+  background-color: white;
+  color: var(--text-color-dark);
+  padding: 5px 10px;
+  border-radius: 30px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+  font-size: 0.85rem;
+  font-weight: 500;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+}
+
+.icon-like {
+  color: red;
+  margin-right: 5px;
+}
+
+/* MemberCard */
+.team-member-card {
+  background-color: var(--card-bg);
+  border-radius: 10px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+  border: 1px solid #eee;
+}
+
+.member-photo {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  display: block;
+}
+
+.member-card-content {
+  padding: 20px;
+  text-align: center;
+}
+
+.team-member-card h4 {
+  font-size: 1.1rem;
+  margin-bottom: 5px;
+  color: var(--primary-color);
+}
+
+.role {
+  color: var(--text-color-light);
+  font-size: 0.85rem;
+}
+
+/* Footer */
 footer {
   background-color: var(--secondary-bg);
   padding: 20px 0;
@@ -330,10 +568,10 @@ footer p {
   font-size: 0.9rem;
 }
 
-/* ============================================
-   AUTH PAGE STYLES (Login, Register, etc.)
-   ============================================ */
 
+/* ============================================
+   AUTH PAGE STYLES (Login, Register, Reset, Forgot)
+   ============================================ */
 .login-page-body {
   background-color: #f7f7f7;
   padding: 0 0 150px 0;
@@ -556,103 +794,10 @@ footer p {
   margin-bottom: 15px;
 }
 
-.profile-setup-container {
-  padding: 30px;
-  padding-top: 20px;
-  max-width: 550px;
-  position: relative;
-}
-
-.profile-setup-title {
-  font-size: 1.8rem;
-  margin-bottom: 30px;
-  text-align: center;
-}
-
-.profile-setup-container .back-button {
-  position: absolute;
-  top: 25px;
-  left: 25px;
-  font-size: 1.5rem;
-  color: #555;
-  text-decoration: none;
-  background: none;
-  border: none;
-  cursor: pointer;
-}
-
-.profile-pic-upload-area {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-bottom: 30px;
-}
-
-.profile-pic-large {
-  width: 100px;
-  height: 100px;
-  border-radius: 50%;
-  background-color: #eee;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  overflow: hidden;
-  border: 2px solid var(--primary-color);
-  margin-bottom: 15px;
-}
-
-.profile-placeholder::before {
-  content: "\f007";
-  font-family: "Font Awesome 5 Free";
-  font-weight: 900;
-  font-size: 3rem;
-  color: #aaa;
-}
-
-.change-pic-button {
-  background-color: #f0f0f0;
-  color: var(--primary-color);
-  padding: 8px 15px;
-  border-radius: 20px;
-  font-weight: 600;
-  cursor: pointer;
-  font-size: 0.95rem;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.hidden-file-input {
-  display: none;
-}
-
-.social-links-group label {
-  margin-bottom: 15px;
-}
-
-.social-input-wrapper {
-  position: relative;
-  margin-bottom: 15px;
-}
-
-.social-input-wrapper .fab,
-.social-input-wrapper .fas {
-  position: absolute;
-  left: 15px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: #aaa;
-  font-size: 1.1rem;
-}
-
-.social-input-wrapper input[type="url"] {
-  padding-left: 45px !important;
-}
 
 /* ============================================
    CREATE RECIPE PAGE STYLES
    ============================================ */
-
 .form-container {
   width: 420px;
   margin: auto;
@@ -879,458 +1024,184 @@ footer p {
   margin-top: 10px;
 }
 
+
 /* ============================================
-   PROFILE PAGE STYLES
+   PROFILE PAGE STYLES (Profile.jsx) - FIX GRID
    ============================================ */
 
-.my-profile-container {
-  max-width: 1000px;
+/* Styles dari src/pages/Profile.css */
+.profile-container {
+  max-width: 900px;
   margin: 0 auto;
+  background: white;
+  font-family: "Inter", sans-serif;
 }
 
-.profileMain {
-  background-color: #ffffff;
-  border-radius: 8px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
-}
-
-.profileHeaderContainer {
+.header-green {
+  background: linear-gradient(to bottom, #2e7d32, #1d5d23);
+  padding: 150px 20px 95px;
+  color: white;
   position: relative;
-  border-bottom: 1px solid #eee;
 }
 
-.profileCoverPhoto {
-  width: 100%;
-  height: 200px;
-  background-color: var(--primary-color);
+.back-btn-fixed {
+  position: absolute;
+  top: 18px;
+  left: 0px;
+  background: none;
+  border: none;
+  color: white;
+  font-size: 25px;
+  cursor: pointer;
 }
 
-.profileDetails {
+.header-title-inline {
+  position: absolute;
+  top: 18px;
+  left: 60px;
   display: flex;
-  align-items: flex-end;
-  padding: 0 25px 20px 25px;
-  gap: 20px;
+  flex-direction: column;
+}
+
+.header-title-inline strong {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.header-title-inline span {
+  font-size: 13px;
+  opacity: 0.85;
+}
+
+.content-wrapper {
+  background: white;
+  padding: 25px;
+  border-radius: 20px 20px 0 0;
+  margin-top: -65px;
   position: relative;
 }
 
-.profilePicLarge {
+.profile-photo-left {
   width: 120px;
   height: 120px;
   border-radius: 50%;
-  background-color: #eee;
-  border: 4px solid #ffffff;
-  margin-top: -60px;
-  flex-shrink: 0;
-  background-size: cover;
-}
-
-.profileUserInfo {
-  flex-grow: 1;
-  margin-bottom: 5px;
-}
-
-.profileUserInfo h2 {
-  font-size: 1.8rem;
-  font-weight: 700;
-  color: #222;
-  margin-bottom: 2px;
-}
-
-.profileUserInfo span {
-  font-size: 1rem;
-  color: #555;
-}
-
-.profileActionButtons {
-  position: absolute;
-  top: 20px;
-  right: 25px;
-  display: flex;
-  gap: 10px;
-}
-
-#profile-action-button {
-  position: absolute;
-  top: 20px;
-  right: 25px;
-}
-
-.profileBio {
-  padding: 20px 25px;
-  font-size: 0.95rem;
-  line-height: 1.6;
-  border-bottom: 1px solid #eee;
-}
-
-.profileTabs {
-  display: flex;
-}
-
-.tabItem {
-  flex: 1;
-  text-align: center;
-  padding: 15px 10px;
-  font-size: 1rem;
-  font-weight: 600;
-  color: #555;
-  text-decoration: none;
-  border-bottom: 3px solid transparent;
-  transition: background-color 0.2s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-}
-
-.tabItem:hover {
-  background-color: #f9f9f9;
-}
-
-.tabItem.active {
-  color: var(--primary-color);
-  border-bottom-color: var(--primary-color);
-}
-
-.profileRecipeGrid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 20px;
-  padding: 25px;
-}
-
-.profileRecipeGrid.hidden {
-  display: none;
-}
-
-.profileRecipeCard {
-  text-decoration: none;
-  color: #333;
-  border-radius: 8px;
-  overflow: hidden;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  transition: transform 0.2s, box-shadow 0.2s;
-}
-
-.profileRecipeCard:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
-}
-
-.profileRecipeCard img {
-  width: 100%;
-  height: 150px;
+  border: 4px solid white;
   object-fit: cover;
-  display: block;
+  margin-right: 20px;
 }
 
-.profileRecipeCard h4 {
-  font-size: 1rem;
-  font-weight: 600;
-  padding: 15px;
+.top-profile-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.profile-info-block {
+  flex: 1;
+}
+
+.name-follow-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.profile-name {
   margin: 0;
+  font-size: 24px;
+  font-weight: 700;
+  color: black;
 }
 
-.profileTopBar {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  display: flex;
-  align-items: center;
-  gap: 20px;
-  padding: 10px 15px;
-  z-index: 10;
-  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0));
+.followers-count {
+  font-size: 14px;
+  color: #666;
 }
 
-.profileTopBar .backButton {
-  color: #ffffff;
-  background-color: transparent;
+.username-small {
+  margin-top: 4px;
+  font-size: 14px;
+  color: #666;
+}
+
+.follow-btn {
+  background: #2e7d32;
+  padding: 10px 30px;
+  color: white;
   border: none;
-  font-size: 1.5rem;
+  border-radius: 25px;
+  font-size: 16px;
+  font-weight: 600;
   cursor: pointer;
-  padding: 5px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
-.profileTopBar .backButton:hover {
-  background-color: rgba(255, 255, 255, 0.1);
+.bio-text {
+  margin-top: 15px;
+  color: #444;
+  font-size: 15px;
+  line-height: 1.5;
 }
 
-.profileTopBarTitle {
-  display: flex;
-  flex-direction: column;
+.social-box-area {
+  margin-top: 20px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
 }
 
-.profileTopBarTitle strong {
-  color: #ffffff;
-  font-size: 1.1rem;
-  font-weight: 700;
-  line-height: 1.2;
-}
-
-.profileTopBarTitle span {
-  color: #f0f0f0;
-  font-size: 0.9rem;
-}
-
-.profileNameLine {
-  display: flex;
-  align-items: baseline;
-  gap: 15px;
-  margin-bottom: 2px;
-}
-
-.profileStatsInline {
-  color: inherit;
-  font-size: 0.95rem;
-  font-weight: 500;
-}
-
-.profileStatsInline strong {
-  color: #222;
-  font-weight: 700;
-}
-
-.profileStatsInline span {
-  color: #555;
-  margin-left: 5px;
-}
-
-.profileLinks {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 15px 25px;
-  padding: 20px 25px;
-  border-bottom: 1px solid #eee;
-}
-
-.profileLinkItem {
-  display: flex;
-  align-items: center;
-  gap: 8px;
+.social-item {
+  border: 1px solid #2e7d32;
+  padding: 10px 0;
+  border-radius: 10px;
+  text-align: center;
   text-decoration: none;
-  color: #555;
-  font-size: 0.9rem;
-  font-weight: 500;
-}
-
-.profileLinkItem:hover {
-  color: var(--primary-color);
-  text-decoration: underline;
-}
-
-.profileLinkItem i {
-  font-size: 1.1rem;
-  color: #777;
-  width: 20px;
-  text-align: center;
-}
-
-.profileLinkItem:hover i {
-  color: var(--primary-color);
-}
-
-.followButton {
-  background: none;
-  border: none;
+  color: #2e7d32;
   font-weight: 600;
-  font-size: 0.9rem;
-  padding: 4px 10px;
-  border-radius: 5px;
-  cursor: pointer;
-  line-height: 1;
+  font-size: 14px;
 }
 
-.follow {
-  color: var(--primary-color);
-}
-
-.following {
-  color: #777;
-  border: 1px solid #ddd;
-}
-
-.emptyStateMessage {
-  grid-column: 1 / -1;
+.tab-header {
   text-align: center;
-  padding: 60px 20px;
-  color: #777;
-  border: 2px dashed #eee;
-  border-radius: 8px;
-  margin: 10px;
+  margin-top: 25px;
 }
 
-.emptyStateMessage i {
-  font-size: 3rem;
-  color: #ccc;
-  margin-bottom: 15px;
+.tab-active {
+  color: #2e7d32;
+  font-weight: bold;
+  padding-bottom: 6px;
+  border-bottom: 3px solid #2e7d32;
+  font-size: 17px;
 }
 
-.emptyStateMessage p {
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: #555;
-  margin-bottom: 5px;
+/* FIX SPESIFISITAS: Menambahkan .profile-container agar aturan 3-kolom menang */
+.profile-container .recipe-grid {
+  display: grid;
+  margin-top: 25px;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
 }
 
-.emptyStateMessage span {
-  font-size: 0.95rem;
-}
-
-.modalOverlay {
-  display: none;
-  position: fixed;
-  top: 0;
-  left: 0;
+.profile-container .recipe-card img {
   width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.6);
-  z-index: 2000;
-  justify-content: center;
-  align-items: center;
-  overflow-y: auto;
-  padding: 20px 0;
-}
-
-.modalActive {
-  display: flex;
-}
-
-.modalContent {
-  background-color: #ffffff;
-  padding: 30px;
+  height: 160px;
   border-radius: 12px;
-  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
-  max-width: 400px;
-  width: 90%;
+  object-fit: cover;
+}
+
+.profile-container .recipe-card h4 {
+  margin-top: 8px;
   text-align: center;
-}
-
-.modalContent p {
-  font-size: 1.1rem;
-  margin-bottom: 25px;
-}
-
-.modalActions {
-  display: flex;
-  justify-content: center;
-  gap: 15px;
-  margin-top: 30px;
-}
-
-.modalButton {
-  padding: 10px 20px;
-}
-
-.modalContent.large {
-  max-width: 550px;
-}
-
-.modalContent .profileSetupTitle {
-  font-size: 1.8rem;
-  margin-bottom: 30px;
-  text-align: center;
-}
-
-.profilePicUploadArea {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-bottom: 30px;
-}
-
-.changePicButton {
-  background-color: #f0f0f0;
-  color: var(--primary-color);
-  padding: 8px 15px;
-  border-radius: 20px;
+  font-size: 15px;
   font-weight: 600;
-  cursor: pointer;
-  font-size: 0.95rem;
-  display: flex;
-  align-items: center;
-  gap: 8px;
+  color: black;
 }
 
-.hiddenFileInput {
-  display: none;
-}
-
-.socialLinksGroup label {
-  margin-bottom: 15px;
-}
-
-.socialInputWrapper {
-  position: relative;
-  margin-bottom: 15px;
-}
-
-.socialInputWrapper .fab,
-.socialInputWrapper .fas {
-  position: absolute;
-  left: 15px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: #aaa;
-  font-size: 1.1rem;
-}
-
-.socialInputWrapper input[type="url"] {
-  padding-left: 45px !important;
-}
-
-#edit-profile-modal .profilePicLarge {
-  margin-top: 0;
-  border: 2px solid var(--primary-color);
-  background-image: none;
-}
-
-.authForm {
-  text-align: left;
-}
-
-.authForm h2 {
-  text-align: center;
-  font-size: 1.8rem;
-  margin-bottom: 30px;
-  color: #333;
-}
-
-.authForm .formGroup {
-  margin-bottom: 20px;
-}
-
-.authForm .formGroup label {
-  display: block;
-  font-size: 0.9rem;
-  color: #555;
-  margin-bottom: 5px;
-}
-
-.authForm .formGroup input,
-.authForm .formGroup textarea {
-  width: 100%;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  padding: 12px;
-  font-size: 1rem;
-  background-color: #f9f9ff;
-  font-family: inherit;
-}
-
-.authForm .formGroup textarea {
-  resize: vertical;
-}
 
 /* ============================================
-   MY PROFILE PAGE STYLES
+   MY PROFILE PAGE STYLES (My-profile.jsx)
    ============================================ */
 
+/* Styles dari src/pages/My-profile.css */
 .myprofile-page {
   max-width: 1000px;
   margin: 0 auto;
@@ -1339,6 +1210,7 @@ footer p {
   padding-bottom: 40px;
 }
 
+/* HEADER */
 .myprofile-header {
   position: absolute;
   top: 0;
@@ -1351,6 +1223,7 @@ footer p {
   color: white;
 }
 
+
 .myprofile-back-btn {
   background: none;
   border: none;
@@ -1358,7 +1231,6 @@ footer p {
   font-size: 22px;
   cursor: pointer;
 }
-
 .myprofile-header-text strong,
 .myprofile-header-text span {
   color: white;
@@ -1369,6 +1241,7 @@ footer p {
   flex-direction: column;
 }
 
+/* COVER */
 .myprofile-cover {
   background: linear-gradient(to bottom, #2e7d32, #1d5d23);
   height: 190px;
@@ -1377,6 +1250,8 @@ footer p {
   padding-top: 0;
 }
 
+
+/* MAIN PROFILE SECTION */
 .myprofile-main {
   background: white;
   padding: 25px;
@@ -1387,6 +1262,7 @@ footer p {
   border-bottom: 1px solid #ddd;
 }
 
+/* PROFILE PHOTO */
 .myprofile-photo {
   width: 120px;
   height: 120px;
@@ -1396,6 +1272,7 @@ footer p {
   margin-top: -60px;
 }
 
+/* PROFILE INFO TEXT */
 .myprofile-info {
   flex: 1;
   margin-left: 10px;
@@ -1429,6 +1306,7 @@ footer p {
   line-height: 1.4;
 }
 
+/* BUTTONS ON THE RIGHT */
 .myprofile-buttons {
   display: flex;
   flex-direction: column;
@@ -1462,6 +1340,7 @@ footer p {
   font-size: 15px;
 }
 
+/* SOCIAL LINKS */
 .myprofile-social {
   background: white;
   display: flex;
@@ -1476,6 +1355,7 @@ footer p {
   text-decoration: none;
 }
 
+/* ============= TABS ============= */
 .myprofile-tabs {
   display: flex;
   justify-content: center;
@@ -1505,6 +1385,7 @@ footer p {
   color: #2e7d32;
 }
 
+/* Green underline */
 .myprofile-tab-line {
   width: 200px;
   height: 4px;
@@ -1513,6 +1394,7 @@ footer p {
   border-radius: 6px;
 }
 
+/* EMPTY BOX */
 .myprofile-empty-section {
   padding: 40px 25px;
 }
@@ -1543,8 +1425,9 @@ footer p {
   font-size: 16px;
 }
 
+
 /* ============================================
-   RESPONSIVE DESIGN
+   RESPONSIVE DESIGN (GLOBAL)
    ============================================ */
 
 @media (max-width: 992px) {
