@@ -5,6 +5,10 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import LandingPage from './pages/landingpage.jsx';
 import Profile from './pages/Profile.jsx';
 import CreateRecipe from './pages/CreateRecipe.jsx';
+import AuthPage from './pages/AuthPage.jsx';
+import ForgotPassword from './pages/ForgotPassword.jsx';
+import ResetPassword from './pages/ResetPassword';
+import MyProfile from './pages/My-profile.jsx';
 
 // Asumsi: Halaman ini akan segera dibuat dari file login.html
 const LoginPage = () => <div>Halaman Login (Belum dibuat)</div>; 
@@ -22,9 +26,12 @@ function App() {
         <Route path="/" element={<LandingPage />} />
         
         {/* Rute Halaman Autentikasi (login.html, forgot-password.html, setup-profile.html) */}
-        {/* Kita menggunakan satu komponen Login/Auth untuk menangani semua flow ini nanti */}
-        <Route path="/login" element={<LoginPage />} /> 
+        <Route path="/login" element={<AuthPage />} /> 
 
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+
+        <Route path="/reset-password" element={<ResetPassword />} />
+        
         {/* Rute Halaman Utama Setelah Login (feed.html) */}
         <Route path="/feed" element={<FeedPage />} /> 
         
@@ -32,7 +39,6 @@ function App() {
         <Route path="/create" element={<CreateRecipe />} />
         
         {/* Rute Halaman Profil Pribadi (my-profile.html) */}
-        {/* Menggunakan prop isCurrentUser={true} pada komponen Profile */}
         <Route path="/profile/me" element={<Profile isCurrentUser={true} />} />
         
         {/* Rute Halaman Profil Orang Lain (profile.html) */}
@@ -40,6 +46,9 @@ function App() {
         
         {/* Rute Halaman Detail Resep (recipe-detail.html) */}
         <Route path="/recipe/:id" element={<RecipeDetail />} />
+
+        {/* ➤ RUTE BARU UNTUK my-profile.jsx */}
+        <Route path="/my-profile" element={<MyProfile />} />
         
         {/* Rute Catch-all untuk 404 */}
         <Route path="*" element={<h1>404 Not Found</h1>} />
