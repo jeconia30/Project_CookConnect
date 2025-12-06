@@ -1,242 +1,199 @@
-import React from "react";
-// Pastikan path gambarnya benar sesuai folder projectmu
-import ayamGeprek from "../assets/geprek.jpeg"; 
-import { FaArrowLeft, FaRegHeart, FaRegComment, FaShare, FaRegBookmark, FaClock, FaUtensils, FaStar, FaShoppingCart, FaListUl, FaTiktok, FaYoutube, FaInstagram, FaPaperPlane } from "react-icons/fa";
+import React, { useEffect, useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+// import api from '../api/axiosInstance'; // <-- KITA MATIKAN DULU
+import Navbar from '../components/Navbar';
+import Sidebar from '../components/Sidebar';
 
 const RecipeDetail = () => {
+  const { id } = useParams();
+  const navigate = useNavigate();
+
+  // --- MOCK DATA (DATA PALSU SESUAI HTML KAMU) ---
+  const mockRecipe = {
+    id: '123',
+    title: "Ayam Geprek Sambal Matah",
+    description: "Ini dia resep ayam geprek andalanku! Resep cocok buat orang yang malas masak! Hanya butuh 15 menit, pedasnya nagih! #ayamgeprek #sambalmatah #masakcepat",
+    image_url: "https://i.pinimg.com/736x/a2/62/77/a262776412f1709424e83c748259461f.jpg", // Gambar contoh internet
+    total_time: 15,
+    servings: 2,
+    difficulty: "Mudah",
+    created_at: new Date().toISOString(),
+    username: "sari_masak",
+    user_fullname: "Sari (Contoh)", // Tambahan field manual buat mock
+    avatar_url: "https://ui-avatars.com/api/?name=Sari+Masak&background=random",
+    like_count: 8100,
+    comment_count: 120,
+    is_liked: true, // Ceritanya user udah like
+    is_saved: true, // Ceritanya user udah save
+    
+    // Array Bahan dari HTML kamu
+    ingredients: [
+      "2 potong ayam goreng (tepung)",
+      "10 buah cabai rawit merah",
+      "5 siung bawang merah",
+      "2 batang sereh (ambil bagian putih)",
+      "4 lembar daun jeruk (buang tulang)",
+      "1/2 sdt terasi bakar",
+      "Garam dan gula secukupnya",
+      "5 sdm minyak kelapa panas"
+    ],
+
+    // Array Langkah dari HTML kamu
+    steps: [
+      "Siapkan Sambal: Ulek kasar cabai, bawang merah, dan terasi. Jangan terlalu halus.",
+      "Iris Bumbu: Iris tipis sereh dan daun jeruk. Campur ke dalam ulekan cabai.",
+      "Siram Minyak: Panaskan minyak kelapa (harus sangat panas). Siramkan langsung ke atas campuran sambal. Aduk rata.",
+      "Geprek Ayam: Ambil ayam goreng tepung yang sudah siap, letakkan di atas cobek.",
+      "Sajikan: Geprek atau tekan ayam menggunakan ulekan hingga sedikit hancur dan tercampur dengan sambal. Sajikan segera dengan nasi hangat."
+    ]
+  };
+
+  // State langsung diisi mock data, tanpa loading
+  const [recipe, setRecipe] = useState(mockRecipe);
+  const [loading, setLoading] = useState(false); 
+
+  /* // --- KODE BACKEND SEMENTARA DIMATIKAN ---
+  useEffect(() => {
+    const fetchRecipe = async () => {
+      try {
+        const response = await api.get(`/recipes/${id}`);
+        setRecipe(response.data);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchRecipe();
+  }, [id]);
+  */
+
+  if (loading) return <div style={{textAlign:'center', marginTop:'50px'}}>Sedang memuat resep... 🍳</div>;
+  if (!recipe) return <div style={{textAlign:'center', marginTop:'50px'}}>Resep tidak ditemukan.</div>;
+
   return (
-    <div className="detail-container">
-      {/* HEADER: Back Button & Title */}
-      <header className="recipe-header">
-        <button className="back-btn" onClick={() => window.history.back()}>
-          <FaArrowLeft />
-        </button>
-        <h1 className="detail-title">Ayam Geprek Sambal Matah</h1>
+    <div className="loggedin-body">
+      <Navbar />
+
+      <main className="feed-container container" style={{display: 'flex', gap: '20px', marginTop: '20px'}}>
         
-        {/* Author Section */}
-        <div className="author-box">
+        <div style={{width: '300px', flexShrink: 0}} className="desktop-only">
+           <Sidebar />
+        </div>
+
+        <div className="recipe-detail-container">
+          
+          {/* Header Detail */}
+          <div className="recipe-detail-header">
+            <div className="recipe-title-group">
+              <button className="back-button" onClick={() => navigate(-1)}>
+                <i className="fas fa-arrow-left"></i>
+              </button>
+              <h1 className="recipe-detail-title">{recipe.title}</h1>
+            </div>
+
+            <div className="post-header revised">
+              <div 
+                className="profile-pic-small" 
+                style={{backgroundImage: `url(${recipe.avatar_url})`}}
+              ></div>
+              
+              <div className="user-details-column">
+                <div className="user-details-top">
+                  <strong>{recipe.user_fullname || recipe.username}</strong>
+                  <span className="username">@{recipe.username}</span>
+                  <span className="dot-separator">•</span>
+                  <button className="follow-button follow small">Ikuti</button>
+                </div>
+                <span className="post-meta">Diposkan 2 jam lalu</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Hero Image */}
           <img
-            src="https://i.pravatar.cc/150?img=5"
-            alt="avatar"
-            className="author-avatar"
+            src={recipe.image_url}
+            alt={recipe.title}
+            className="recipe-hero-image"
           />
-          <div className="author-info">
-            <div className="author-top">
-              <strong>Sari (Contoh)</strong>
-              <span className="author-handle">@sari_masak</span>
-              <button className="follow-btn">Ikuti</button>
-            </div>
-            <p className="time-posted">Diposkan 2 jam lalu</p>
+
+          {/* Actions */}
+          <div className="post-actions detail-page-actions">
+            <button className={recipe.is_liked ? "like-active" : ""}>
+              <i className={recipe.is_liked ? "fas fa-heart" : "far fa-heart"}></i> {recipe.like_count.toLocaleString()} Suka
+            </button>
+            <a href="#comments-section">
+              <i className="far fa-comment"></i> {recipe.comment_count} Komentar
+            </a>
+            <button><i className="far fa-share-square"></i> Bagikan</button>
+            <button className={recipe.is_saved ? "save-active" : ""}>
+              <i className={recipe.is_saved ? "fas fa-bookmark" : "far fa-bookmark"}></i> Disimpan
+            </button>
           </div>
+
+          {/* Caption */}
+          <div className="recipe-caption-full">
+            <p>{recipe.description}</p>
+          </div>
+
+          {/* Meta Info */}
+          <div className="recipe-meta-info">
+            <div>
+              <i className="fas fa-clock"></i> <strong>Total Waktu:</strong><br/> {recipe.total_time} Menit
+            </div>
+            <div>
+              <i className="fas fa-utensils"></i> <strong>Porsi:</strong><br/> {recipe.servings} orang
+            </div>
+            <div>
+              <i className="fas fa-star"></i> <strong>Kesulitan:</strong><br/> {recipe.difficulty}
+            </div>
+          </div>
+
+          {/* Main Content */}
+          <div className="recipe-main-content-wrapper">
+            
+            <div className="recipe-ingredients">
+              <h3><i className="fas fa-shopping-cart"></i> Bahan-Bahan</h3>
+              <ul>
+                {recipe.ingredients.map((item, idx) => (
+                  <li key={idx}>{item}</li>
+                ))}
+              </ul>
+            </div>
+
+            <div className="recipe-instructions">
+              <h3><i className="fas fa-list-ol"></i> Langkah-Langkah</h3>
+              <ol>
+                {recipe.steps.map((step, idx) => (
+                  <li key={idx}>{step}</li>
+                ))}
+              </ol>
+            </div>
+          </div>
+
+          {/* Video Links */}
+          <div className="recipe-video-links">
+             <h3><i className="fas fa-video"></i> Tonton Video Resep</h3>
+             <ul className="video-link-list">
+                <li>
+                  <a href="#" className="video-link-tiktok" style={{background: 'black'}}><i className="fab fa-tiktok"></i> TikTok</a>
+                </li>
+                <li>
+                  <a href="#" className="video-link-youtube" style={{background: 'red'}}><i className="fab fa-youtube"></i> YouTube</a>
+                </li>
+             </ul>
+          </div>
+
+          {/* Comments Dummy */}
+          <div className="comments-section" id="comments-section">
+            <h3><i className="fas fa-comments"></i> 10 Komentar</h3>
+            <div style={{marginTop: '20px', color: '#666', fontStyle: 'italic'}}>
+               (Komentar dummy: "Wah enak banget!", "Recook ah!", dll...)
+            </div>
+          </div>
+
         </div>
-      </header>
-
-      {/* HERO SECTION: Image & Actions */}
-      <section className="hero-section">
-        <img src={ayamGeprek} alt="Ayam Geprek" className="detail-image" />
-        
-        <div className="action-bar">
-          <div className="action-left">
-            <button className="action-btn"><FaRegHeart className="icon-red" /> 8.1K Suka</button>
-            <button className="action-btn"><FaRegComment /> 120 Komentar</button>
-          </div>
-          <div className="action-right">
-            <button className="action-btn"><FaShare /> Bagikan</button>
-            <button className="action-btn"><FaRegBookmark className="icon-green" /> Disimpan</button>
-          </div>
-        </div>
-      </section>
-
-      <hr className="divider" />
-
-      {/* DESCRIPTION */}
-      <p className="recipe-description">
-        Ini dia resep ayam geprek andalanku! Resep cocok buat orang yang malas masak! 
-        Hanya butuh 15 menit, pedasnya nagih! #ayamgeprek #sambalmatah #masakcepat
-      </p>
-
-      {/* INFO CARD (Time, Portion, Difficulty) */}
-      <div className="info-card">
-        <div className="info-item">
-          <FaClock className="info-icon" />
-          <span className="info-label">Total Waktu:</span>
-          <span className="info-value">15 Menit</span>
-        </div>
-        <div className="info-item border-x">
-          <FaUtensils className="info-icon" />
-          <span className="info-label">Porsi:</span>
-          <span className="info-value">2 orang</span>
-        </div>
-        <div className="info-item">
-          <FaStar className="info-icon" />
-          <span className="info-label">Kesulitan:</span>
-          <span className="info-value">Mudah</span>
-        </div>
-      </div>
-
-      {/* MAIN CONTENT GRID (Ingredients & Steps) */}
-      <div className="recipe-content-grid">
-        {/* Left Column: Ingredients */}
-        <div className="ingredients-section">
-          <h2 className="section-title"><FaShoppingCart className="section-icon" /> Bahan-Bahan</h2>
-          <ul className="ingredient-list">
-            <li>2 potong ayam goreng (tepung)</li>
-            <li>10 buah cabai rawit merah</li>
-            <li>5 siung bawang merah</li>
-            <li>2 batang sereh (ambil bagian putih)</li>
-            <li>4 lembar daun jeruk (buang tulang)</li>
-            <li>1/2 sdt terasi bakar</li>
-            <li>Garam dan gula secukupnya</li>
-            <li>5 sdm minyak kelapa panas</li>
-          </ul>
-        </div>
-
-        {/* Right Column: Steps */}
-        <div className="steps-section">
-          <h2 className="section-title"><FaListUl className="section-icon" /> Langkah-Langkah</h2>
-          <div className="step-list">
-            <div className="step-item">
-              <h3>1. Siapkan Sambal:</h3>
-              <p>Ulek kasar cabai, bawang merah, dan terasi. Jangan terlalu halus.</p>
-            </div>
-            <div className="step-item">
-              <h3>2. Iris Bumbu:</h3>
-              <p>Iris tipis sereh dan daun jeruk. Campur ke dalam ulekan cabai.</p>
-            </div>
-            <div className="step-item">
-              <h3>3. Siram Minyak:</h3>
-              <p>Panaskan minyak kelapa (harus sangat panas). Siramkan langsung ke atas campuran sambal. Aduk rata.</p>
-            </div>
-            <div className="step-item">
-              <h3>4. Geprek Ayam:</h3>
-              <p>Ambil ayam goreng tepung yang sudah siap, letakkan di atas cobek.</p>
-            </div>
-            <div className="step-item">
-              <h3>5. Sajikan:</h3>
-              <p>Geprek atau tekan ayam menggunakan ulekan hingga sedikit hancur dan tercampur dengan sambal. Sajikan segera.</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <hr className="divider" />
-
-      {/* VIDEO SECTION */}
-      <section className="video-section">
-        <h2 className="section-title">🎥 Tonton Video Resep</h2>
-        <div className="video-buttons">
-          <button className="vid-btn tiktok"><FaTiktok /> Tonton di TikTok</button>
-          <button className="vid-btn youtube"><FaYoutube /> Tonton di YouTube</button>
-          <button className="vid-btn instagram"><FaInstagram /> Tonton di Instagram</button>
-        </div>
-      </section>
-
-      <hr className="divider" />
-
-      {/* COMMENTS SECTION */}
-      <section className="comments-section">
-        <h2 className="section-title"><FaRegComment className="section-icon" /> 10 Komentar</h2>
-        
-        <div className="comment-input-area">
-          <div className="comment-avatar placeholder"></div>
-          <input type="text" placeholder="Tulis komentar Anda..." className="comment-input" />
-          <button className="send-btn">Kirim</button>
-        </div>
-
-        <div className="comments-list">
-          {/* Mock Comment 1 */}
-          <div className="comment-item">
-            <div className="comment-avatar bg-gray"></div>
-            <div className="comment-text">
-              <strong>@budi_rendang</strong>
-              <p>Wah, keliatannya pedes banget! Jadi lapar!</p>
-              <span className="comment-time">2 jam lalu</span>
-            </div>
-          </div>
-          {/* Mock Comment 2 */}
-          <div className="comment-item">
-            <div className="comment-avatar bg-gray"></div>
-            <div className="comment-text">
-              <strong>@chef_yuni</strong>
-              <p>Tips: minyaknya harus beneran panas biar wangi serehnya keluar. Mantap resepnya!</p>
-              <span className="comment-time">1 jam lalu</span>
-            </div>
-          </div>
-          {/* Mock Comment 3 */}
-          <div className="comment-item">
-            <div className="comment-avatar bg-gray"></div>
-            <div className="comment-text">
-              <strong>@dapur_ina</strong>
-              <p>Tips: Ini sambal matahnya disiram minyak panas biasa atau minyak kelapa, ya?</p>
-              <span className="comment-time">1 jam lalu</span>
-            </div>
-          </div>
-          {/* Mock Comment 4 */}
-          <div className="comment-item">
-            <div className="comment-avatar bg-gray"></div>
-            <div className="comment-text">
-              <strong>@resep_simple</strong>
-              <p>Tips: Keliatannya gampang, weekend ini fix coba!</p>
-              <span className="comment-time">55 menit lalu</span>
-            </div>
-          </div>
-          {/* Mock Comment 5 */}
-          <div className="comment-item">
-            <div className="comment-avatar bg-gray"></div>
-            <div className="comment-text">
-              <strong>@sambal_lover</strong>
-              <p>Tips: Auto ngiler liat sambelnya... 🤤</p>
-              <span className="comment-time">48 menit lalu</span>
-            </div>
-          </div>
-          {/* Mock Comment 6 */}
-          <div className="comment-item">
-            <div className="comment-avatar bg-gray"></div>
-            <div className="comment-text">
-              <strong>@nasgor_bang_rt</strong>
-              <p>Tips: Mantap! Lebih nendang lagi kalau ayamnya digeprek beneran sampe ancur.</p>
-              <span className="comment-time">30 menit lalu</span>
-            </div>
-          </div>
-          {/* Mock Comment 7 */}
-          <div className="comment-item">
-            <div className="comment-avatar bg-gray"></div>
-            <div className="comment-text">
-              <strong>@foodie_jakarta</strong>
-              <p>Tips: Udah recook! Enak banget, resepnya anti gagal. Thanks, Sari!</p>
-              <span className="comment-time">20 menit lalu</span>
-            </div>
-          </div>
-          {/* Mock Comment 8 */}
-          <div className="comment-item">
-            <div className="comment-avatar bg-gray"></div>
-            <div className="comment-text">
-              <strong>@belajar_baking</strong>
-              <p>Tips: Walaupun biasanya baking, jadi pengen coba yang pedes-pedes hehe.</p>
-              <span className="comment-time">15 menit lalu</span>
-            </div>
-          </div>
-          {/* Mock Comment 9 */}
-          <div className="comment-item">
-            <div className="comment-avatar bg-gray"></div>
-            <div className="comment-text">
-              <strong>@anak_kost_survive</strong>
-              <p>Tips: Bisa jadi menu andalan akhir bulan nih. Save dulu!</p>
-              <span className="comment-time">10 menit lalu</span>
-            </div>
-          </div>
-          {/* Mock Comment 10 */}
-          <div className="comment-item">
-            <div className="comment-avatar bg-gray"></div>
-            <div className="comment-text">
-              <strong>@mama_muda_masak</strong>
-              <p>Tips: Serehnya opsional gak ya? Anakku kurang suka.</p>
-              <span className="comment-time">Baru saja</span>
-            </div>
-          </div>
-        </div>
-      </section>
-
+      </main>
     </div>
   );
 };

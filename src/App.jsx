@@ -13,14 +13,7 @@ import RecipeDetail from "./pages/RecipeDetail";
 
 import FeedPage from './pages/FeedPage.jsx'; 
 import SetupProfile from './pages/SetupProfile.jsx';
-
-// // Asumsi: Halaman ini akan segera dibuat dari file login.html
-// const LoginPage = () => <div>Halaman Login (Belum dibuat)</div>; 
-// // Asumsi: Halaman ini akan segera dibuat dari file feed.html
-// const FeedPage = () => <div>Halaman Feed (Belum dibuat)</div>; 
-// Asumsi: Halaman ini akan segera dibuat dari file recipe-detail.html
-
-
+import RecipeDetail from './pages/RecipeDetail.jsx';
 
 function App() {
   return (
