@@ -2,7 +2,6 @@ import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import './styles/App.css';
 
-// Import Halaman yang sudah di-migrasi
 import LandingPage from './pages/LandingPage.jsx';
 import Profile from './pages/Profile.jsx';
 import CreateRecipe from './pages/CreateRecipe.jsx';
@@ -11,10 +10,12 @@ import ForgotPassword from './pages/ForgotPassword.jsx';
 import ResetPassword from './pages/ResetPassword';
 import MyProfile from './pages/My-profile.jsx';
 
-// Asumsi: Halaman ini akan segera dibuat dari file login.html
-const LoginPage = () => <div>Halaman Login (Belum dibuat)</div>; 
-// Asumsi: Halaman ini akan segera dibuat dari file feed.html
-const FeedPage = () => <div>Halaman Feed (Belum dibuat)</div>; 
+import FeedPage from './pages/FeedPage.jsx'; 
+
+// // Asumsi: Halaman ini akan segera dibuat dari file login.html
+// const LoginPage = () => <div>Halaman Login (Belum dibuat)</div>; 
+// // Asumsi: Halaman ini akan segera dibuat dari file feed.html
+// const FeedPage = () => <div>Halaman Feed (Belum dibuat)</div>; 
 // Asumsi: Halaman ini akan segera dibuat dari file recipe-detail.html
 const RecipeDetail = () => <div>Halaman Detail Resep (Belum dibuat)</div>; 
 
@@ -34,7 +35,7 @@ function App() {
         <Route path="/reset-password" element={<ResetPassword />} />
         
         {/* Rute Halaman Utama Setelah Login (feed.html) */}
-        <Route path="/feed" element={<FeedPage />} /> 
+        <Route path="/feed" element={<FeedPage />} />
         
         {/* Rute Halaman Buat Resep (create-recipe.html) */}
         <Route path="/create" element={<CreateRecipe />} />
