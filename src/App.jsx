@@ -9,8 +9,8 @@ import AuthPage from './pages/AuthPage.jsx';
 import ForgotPassword from './pages/ForgotPassword.jsx';
 import ResetPassword from './pages/ResetPassword';
 import MyProfile from './pages/My-profile.jsx';
-
 import FeedPage from './pages/FeedPage.jsx'; 
+import SetupProfile from './pages/SetupProfile.jsx';
 
 // // Asumsi: Halaman ini akan segera dibuat dari file login.html
 // const LoginPage = () => <div>Halaman Login (Belum dibuat)</div>; 
@@ -33,6 +33,8 @@ function App() {
         <Route path="/forgot-password" element={<ForgotPassword />} />
 
         <Route path="/reset-password" element={<ResetPassword />} />
+
+        <Route path="/setup-profile" element={<SetupProfile />} />
         
         {/* Rute Halaman Utama Setelah Login (feed.html) */}
         <Route path="/feed" element={<FeedPage />} />

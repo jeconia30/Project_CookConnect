@@ -1736,3 +1736,168 @@ footer p {
         max-width: 100%;
     }
 }
+
+/* =========================================
+   SETUP PROFILE PAGE STYLES
+   ========================================= */
+
+.login-container {
+  background-color: #ffffff;
+  padding: 40px;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 450px;
+  margin: 80px auto 0 auto;
+}
+
+.profile-setup-container {
+  padding: 30px;
+  padding-top: 20px;
+  max-width: 550px;
+  position: relative;
+}
+
+.profile-setup-title {
+  font-size: 1.8rem;
+  margin-bottom: 30px;
+  text-align: center;
+  color: #333;
+}
+
+.back-button {
+  position: absolute;
+  top: 25px;
+  left: 25px;
+  font-size: 1.5rem;
+  color: #555;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.profile-pic-upload-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.profile-pic-large {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background-color: #eee;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  border: 2px solid #38761d;
+  margin-bottom: 15px;
+}
+
+.profile-pic-large img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; 
+}
+
+.profile-placeholder::before {
+  content: "\f007";
+  font-family: "Font Awesome 5 Free"; /* Pastikan fontawesome loaded */
+  font-weight: 900;
+  font-size: 3rem;
+  color: #aaa;
+}
+
+.change-pic-button {
+  background-color: #f0f0f0;
+  color: #38761d;
+  padding: 8px 15px;
+  border-radius: 20px;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.hidden-file-input {
+  display: none;
+}
+
+/* Style Form General (Bisa dipakai ulang) */
+.auth-form .form-group {
+  margin-bottom: 20px;
+}
+
+.auth-form label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #555;
+}
+
+.auth-form input[type="text"],
+.auth-form textarea,
+.auth-form input[type="url"] {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 1rem;
+  box-sizing: border-box; 
+}
+
+.social-input-wrapper {
+  position: relative;
+  margin-bottom: 15px;
+}
+
+.social-input-wrapper i {
+  position: absolute;
+  left: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #aaa;
+  font-size: 1.1rem;
+}
+
+.social-input-wrapper input {
+  padding-left: 45px !important;
+}
+
+.auth-button {
+  display: block;
+  width: 100%;
+  padding: 12px;
+  background-color: #38761d;
+  color: white;
+  text-align: center;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  margin-top: 20px;
+}
+
+.auth-button:hover {
+  background-color: #2b5c16;
+}
+
+.auth-button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+/* Header & Footer Styles (Kalau belum ada) */
+.login-header {
+  padding: 20px;
+  background: white;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+.login-page-body {
+  min-height: 100vh;
+  background-color: #f9f9f9; /* Biar beda dikit sama container putih */
+}
