@@ -1,0 +1,78 @@
+/* Styling Tombol */
+.btn-create {
+  width: 100%;
+  background-color: #38761d;
+  color: white;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1); 
+  transition: background 0.2s;
+}
+
+.btn-create:hover {
+  background-color: #2e5c17;
+}
+
+.trending-box {
+  background: #ffffff;          
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.08); 
+  border: 1px solid #e0e0e0;
+}
+
+.trending-box h3 {
+  margin-top: 0;
+  margin-bottom: 15px;
+  font-size: 16px;
+  color: #333;
+}
+
+.trending-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.trending-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 15px;
+  cursor: pointer;
+}
+
+.trending-img {
+  width: 45px;
+  height: 45px;
+  border-radius: 8px;
+  object-fit: cover;
+  border: 1px solid #eee;
+}
+
+.trending-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.trending-name {
+  font-weight: 600;
+  font-size: 14px;
+  color: #333;
+}
+
+.trending-likes {
+  font-size: 12px;
+  color: #666;
+  margin-top: 2px;
+}
+
