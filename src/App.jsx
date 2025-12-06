@@ -9,6 +9,8 @@ import AuthPage from './pages/AuthPage.jsx';
 import ForgotPassword from './pages/ForgotPassword.jsx';
 import ResetPassword from './pages/ResetPassword';
 import MyProfile from './pages/My-profile.jsx';
+import RecipeDetail from "./pages/RecipeDetail";
+
 import FeedPage from './pages/FeedPage.jsx'; 
 import SetupProfile from './pages/SetupProfile.jsx';
 
@@ -17,7 +19,7 @@ import SetupProfile from './pages/SetupProfile.jsx';
 // // Asumsi: Halaman ini akan segera dibuat dari file feed.html
 // const FeedPage = () => <div>Halaman Feed (Belum dibuat)</div>; 
 // Asumsi: Halaman ini akan segera dibuat dari file recipe-detail.html
-const RecipeDetail = () => <div>Halaman Detail Resep (Belum dibuat)</div>; 
+
 
 
 function App() {
@@ -53,6 +55,9 @@ function App() {
 
         {/* ➤ RUTE BARU UNTUK my-profile.jsx */}
         <Route path="/my-profile" element={<MyProfile />} />
+
+        <Route path="/detail-resep" element={<RecipeDetail />} />
+
         
         {/* Rute Catch-all untuk 404 */}
         <Route path="*" element={<h1>404 Not Found</h1>} />
