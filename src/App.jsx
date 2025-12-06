@@ -9,6 +9,8 @@ import AuthPage from './pages/AuthPage.jsx';
 import ForgotPassword from './pages/ForgotPassword.jsx';
 import ResetPassword from './pages/ResetPassword';
 import MyProfile from './pages/My-profile.jsx';
+import RecipeDetail from "./pages/RecipeDetail";
+
 import FeedPage from './pages/FeedPage.jsx'; 
 import SetupProfile from './pages/SetupProfile.jsx';
 import RecipeDetail from './pages/RecipeDetail.jsx';
@@ -46,6 +48,9 @@ function App() {
 
         {/* ➤ RUTE BARU UNTUK my-profile.jsx */}
         <Route path="/my-profile" element={<MyProfile />} />
+
+        <Route path="/detail-resep" element={<RecipeDetail />} />
+
         
         {/* Rute Catch-all untuk 404 */}
         <Route path="*" element={<h1>404 Not Found</h1>} />
