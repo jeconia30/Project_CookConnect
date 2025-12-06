@@ -1691,3 +1691,376 @@ footer p {
     font-size: 2rem;
   }
 }
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Playfair+Display:wght@700&display=swap');
+
+/* ==========================
+   DETAIL RESEP PAGE
+   ========================== */
+
+.detail-container {
+  width: 100%;
+  max-width: 900px; /* Lebar ideal untuk konten bacaan */
+  margin: 40px auto;
+  background: #fff;
+  padding: 40px;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  font-family: "Inter", sans-serif;
+  color: #333;
+}
+
+/* Header & Author */
+.recipe-header {
+  margin-bottom: 20px;
+}
+
+.back-btn {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: #555;
+  margin-bottom: 15px;
+  padding: 0;
+}
+
+.detail-title {
+  font-family: 'Playfair Display', serif; /* Font serif untuk judul agar mirip koran/majalah */
+  font-size: 42px;
+  font-weight: 700;
+  margin-bottom: 25px;
+  color: #1a1a1a;
+  line-height: 1.2;
+}
+
+.author-box {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.author-avatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.author-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.author-top {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 16px;
+}
+
+.author-handle {
+  color: #666;
+  font-weight: 400;
+  font-size: 14px;
+}
+
+.follow-btn {
+  background: none;
+  border: none;
+  color: #2e7d32; /* Warna hijau seperti di SS */
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.time-posted {
+  font-size: 13px;
+  color: #888;
+  margin: 2px 0 0 0;
+}
+
+/* Hero Image & Action Bar */
+.hero-section {
+  margin: 20px 0 30px 0;
+}
+
+.detail-image {
+  width: 100%;
+  height: auto;
+  border-radius: 12px;
+  display: block;
+}
+
+.action-bar {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 15px;
+  padding: 0 5px;
+}
+
+.action-left, .action-right {
+  display: flex;
+  gap: 20px;
+}
+
+.action-btn {
+  background: none;
+  border: none;
+  font-family: "Inter", sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: #555;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: 0.2s;
+}
+
+.action-btn:hover {
+  color: #000;
+}
+
+.icon-red { color: #e91e63; }
+.icon-green { color: #2e7d32; }
+
+.divider {
+  border: none;
+  border-top: 1px solid #eee;
+  margin: 30px 0;
+}
+
+/* Description & Info Card */
+.recipe-description {
+  font-size: 16px;
+  line-height: 1.6;
+  color: #444;
+  margin-bottom: 30px;
+}
+
+.info-card {
+  display: flex;
+  justify-content: space-between;
+  background: #fcfcfc;
+  border: 1px solid #eee;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 40px;
+}
+
+.info-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.border-x {
+  border-left: 1px solid #eee;
+  border-right: 1px solid #eee;
+}
+
+.info-icon {
+  font-size: 24px;
+  color: #4a6f2a; /* Hijau tua */
+  margin-bottom: 8px;
+}
+
+.info-label {
+  font-size: 14px;
+  font-weight: 700;
+  color: #555;
+}
+
+.info-value {
+  font-size: 14px;
+  color: #666;
+  margin-top: 4px;
+}
+
+/* Content Grid (Ingredients & Steps Side by Side) */
+.recipe-content-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.5fr; /* Kiri lebih kecil dari kanan */
+  gap: 40px;
+  align-items: start;
+}
+
+.section-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: #222;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.section-icon {
+  color: #4a6f2a;
+}
+
+/* Ingredients */
+.ingredient-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.ingredient-list li {
+  padding: 12px 0;
+  border-bottom: 1px dotted #ddd;
+  font-size: 15px;
+  color: #444;
+  line-height: 1.5;
+}
+
+/* Steps */
+.step-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.step-item h3 {
+  font-size: 16px;
+  font-weight: 700;
+  margin: 0 0 6px 0;
+  color: #333;
+}
+
+.step-item p {
+  font-size: 15px;
+  color: #555;
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* Video Buttons */
+.video-buttons {
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+.vid-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  color: white;
+  cursor: pointer;
+  font-size: 14px;
+  transition: transform 0.2s;
+}
+
+.vid-btn:hover { transform: translateY(-2px); }
+
+.tiktok { background: #000; }
+.youtube { background: #ff0000; }
+.instagram { background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); }
+
+/* Comments */
+.comment-input-area {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 30px;
+  align-items: flex-start;
+}
+
+.comment-input {
+  flex: 1;
+  padding: 12px 15px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-family: inherit;
+}
+
+.send-btn {
+  padding: 12px 20px;
+  background: #eee;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.comments-list {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+.comment-item {
+  display: flex;
+  gap: 15px;
+}
+
+.comment-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.placeholder { background: #eee; }
+.bg-gray { background: #e0e0e0; }
+
+.comment-text strong {
+  display: block;
+  font-size: 14px;
+  margin-bottom: 4px;
+  color: #000;
+}
+
+.comment-text p {
+  margin: 0;
+  font-size: 14px;
+  color: #333;
+  line-height: 1.4;
+}
+
+.comment-time {
+  display: block;
+  font-size: 12px;
+  color: #999;
+  margin-top: 5px;
+}
+
+/* Responsive Mobile */
+@media (max-width: 768px) {
+  .detail-container {
+    padding: 20px;
+    margin: 0;
+    width: 100%;
+    border-radius: 0;
+  }
+  
+  .recipe-content-grid {
+    grid-template-columns: 1fr; /* Stack kebawah di HP */
+    gap: 30px;
+  }
+
+  .detail-title {
+    font-size: 28px;
+  }
+  
+  .action-bar {
+    flex-wrap: wrap;
+    gap: 15px;
+  }
+  
+  .video-buttons {
+    flex-direction: column;
+  }
+  
+  .vid-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
