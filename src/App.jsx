@@ -13,7 +13,7 @@ import RecipeDetail from "./pages/RecipeDetail";
 
 import FeedPage from './pages/FeedPage.jsx'; 
 import SetupProfile from './pages/SetupProfile.jsx';
-import RecipeDetail from './pages/RecipeDetail.jsx';
+
 
 function App() {
   return (
