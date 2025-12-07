@@ -1,37 +1,75 @@
 import React, { useState } from 'react';
+import { useNavigate, Link } from 'react-router-dom'; // Wajib import ini
 import '../styles/app.css';
 
 const LoginForm = ({ onToggle }) => {
-  // Dalam proyek React sesungguhnya, state untuk input form akan di handle di sini
-  // dan fungsi untuk submit form juga akan ada di sini
+  const navigate = useNavigate();
+  
+  // State untuk input & toggle password
+  const [showPassword, setShowPassword] = useState(false);
+  const [formData, setFormData] = useState({
+    email: '',
+    password: ''
+  });
+
+  const handleChange = (e) => {
+    // id input harus sesuai (login-email -> email, login-password -> password)
+    // atau kita sesuaikan id-nya biar simpel
+    const key = e.target.id === 'login-email' ? 'email' : 'password';
+    setFormData({ ...formData, [key]: e.target.value });
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    // Di sini nanti logika API ke Backend
+    console.log("Login Data:", formData);
+    
+    // Simulasi Login Sukses -> Pindah ke Feed
+    navigate('/feed');
+  };
+
   return (
-    <form id="login-form" className="auth-form" onSubmit={(e) => e.preventDefault()}>
+    <form id="login-form" className="auth-form" onSubmit={handleSubmit}>
       <div className="logo-auth">CookConnect</div>
       <h2>Selamat Datang Kembali!</h2>
 
       <div className="form-group">
         <label htmlFor="login-email">Email/Username</label>
-        <input type="email" id="login-email" required />
+        <input 
+          type="text" // Bisa text/email
+          id="login-email" 
+          value={formData.email}
+          onChange={handleChange}
+          required 
+        />
       </div>
+      
       <div className="form-group">
         <label htmlFor="login-password">Password</label>
         <div className="password-wrapper">
-          <input type="password" id="login-password" required />
-          {/* Ikon mata untuk toggle password (perlu implementasi JS untuk fungsinya) */}
+          <input 
+            type={showPassword ? "text" : "password"} // Logika Show/Hide
+            id="login-password" 
+            value={formData.password}
+            onChange={handleChange}
+            required 
+          />
+          {/* Ikon Mata diklik -> ubah state showPassword */}
           <i
-            className="fas fa-eye-slash password-toggle-icon"
-            id="toggle-password"
+            className={`fas ${showPassword ? "fa-eye" : "fa-eye-slash"} password-toggle-icon`}
+            onClick={() => setShowPassword(!showPassword)}
+            style={{ cursor: 'pointer' }}
           ></i>
         </div>
       </div>
+      
       <div className="form-extra">
-        {/* Mengganti href ke link React Router/function jika menggunakan router */}
-        <a href="/forgot-password" className="forgot-password">
+        {/* Pakai Link agar tidak reload */}
+        <Link to="/forgot-password" className="forgot-password">
           Lupa Password?
-        </a>
+        </Link>
       </div>
 
-      {/* Mengganti <a> dengan <button type="submit"> untuk aksi form sesungguhnya */}
       <button type="submit" className="cta-button auth-button">
         Login
       </button>
@@ -60,31 +98,75 @@ const LoginForm = ({ onToggle }) => {
 };
 
 const RegisterForm = ({ onToggle }) => {
-  // Dalam proyek React sesungguhnya, state untuk input form akan di handle di sini
-  // dan fungsi untuk submit form juga akan ada di sini
+  const navigate = useNavigate();
+  
+  // State password visibility
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
+
+  // State Input
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    password: '',
+    confirmPassword: ''
+  });
+
+  const handleChange = (e) => {
+    // Mapping ID ke key state (agak manual karena ID kamu spesifik)
+    let key = '';
+    if (e.target.id === 'reg-name') key = 'name';
+    else if (e.target.id === 'reg-email') key = 'email';
+    else if (e.target.id === 'reg-password') key = 'password';
+    else if (e.target.id === 'reg-password-confirm') key = 'confirmPassword';
+    
+    setFormData({ ...formData, [key]: e.target.value });
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    
+    // Validasi sederhana
+    if (formData.password !== formData.confirmPassword) {
+      alert("Password dan Konfirmasi tidak cocok!");
+      return;
+    }
+
+    console.log("Register Data:", formData);
+    
+    // Simulasi Register Sukses -> Pindah ke Setup Profile
+    // Sesuai cerita: "Setelah registrasi... user dimintai melengkapi profil"
+    navigate('/setup-profile');
+  };
+
   return (
-    <form id="register-form" className="auth-form" onSubmit={(e) => e.preventDefault()}>
+    <form id="register-form" className="auth-form" onSubmit={handleSubmit}>
       <div className="logo-auth">CookConnect</div>
       <h2>Buat Akun Baru</h2>
 
       <div className="form-group">
         <label htmlFor="reg-name">Nama</label>
-        <input type="text" id="reg-name" required />
+        <input type="text" id="reg-name" required onChange={handleChange} />
       </div>
 
       <div className="form-group">
         <label htmlFor="reg-email">Email</label>
-        <input type="email" id="reg-email" required />
+        <input type="email" id="reg-email" required onChange={handleChange} />
       </div>
 
       <div className="form-group">
         <label htmlFor="reg-password">Password</label>
         <div className="password-wrapper">
-          <input type="password" id="reg-password" required />
-          {/* Ikon mata untuk toggle password */}
+          <input 
+            type={showPassword ? "text" : "password"} 
+            id="reg-password" 
+            required 
+            onChange={handleChange} 
+          />
           <i
-            className="fas fa-eye-slash password-toggle-icon"
-            id="toggle-reg-password"
+            className={`fas ${showPassword ? "fa-eye" : "fa-eye-slash"} password-toggle-icon`}
+            onClick={() => setShowPassword(!showPassword)}
+            style={{ cursor: 'pointer' }}
           ></i>
         </div>
       </div>
@@ -92,28 +174,28 @@ const RegisterForm = ({ onToggle }) => {
       <div className="form-group">
         <label htmlFor="reg-password-confirm">Konfirmasi Password</label>
         <div className="password-wrapper">
-          <input type="password" id="reg-password-confirm" required />
-          {/* Ikon mata untuk toggle password */}
+          <input 
+            type={showConfirm ? "text" : "password"} 
+            id="reg-password-confirm" 
+            required 
+            onChange={handleChange} 
+          />
           <i
-            className="fas fa-eye-slash password-toggle-icon"
-            id="toggle-reg-confirm"
+            className={`fas ${showConfirm ? "fa-eye" : "fa-eye-slash"} password-toggle-icon`}
+            onClick={() => setShowConfirm(!showConfirm)}
+            style={{ cursor: 'pointer' }}
           ></i>
         </div>
       </div>
 
       <p className="auth-policy">
-        Dengan mendaftar, Anda menyetujui
-        <a href="/terms#terms" target="_blank" rel="noopener noreferrer">
-          Syarat & Ketentuan
-        </a>
-        serta
-        <a href="/terms#privacy" target="_blank" rel="noopener noreferrer">
-          Kebijakan Privasi
-        </a>
-        kami.
+        Dengan mendaftar, Anda menyetujui{' '}
+        <Link to="/terms" target="_blank">Syarat & Ketentuan</Link>
+        {' '}serta{' '}
+        <Link to="/privacy" target="_blank">Kebijakan Privasi</Link>
+        {' '}kami.
       </p>
 
-      {/* Mengganti <a> dengan <button type="submit"> untuk aksi form sesungguhnya */}
       <button type="submit" className="cta-button auth-button">
         Register
       </button>
@@ -141,7 +223,6 @@ const RegisterForm = ({ onToggle }) => {
 };
 
 const AuthPage = () => {
-  // State untuk menentukan formulir mana yang ditampilkan: 'login' atau 'register'
   const [isLogin, setIsLogin] = useState(true);
 
   const toggleForm = (e) => {
@@ -153,9 +234,9 @@ const AuthPage = () => {
     <div className="login-page-body">
       <header className="login-header">
         <div className="container">
-          <a href="/" className="logo-link">
+          <Link to="/" className="logo-link">
             <div className="logo">CookConnect</div>
-          </a>
+          </Link>
         </div>
       </header>
 

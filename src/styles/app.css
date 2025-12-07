@@ -2295,3 +2295,106 @@ footer p {
   color: #999999 !important;
   opacity: 1;
 }
+
+/* Tambahkan di bagian bawah file src/styles/app.css */
+
+.recipe-grid-profile {
+  display: grid;
+  /* Kolom responsif: minimal lebar 160px, sisanya menyesuaikan */
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); 
+  gap: 15px;
+  padding: 0 20px;
+  width: 100%;
+  margin-top: 20px;
+}
+
+/* Khusus HP: Paksa jadi 2 kolom */
+@media (max-width: 600px) {
+  .recipe-grid-profile {
+    grid-template-columns: repeat(2, 1fr); 
+    gap: 10px;
+    padding: 0 15px;
+  }
+}
+
+/* src/styles/pages/NotificationPage.css */
+
+.notification-page-content h1 {
+  font-size: 1.8rem;
+  color: #333;
+  margin-bottom: 5px;
+}
+
+.notification-desc {
+  font-size: 0.9rem;
+  color: #777;
+  margin-bottom: 25px;
+}
+
+.notification-list {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+  border: 1px solid #eee;
+}
+
+.notification-item {
+  display: flex;
+  align-items: center;
+  padding: 15px 20px;
+  text-decoration: none;
+  color: #333;
+  border-bottom: 1px solid #eee;
+  transition: background-color 0.2s;
+}
+
+.notification-item:hover {
+  background-color: #f9f9f9;
+}
+
+.icon-indicator {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 15px;
+  font-size: 1.1rem;
+}
+
+.icon-indicator.comment { background: #e8f5e9; color: #38761d; } /* Green */
+.icon-indicator.like { background: #ffebee; color: #e74c3c; }    /* Red/Pink */
+.icon-indicator.follow { background: #e3f2fd; color: #007bff; }  /* Blue */
+.icon-indicator.save { background: #fff3e0; color: #ff9800; }    /* Orange */
+
+.notification-text {
+  flex-grow: 1;
+  line-height: 1.4;
+  font-size: 0.95rem;
+}
+
+.notification-text strong {
+  font-weight: 600;
+  color: #38761d;
+}
+
+.notification-time {
+  display: block;
+  font-size: 0.8rem;
+  color: #999;
+  margin-top: 2px;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 50px;
+  color: #ccc;
+  font-size: 1.1rem;
+}
+
+.empty-state i {
+  font-size: 3rem;
+  margin-bottom: 10px;
+}

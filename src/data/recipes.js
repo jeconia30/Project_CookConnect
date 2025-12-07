@@ -6,7 +6,8 @@ import imgNasgor from '../assets/nasgor.jpeg';
 import imgSoto from '../assets/soto.jpeg';
 import imgDbox from '../assets/dbox.jpg';
 
-export const recipesData = [
+// DATA RESEP BAWAAN (HARDCODED)
+export const initialRecipesData = [
   {
     id: 1,
     author: "Sari (Contoh)",
@@ -64,6 +65,7 @@ export const recipesData = [
     likes: 5900,
     comments: 90
   },
+  // ... (Data resep bawaan lainnya tetap di sini)
   {
     id: 4,
     author: "Pak RT (Contoh)",
@@ -104,6 +106,7 @@ export const recipesData = [
   }
 ];
 
+// DATA TRENDING (TIDAK BERUBAH)
 export const trendingData = [
     { id: 1, name: "#RendangViral", likes: "12.4K", img: imgRendang },
     { id: 2, name: "#AyamGeprekLevelPedas", likes: "8.1K", img: imgGeprek },
@@ -111,3 +114,13 @@ export const trendingData = [
     { id: 4, name: "#NasiGorengKampung", likes: "4.5K", img: imgNasgor },
     { id: 5, name: "#DessertBoxKekinian", likes: "3.2K", img: imgDbox },
 ];
+
+// FUNGSI UTAMA: MENGGABUNGKAN RESEP BARU & LAMA
+export const getRecipesData = () => {
+    // 1. Ambil resep baru dari LocalStorage
+    const userRecipes = JSON.parse(localStorage.getItem('userRecipes')) || [];
+    
+    // 2. Gabungkan resep baru (di depan) dan resep bawaan (di belakang)
+    // Resep baru akan muncul pertama di feed
+    return [...userRecipes, ...initialRecipesData];
+};

@@ -1,8 +1,5 @@
 import React, { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import Navbar from "../components/Navbar";
-import Sidebar from "../components/Sidebar";
-import Footer from "../components/Footer";
 import CommentsSection from "../components/CommentsSection";
 
 const RecipeDetail = () => {
@@ -124,26 +121,13 @@ const RecipeDetail = () => {
 
   return (
     <div className="loggedin-body">
-      <Navbar />
+   
 
       <main
         className="feed-container container"
         style={{ display: "flex", gap: "20px", marginTop: "20px" }}
       >
-        {/* Sidebar Sticky */}
-        <div
-          className="desktop-only"
-          style={{
-            width: "300px",
-            flexShrink: 0,
-            position: "sticky",
-            top: "100px",
-            height: "fit-content",
-          }}
-        >
-          <Sidebar />
-        </div>
-
+       
         {/* Konten Utama */}
         <div className="recipe-detail-container">
           <div className="recipe-detail-header">
@@ -298,7 +282,7 @@ const RecipeDetail = () => {
         </div>
       </main>
 
-      <Footer />
+
     </div>
   );
 };

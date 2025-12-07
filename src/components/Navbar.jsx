@@ -1,29 +1,28 @@
 import React, { useState } from 'react';
-import "../styles/components/Navbar.css"; // Pastikan CSS diimport
+import { Link, useNavigate } from 'react-router-dom'; // Import Link & useNavigate
+import "../styles/components/Navbar.css";
 
 const NavbarLoggedin = () => {
   const [keyword, setKeyword] = useState('');
+  const navigate = useNavigate(); // Hook untuk navigasi via function
 
-  // Fungsi untuk menangani pencarian
   const handleSearch = (e) => {
     if (e.key === 'Enter') {
       e.preventDefault();
-      // LOGIKA PENCARIAN DI SINI
-      // Contoh: Navigasi ke halaman hasil atau filter resep
-      console.log('Melakukan pencarian untuk:', keyword);
-      alert(`Mencari resep: ${keyword}`); 
+      // Contoh navigasi search
+      alert(`Mencari: ${keyword}`); 
+      // navigate(`/search?q=${keyword}`); 
     }
   };
 
   return (
     <header className="main-header">
       <nav className="navbar container">
-        {/* 1. LOGO */}
-        <a href="/feed" className="logo-link">
+        {/* GANTI a href DENGAN Link to */}
+        <Link to="/feed" className="logo-link">
           <div className="logo">CookConnect</div>
-        </a>
+        </Link>
 
-        {/* 2. SEARCH BAR (BARU) */}
         <div className="search-container">
           <i className="fas fa-search search-icon-input"></i>
           <input 
@@ -36,22 +35,20 @@ const NavbarLoggedin = () => {
           />
         </div>
 
-        {/* 3. USER ACTIONS */}
         <div className="user-actions">
-          <a href="#notifications" className="action-icon notification-button">
+          <Link to="/notifications" className="action-icon notification-button">
             <i className="fas fa-bell"></i>
-          </a>
+          </Link>
           
           <div className="profile-dropdown-wrapper">
-            <a href="/profile/me" className="profile-link">
-              {/* Profile pic placeholder */}
+            {/* Arahkan ke rute profil yang kamu inginkan */}
+            <Link to="/profile/me" className="profile-link">
               <div className="profile-pic"></div>
-            </a>
+            </Link>
             
-            {/* Dropdown Menu */}
             <div className="profile-dropdown-menu">
-              <a href="/profile/me">Lihat Profil</a>
-              <a href="/">Logout</a>
+              <Link to="/profile/me">Lihat Profil</Link>
+              <Link to="/login">Logout</Link>
             </div>
           </div>
         </div>

@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import api from '../api/axiosInstance'; 
-import { supabase } from '../utils/supabaseClient'; 
+import { useNavigate, Link } from 'react-router-dom';
+import '../styles/app.css';
+
+// Hapus import yang tidak perlu (mocked backend)
+// import api from '../api/axiosInstance'; 
+// import { supabase } from '../utils/supabaseClient'; 
 
 const SetupProfile = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
-
-  // --- ⚠️ PENTING: GANTI DENGAN UUID DARI DATABASE SUPABASE KAMU ---
-  const userId = '4921d5f3-aa2b-46dc-9c10-da200710e946'; 
 
   const [formData, setFormData] = useState({
     full_name: '',
@@ -41,44 +41,29 @@ const SetupProfile = () => {
     setLoading(true);
 
     try {
-      let finalAvatarUrl = null;
-
-      // 1. Upload Foto ke Supabase
-      if (imageFile) {
-        const fileExt = imageFile.name.split('.').pop();
-        const fileName = `${userId}-${Date.now()}.${fileExt}`;
-        
-        const { error: uploadError } = await supabase.storage
-          .from('avatars')
-          .upload(fileName, imageFile);
-
-        if (uploadError) throw uploadError;
-
-        const { data } = supabase.storage
-          .from('avatars')
-          .getPublicUrl(fileName);
-        
-        finalAvatarUrl = data.publicUrl;
-      }
-
-      // 2. Update Data ke Backend
-      const payload = {
-        full_name: formData.full_name,
+      // 1. Buat Objek Profil Sesuai Format yang disimpan di LocalStorage
+      const initialProfileData = {
+        name: formData.full_name || formData.username, 
+        username: formData.username, 
         bio: formData.bio,
-        link_tiktok: formData.link_tiktok,
-        link_instagram: formData.link_instagram,
-        // Kirim link_linkedin & link_other kalau backend sudah support
-        avatar_url: finalAvatarUrl
+        // Gunakan imagePreview (Blob URL) atau avatar placeholder
+        photo: imagePreview || 'https://ui-avatars.com/api/?name=' + (formData.full_name || formData.username) + '&background=random',
+        pronouns: formData.pronouns,
+        tiktok: formData.link_tiktok,
+        instagram: formData.link_instagram,
+        linkedin: formData.link_linkedin,
+        website: formData.link_other
       };
+      
+      // 2. Simpan ke LocalStorage
+      localStorage.setItem('userProfileData', JSON.stringify(initialProfileData));
 
-      await api.put(`/users/${userId}`, payload);
-
-      alert('Profil berhasil disimpan!');
+      alert('Setup Profil berhasil! Anda akan diarahkan ke Feed.');
       navigate('/feed'); 
 
     } catch (error) {
       console.error('Error:', error);
-      alert('Gagal update profil. Cek console.');
+      alert('Gagal setup profil. Cek console.');
     } finally {
       setLoading(false);
     }
@@ -88,7 +73,9 @@ const SetupProfile = () => {
     <div className="login-page-body">
       <header className="login-header">
         <div className="container">
-          <div className="logo" style={{fontSize: '1.5rem', fontWeight: 'bold', color: '#38761d'}}>CookConnect</div>
+          <Link to="/" className="logo-link">
+            <div className="logo" style={{fontSize: '1.5rem', fontWeight: 'bold', color: '#38761d'}}>CookConnect</div>
+          </Link>
         </div>
       </header>
 

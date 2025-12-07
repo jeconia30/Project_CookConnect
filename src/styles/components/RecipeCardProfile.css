@@ -1,0 +1,59 @@
+/* src/styles/components/RecipeCardProfile.css */
+
+.profile-card-link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
+.profile-recipe-card {
+  background-color: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  transition: transform 0.2s, box-shadow 0.2s;
+  border: 1px solid #eee;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.profile-recipe-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 15px rgba(0,0,0,0.15);
+}
+
+/* KUNCI: Membuat gambar Persegi (Square 1:1) */
+.profile-card-img-wrapper {
+  width: 100%;
+  padding-top: 100%; /* Rasio 1:1 */
+  position: relative;
+  background-color: #f0f0f0;
+}
+
+.profile-card-img-wrapper img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Crop gambar agar pas */
+}
+
+.profile-card-info {
+  padding: 12px;
+}
+
+.profile-card-info h4 {
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin: 0;
+  color: #333;
+  line-height: 1.4;
+  
+  /* Batasi teks maksimal 2 baris lalu titik-titik (...) */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
