@@ -1,16 +1,26 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import api from "../api/axiosInstance";
+import { uploadProfileAvatar } from "../services/uploadService";
 import "../styles/app.css";
-
-// Hapus import yang tidak perlu (mocked backend)
-// import api from '../api/axiosInstance';
-// import { supabase } from '../utils/supabaseClient';
 
 const SetupProfile = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
-  const userId = "CURRENT_USER_ID"; // Placeholder untuk ID yang seharusnya diambil dari Token
+  const authToken = localStorage.getItem("authToken");
+
+  // Decode token untuk ambil userId
+  const getUserIdFromToken = () => {
+    if (!authToken) return null;
+    try {
+      const decoded = JSON.parse(atob(authToken.split('.')[1]));
+      return decoded.id;
+    } catch {
+      return null;
+    }
+  };
+
+  const userId = getUserIdFromToken();
 
   const [formData, setFormData] = useState({
     full_name: "",
@@ -25,16 +35,30 @@ const SetupProfile = () => {
 
   const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
+  const [uploadingImage, setUploadingImage] = useState(false);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
   };
 
-  const handleImageChange = (e) => {
+  const handleImageChange = async (e) => {
     const file = e.target.files[0];
     if (file) {
       setImageFile(file);
       setImagePreview(URL.createObjectURL(file));
+      
+      // Auto-upload gambar
+      setUploadingImage(true);
+      try {
+        const result = await uploadProfileAvatar(file, userId);
+        // Simpan URL ke formData atau state tersendiri
+        formData.avatar_url = result.url;
+        console.log('Avatar uploaded:', result.url);
+      } catch (error) {
+        alert('Gagal upload avatar: ' + error.message);
+      } finally {
+        setUploadingImage(false);
+      }
     }
   };
 
@@ -43,11 +67,6 @@ const SetupProfile = () => {
     setLoading(true);
 
     try {
-      // 1. Dapatkan Auth Token
-      const authToken = localStorage.getItem("authToken");
-      if (!authToken) throw new Error("Token otentikasi tidak ditemukan.");
-
-      // 2. Kirim data profil ke API
       const payload = {
         full_name: formData.full_name,
         username: formData.username,
@@ -57,22 +76,18 @@ const SetupProfile = () => {
         link_instagram: formData.link_instagram,
         link_linkedin: formData.link_linkedin,
         link_other: formData.link_other,
-        avatar_url: imagePreview || null, // Photo upload harus dihandle di sini (di real project)
+        avatar_url: formData.avatar_url || null,
       };
 
-      // PANGGIL API UNTUK UPDATE PROFIL
-      await api.put(`/users/${userId}/profile`, payload, {
+      await api.put(`/users/me/profile`, payload, {
         headers: { Authorization: `Bearer ${authToken}` },
       });
 
-      // Hapus data mock lama dari LocalStorage
-      localStorage.removeItem("userProfileData");
-
-      alert("Setup Profil berhasil! Mulai menjelajah CookConnect.");
+      alert("Setup Profil berhasil!");
       navigate("/feed");
     } catch (error) {
-      console.error("Error Setup Profile:", error.response || error);
-      alert("Gagal update profil. Pastikan username belum dipakai.");
+      console.error("Error:", error.response || error);
+      alert("Gagal setup profil: " + (error.response?.data?.error || error.message));
     } finally {
       setLoading(false);
     }
@@ -83,16 +98,7 @@ const SetupProfile = () => {
       <header className="login-header">
         <div className="container">
           <Link to="/" className="logo-link">
-            <div
-              className="logo"
-              style={{
-                fontSize: "1.5rem",
-                fontWeight: "bold",
-                color: "#38761d",
-              }}
-            >
-              CookConnect
-            </div>
+            <div className="logo">CookConnect</div>
           </Link>
         </div>
       </header>
@@ -114,13 +120,14 @@ const SetupProfile = () => {
               {imagePreview && <img src={imagePreview} alt="Preview" />}
             </div>
             <label htmlFor="profile-pic" className="change-pic-button">
-              <i className="fas fa-camera"></i> Ubah Foto Profil
+              <i className="fas fa-camera"></i> {uploadingImage ? 'Mengupload...' : 'Ubah Foto Profil'}
               <input
                 type="file"
                 id="profile-pic"
                 accept="image/*"
                 className="hidden-file-input"
                 onChange={handleImageChange}
+                disabled={uploadingImage}
               />
             </label>
           </div>
@@ -133,6 +140,7 @@ const SetupProfile = () => {
               placeholder="Nama Lengkap Anda"
               value={formData.full_name}
               onChange={handleChange}
+              required
             />
           </div>
 
@@ -142,9 +150,9 @@ const SetupProfile = () => {
               type="text"
               id="username"
               placeholder="cth: chefbudi_123"
-              required
               value={formData.username}
               onChange={handleChange}
+              required
             />
           </div>
 
@@ -221,7 +229,7 @@ const SetupProfile = () => {
           <button
             type="submit"
             className="cta-button auth-button"
-            disabled={loading}
+            disabled={loading || uploadingImage}
           >
             {loading ? "Menyimpan..." : "Simpan Profil & Mulai"}
           </button>
