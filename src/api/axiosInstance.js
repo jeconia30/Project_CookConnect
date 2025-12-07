@@ -1,4 +1,3 @@
-// src/api/axiosInstance.js
 import axios from 'axios';
 
 // Instance utama untuk JSON
@@ -9,29 +8,48 @@ const api = axios.create({
   },
 });
 
-// Instance khusus untuk Upload (Multipart)
-export const uploadApi = axios.create({
+// Axios khusus untuk upload (multipart/form-data)
+const uploadApi = axios.create({
   baseURL: 'http://localhost:5000/api',
 });
 
-// --- INTERCEPTOR: Otomatis sisipkan Token ---
-const addToken = (config) => {
-  const token = localStorage.getItem('authToken');
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
+// Interceptor: tambah token ke request
+api.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('authToken');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
+
+uploadApi.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('authToken');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    // Jangan set Content-Type, browser akan set ke multipart/form-data
+    delete config.headers['Content-Type'];
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
+
+// Interceptor: handle 401
+const handleUnauth = (error) => {
+  if (error.response?.status === 401) {
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('userProfileData');
+    window.location.href = '/login';
   }
-  return config;
+  return Promise.reject(error);
 };
 
-api.interceptors.request.use(addToken, (error) => Promise.reject(error));
+api.interceptors.response.use((response) => response, handleUnauth);
+uploadApi.interceptors.response.use((response) => response, handleUnauth);
 
-uploadApi.interceptors.request.use((config) => {
-  const token = localStorage.getItem('authToken');
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-  // Browser akan otomatis set Content-Type: multipart/form-data saat ada File
-  return config;
-}, (error) => Promise.reject(error));
-
+export { api, uploadApi };
 export default api;
