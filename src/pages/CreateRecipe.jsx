@@ -1,15 +1,20 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom"; // Import useNavigate
+import { useNavigate } from "react-router-dom";
 import api from "../api/axiosInstance";
+import { uploadRecipeImage } from "../services/uploadService"; // Pastikan import ini ada
 import "../styles/app.css";
 
 function CreateRecipe() {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
 
+  // State untuk gambar
+  const [uploadingImage, setUploadingImage] = useState(false);
+  const [recipeImage, setRecipeImage] = useState(null); // File object (untuk preview)
+  const [recipeImageUrl, setRecipeImageUrl] = useState(null); // URL dari server (untuk submit)
+
   const [ingredients, setIngredients] = useState([""]);
   const [steps, setSteps] = useState([""]);
-  const [recipeImage, setRecipeImage] = useState(null);
 
   const [recipeInfo, setRecipeInfo] = useState({
     title: "",
@@ -75,58 +80,76 @@ function CreateRecipe() {
     }
   };
 
-  const handleImageChange = (event) => {
+  const handleImageChange = async (event) => {
     const file = event.target.files[0];
-    if (file) {
-      setRecipeImage(file);
+    if (!file) return;
+
+    // 1. Set Preview Lokal
+    setRecipeImage(file);
+
+    // 2. Upload ke Backend
+    setUploadingImage(true);
+    try {
+      const result = await uploadRecipeImage(file);
+      setRecipeImageUrl(result.url); // Simpan URL yang dikasih backend
+      console.log("Gambar sukses diupload:", result.url);
+    } catch (error) {
+      console.error("Gagal upload gambar:", error);
+      alert("Gagal mengupload gambar. Silakan coba lagi.");
+      setRecipeImage(null); // Reset jika gagal
+    } finally {
+      setUploadingImage(false);
     }
   };
 
-  // --- LOGIKA UTAMA: TERBITKAN RESEP ---
+  // --- SUBMIT RESEP ---
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
 
-    const finalIngredients = ingredients.filter((item) => item.trim() !== "");
-    const finalSteps = steps.filter((step) => step.trim() !== "");
     const authToken = localStorage.getItem("authToken");
-
     if (!authToken) {
-      alert("Anda harus login untuk menerbitkan resep.");
+      alert("Sesi habis. Silakan login ulang.");
       setIsLoading(false);
       return;
     }
 
+    // Validasi Gambar
+    if (!recipeImageUrl) {
+      alert(
+        "Harap tunggu upload gambar selesai atau pilih gambar terlebih dahulu."
+      );
+      setIsLoading(false);
+      return;
+    }
+
+    const finalIngredients = ingredients.filter((item) => item.trim() !== "");
+    const finalSteps = steps.filter((step) => step.trim() !== "");
+
     try {
-      // 1. Buat Payload
       const payload = {
         title: recipeInfo.title,
         description: recipeInfo.shortDescription,
-        image: recipeImage ? "PLACEHOLDER_IMAGE_URL" : null,
+        image_url: recipeImageUrl, // ✅ Gunakan URL asli dari server
         ingredients: finalIngredients,
         steps: finalSteps,
-        details: details,
-        videos: {
-          youtube: recipeInfo.linkYoutube,
-          tiktok: recipeInfo.linkTiktok,
-          instagram: recipeInfo.linkInstagram,
-        },
+        total_time: parseInt(details.totalTime) || 0,
+        servings: parseInt(details.servingSize) || 0,
+        difficulty: details.difficulty,
+        // Optional: gabungkan link video jika backend support struktur ini,
+        // tapi sesuai controller backend kamu, dia cuma terima 1 field 'video_url' atau tidak ada di schema?
+        // Kita asumsikan backend hanya simpan resep dasar dulu. Jika perlu video, pastikan schema DB ada.
       };
 
-      // 2. PANGGIL API POST
-      await api.post("/recipes", payload, {
-        headers: {
-          Authorization: `Bearer ${authToken}`,
-          "Content-Type": "application/json",
-        },
-      });
+      await api.post("/recipes", payload);
 
       alert("Resep berhasil diterbitkan!");
       navigate("/feed");
     } catch (error) {
-      console.error("Error Create Recipe:", error.response || error);
+      console.error("Error Create Recipe:", error);
       alert(
-        "Gagal menerbitkan resep. Pastikan semua field wajib terisi dan Anda sudah login."
+        "Gagal menerbitkan resep: " +
+          (error.response?.data?.error || error.message)
       );
     } finally {
       setIsLoading(false);
@@ -134,11 +157,7 @@ function CreateRecipe() {
   };
 
   const handleCancel = () => {
-    if (
-      window.confirm("Yakin ingin membatalkan resep? Semua input akan hilang.")
-    ) {
-      navigate("/feed");
-    }
+    if (window.confirm("Batalkan pembuatan resep?")) navigate("/feed");
   };
 
   return (
