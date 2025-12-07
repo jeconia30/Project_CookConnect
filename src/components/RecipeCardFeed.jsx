@@ -1,15 +1,19 @@
-import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom"; // Pastikan import ini ada
-import api from "../api/axiosInstance";
+// src/components/RecipeCardFeed.jsx
+
+import React, { useState } from "react";
+import { Link } from "react-router-dom"; // Wajib import Link
+import api from "../api/axiosInstance"; // Import API
 import "../styles/components/RecipeCardFeed.css";
 
 const RecipeCardFeed = ({ recipe }) => {
+  // Pastikan recipe tidak null/undefined sebelum mengakses properti
+  if (!recipe) return null;
+
   const authToken = localStorage.getItem("authToken");
 
   // STATE INTERAKSI (Diasumsikan API mengembalikan status awal di object recipe)
-  // Karena mock data di FeedPage tidak menyediakan, kita menggunakan fallback
   const [isLiked, setIsLiked] = useState(recipe.is_liked || false);
-  const [likeCount, setLikeCount] = useState(recipe.likes);
+  const [likeCount, setLikeCount] = useState(recipe.likes || 0);
   const [isFollowing, setIsFollowing] = useState(recipe.is_following || false);
   const [isShared, setIsShared] = useState(false);
   const [isSaved, setIsSaved] = useState(recipe.is_saved || false);
@@ -73,11 +77,11 @@ const RecipeCardFeed = ({ recipe }) => {
 
   return (
     <div className="feed-card">
-      {/* 1. BAGIAN ATAS: PROFIL (TETAP TERPISAH AGAR BISA KLIK NAMA/FOLLOW) */}
       <div className="card-header">
         <div className="user-profile">
           <img src={recipe.avatar} alt="avatar" className="avatar" />
           <div className="user-info">
+            {/* LINK KE PROFIL ORANG LAIN */}
             <Link
               to={`/profile/${recipe.handle}`}
               className="username"
@@ -90,7 +94,7 @@ const RecipeCardFeed = ({ recipe }) => {
               <span className="separator"> • </span>
               <button
                 className={`text-btn ${isFollowing ? "grey" : "green"}`}
-                onClick={() => setIsFollowing(!isFollowing)}
+                onClick={handleFollow}
               >
                 {isFollowing ? "Mengikuti" : "Ikuti"}
               </button>
@@ -100,8 +104,7 @@ const RecipeCardFeed = ({ recipe }) => {
         </div>
       </div>
 
-      {/* 2. AREA KLIK UTAMA (JUDUL, GAMBAR, DESKRIPSI) */}
-      {/* Kita bungkus semua ini dalam satu Link agar area klik luas */}
+      {/* AREA KLIK UTAMA (JUDUL, GAMBAR, DESKRIPSI) -> LINK KE DETAIL */}
       <Link
         to={`/recipe/${recipe.id}`}
         style={{ textDecoration: "none", color: "inherit", display: "block" }}
@@ -111,14 +114,11 @@ const RecipeCardFeed = ({ recipe }) => {
         <div className="card-body">
           <div className="recipe-steps">
             <ol>
-              {recipe.steps.slice(0, 3).map(
-                (
-                  step,
-                  idx // Opsional: Limit langkah di feed biar rapi
-                ) => (
-                  <li key={idx}>{step}</li>
-                )
-              )}
+              {/* FIX UTAMA: Pengecekan Array.isArray(recipe.steps) */}
+              {Array.isArray(recipe.steps) &&
+                recipe.steps
+                  .slice(0, 3)
+                  .map((step, idx) => <li key={idx}>{step}</li>)}
             </ol>
           </div>
           <div className="recipe-img-wrapper">

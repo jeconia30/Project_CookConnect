@@ -1,31 +1,48 @@
-import React, { useState, useEffect } from 'react'; 
+import React, { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom'; // Import useLocation
+import api from '../api/axiosInstance'; 
+import { initialRecipesData } from '../data/recipes'; 
 import RecipeCardFeed from '../components/RecipeCardFeed';
-import api from '../api/axiosInstance';
-import { initialRecipesData } from '../data/recipes';
 
 const FeedPage = () => {
   const [feedRecipes, setFeedRecipes] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const authToken = localStorage.getItem('authToken');
+  
+  const location = useLocation(); // Hook untuk info URL
+  const searchParams = new URLSearchParams(location.search);
+  const query = searchParams.get('q'); // Ambil 'q' parameter
 
   useEffect(() => {
     const fetchFeed = async () => {
+      setIsLoading(true);
+      setError(null);
+      
+      // Tentukan endpoint: Feed utama atau Search
+      const endpoint = query ? `/recipes/search?q=${query}` : '/recipes';
+      
       try {
-        // PANGGIL API GET FEED
-        const response = await api.get('/recipes', {
+        const response = await api.get(endpoint, {
              headers: { Authorization: `Bearer ${authToken}` }
         });
         
-        // Asumsi API mengembalikan array of recipes (response.data.recipes atau response.data)
         setFeedRecipes(response.data.recipes || response.data); 
         
       } catch (err) {
         console.error("Fetch Feed Error:", err.response || err);
-        setError("Gagal mengambil data Feed. Menampilkan data mock.");
+        setError(`Gagal mengambil data ${query ? 'pencarian' : 'Feed utama'}. Menampilkan data mock.`);
         
-        // FALLBACK KE MOCK DATA LAMA JIKA GAGAL
-        setFeedRecipes(initialRecipesData);
+        // FALLBACK LOGIC
+        if (query) {
+             const filteredMock = initialRecipesData.filter(r => 
+                 r.title.toLowerCase().includes(query.toLowerCase()) || 
+                 r.description.toLowerCase().includes(query.toLowerCase())
+             );
+             setFeedRecipes(filteredMock);
+        } else {
+             setFeedRecipes(initialRecipesData);
+        }
         
       } finally {
         setIsLoading(false);
@@ -33,15 +50,23 @@ const FeedPage = () => {
     };
 
     fetchFeed();
-  }, [authToken]); // Run sekali saat mount
+  }, [query, authToken]);// Run sekali saat mount
 
   return (
     <div className="feed-area">
-      {isLoading && <p style={{ textAlign: 'center', marginTop: '20px' }}>Memuat Feed...</p>}
+      {query && (
+          <h2 style={{ fontSize: '1.5rem', marginBottom: '15px' }}>
+              Hasil Pencarian untuk: **"{query}"**
+          </h2>
+      )}
+      
+      {isLoading && <p style={{ textAlign: 'center', marginTop: '20px' }}>Memuat {query ? 'Pencarian' : 'Feed'}...</p>}
       {error && <p style={{ color: 'red', textAlign: 'center' }}>{error}</p>}
       
       {!isLoading && feedRecipes.length === 0 && !error && (
-        <p style={{ textAlign: 'center', marginTop: '20px' }}>Belum ada resep di Feed.</p>
+        <p style={{ textAlign: 'center', marginTop: '20px' }}>
+            Tidak ada resep yang ditemukan {query ? `untuk "${query}"` : 'di Feed utama.'}
+        </p>
       )}
 
       {feedRecipes.map((recipe) => (

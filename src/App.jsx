@@ -5,6 +5,7 @@ import './styles/app.css';
 
 // Import Components
 import Layout from './components/Layout'; // BARU
+import ProtectedRoute from './components/ProtectedRoute.jsx';
 import LandingPage from './pages/LandingPage.jsx';
 import AuthPage from './pages/AuthPage.jsx';
 import ForgotPassword from './pages/ForgotPassword.jsx';
@@ -50,8 +51,8 @@ function App() {
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/setup-profile" element={<SetupProfile />} />
         
-        {/* === PROTECTED ROUTES (Menggunakan Layout Component) === */}
-        <Route element={<Layout />}>
+        {/* === PROTECTED ROUTES (Menggunakan ProtectedRoute) === */}
+        <Route element={<ProtectedRoute><Layout /></ProtectedRoute>}>
              
             <Route path="/feed" element={<FeedPage />} />
 
@@ -80,7 +81,7 @@ function App() {
         <Route path="*" element={
           <div style={{ textAlign: 'center', marginTop: '50px' }}>
             <h1>404 - Halaman Tidak Ditemukan</h1>
-            <p>Sepertinya kamu tersesat di dapur orang lain.</p>
+            <p>Sepertinya kamu tersesat di dapur.</p>
             <a href="/feed" style={{ color: '#38761d', fontWeight: 'bold' }}>Kembali ke Feed</a>
           </div>
         } />

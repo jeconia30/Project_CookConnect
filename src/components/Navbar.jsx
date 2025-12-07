@@ -4,25 +4,33 @@ import "../styles/components/Navbar.css";
 
 const NavbarLoggedin = () => {
   const [keyword, setKeyword] = useState('');
-  const navigate = useNavigate(); // Hook untuk navigasi via function
+  const navigate = useNavigate(); 
+  const authToken = localStorage.getItem('authToken');
+  // Ambil data profil dari LocalStorage untuk gambar/username
+  const userProfileData = JSON.parse(localStorage.getItem('userProfileData') || '{}'); 
+  const profilePhoto = userProfileData.photo || null;
+  const username = userProfileData.username || "guest";
 
+  // Fungsi untuk menangani pencarian
   const handleSearch = (e) => {
     if (e.key === 'Enter') {
       e.preventDefault();
-      // Contoh navigasi search
-      alert(`Mencari: ${keyword}`); 
-      // navigate(`/search?q=${keyword}`); 
+      const trimmedKeyword = keyword.trim();
+      
+      // Navigasi ke halaman feed dengan query parameter
+      navigate(`/feed?q=${trimmedKeyword}`); 
     }
   };
 
   return (
     <header className="main-header">
       <nav className="navbar container">
-        {/* GANTI a href DENGAN Link to */}
+        {/* 1. LOGO */}
         <Link to="/feed" className="logo-link">
           <div className="logo">CookConnect</div>
         </Link>
 
+        {/* 2. SEARCH BAR (Kini Memicu Navigasi) */}
         <div className="search-container">
           <i className="fas fa-search search-icon-input"></i>
           <input 
@@ -35,20 +43,28 @@ const NavbarLoggedin = () => {
           />
         </div>
 
+        {/* 3. USER ACTIONS */}
         <div className="user-actions">
           <Link to="/notifications" className="action-icon notification-button">
             <i className="fas fa-bell"></i>
           </Link>
           
           <div className="profile-dropdown-wrapper">
-            {/* Arahkan ke rute profil yang kamu inginkan */}
             <Link to="/profile/me" className="profile-link">
-              <div className="profile-pic"></div>
+              {/* Gunakan foto profil dari LocalStorage */}
+              <div className="profile-pic" style={{ backgroundImage: profilePhoto ? `url(${profilePhoto})` : 'none' }}></div>
             </Link>
             
             <div className="profile-dropdown-menu">
+              <div style={{ padding: '10px 15px', borderBottom: '1px solid #eee', fontWeight: 'bold' }}>
+                  @{username}
+              </div>
               <Link to="/profile/me">Lihat Profil</Link>
-              <Link to="/login">Logout</Link>
+              <Link to="/create">Buat Resep</Link>
+              <Link to="/login" onClick={() => {
+                  localStorage.removeItem('authToken');
+                  localStorage.removeItem('userProfileData'); // Hapus data profil saat logout
+              }}>Logout</Link>
             </div>
           </div>
         </div>
