@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, Link, useParams } from "react-router-dom";
 import "../styles/app.css"; 
 import { initialRecipesData } from '../data/recipes';
@@ -22,77 +22,75 @@ const DEFAULT_PROFILE = {
 };
 
 const ProfilePage = ({ isCurrentUser }) => { 
-  const navigate = useNavigate();
-  const { username: profileUsername } = useParams(); 
-  const [activeTab, setActiveTab] = useState("resep");
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [isEditOpen, setIsEditOpen] = useState(false);
-  
-  const [profileData, setProfileData] = useState(DEFAULT_PROFILE);
-  const [uploadedRecipes, setUploadedRecipes] = useState([]);
-  const [savedRecipes, setSavedRecipes] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  
-  const [isFollowing, setIsFollowing] = useState(false);
-  
-  // --- STATE UNTUK FORM EDIT (API) ---
-  const [editFormData, setEditFormData] = useState(DEFAULT_PROFILE);
-  const [editImagePreview, setEditImagePreview] = useState(DEFAULT_PROFILE.photo);
-  
-
-  // --- FETCH DATA DARI API ---
-  useEffect(() => {
-    const userToFetch = isCurrentUser ? 'me' : profileUsername;
-    const authToken = localStorage.getItem('authToken');
+    const navigate = useNavigate();
+    const { username: profileUsername } = useParams(); 
+    const [activeTab, setActiveTab] = useState("resep");
+    const [menuOpen, setMenuOpen] = useState(false);
+    const [isEditOpen, setIsEditOpen] = useState(false);
     
-    const fetchProfileData = async () => {
-        setIsLoading(true);
-        try {
-            // 1. Ambil data Profil & Status Follow/Save
-            const profileRes = await api.get(`/users/${userToFetch}`, {
-                 headers: { Authorization: `Bearer ${authToken}` }
-            });
-            const profile = profileRes.data.profile || profileRes.data;
-            setProfileData(profile); 
-            
-            // Set status interaksi awal
-            setIsFollowing(profile.is_following || false);
-
-            // 2. Ambil Resep yang Di-upload
-            const uploadedRes = await api.get(`/users/${userToFetch}/recipes`, {
-                headers: { Authorization: `Bearer ${authToken}` }
-            });
-            setUploadedRecipes(uploadedRes.data.recipes || []);
-
-            // 3. Ambil Resep Disimpan (Hanya untuk profil sendiri)
-            if (isCurrentUser) {
-                const savedRes = await api.get(`/users/me/saved-recipes`, {
-                    headers: { Authorization: `Bearer ${authToken}` }
-                });
-                setSavedRecipes(savedRes.data.recipes || []);
-            }
-
-        } catch (err) {
-            console.error("Fetch Profile Error:", err.response || err);
-            // Fallback ke mock data jika API gagal
-            setProfileData(DEFAULT_PROFILE);
-            setUploadedRecipes(initialRecipesData.filter(r => r.handle === DEFAULT_PROFILE.username));
-            setSavedRecipes([]);
-        } finally {
-            setIsLoading(false);
-        }
-    };
-    fetchProfileData();
+    // Variabel State yang Benar
+    const [profileData, setProfileData] = useState(DEFAULT_PROFILE);
+    const [uploadedRecipes, setUploadedRecipes] = useState([]); // Diambil dari API
+    const [savedRecipes, setSavedRecipes] = useState([]);     // Diambil dari API
+    const [isLoading, setIsLoading] = useState(true);
     
-    // CLEANUP SEMUA LOCAL STORAGE MOCK
-    // Kita pastikan semua data yang berhubungan dengan profil dihapus karena sekarang menggunakan API
-    localStorage.removeItem('userProfileData');
-    localStorage.removeItem('userRecipes');
-    localStorage.removeItem('savedRecipes');
+    const [isFollowing, setIsFollowing] = useState(false);
     
-  }, [isCurrentUser, profileUsername]);
+    const [editFormData, setEditFormData] = useState(DEFAULT_PROFILE);
+    const [editImagePreview, setEditImagePreview] = useState(DEFAULT_PROFILE.photo);
+    
 
-  // --- HANDLERS ---
+    // --- FETCH DATA DARI API ---
+    useEffect(() => {
+      const userToFetch = isCurrentUser ? 'me' : profileUsername;
+      const authToken = localStorage.getItem('authToken');
+      
+      const fetchProfileData = async () => {
+          setIsLoading(true);
+          try {
+              // 1. Ambil data Profil
+              const profileRes = await api.get(`/users/${userToFetch}`, {
+                   headers: { Authorization: `Bearer ${authToken}` }
+              });
+              const profile = profileRes.data.profile || profileRes.data;
+              setProfileData(profile); 
+              
+              setIsFollowing(profile.is_following || false);
+
+              // 2. Ambil Resep yang Di-upload
+              const uploadedRes = await api.get(`/users/${userToFetch}/recipes`, {
+                  headers: { Authorization: `Bearer ${authToken}` }
+              });
+              setUploadedRecipes(uploadedRes.data.recipes || []);
+
+              // 3. Ambil Resep Disimpan (Hanya untuk profil sendiri)
+              if (isCurrentUser) {
+                  const savedRes = await api.get(`/users/me/saved-recipes`, {
+                      headers: { Authorization: `Bearer ${authToken}` }
+                  });
+                  setSavedRecipes(savedRes.data.recipes || []);
+              }
+
+          } catch (err) {
+              console.error("Fetch Profile Error:", err.response || err);
+              // Fallback ke mock data jika API gagal
+              setProfileData(DEFAULT_PROFILE);
+              setUploadedRecipes(initialRecipesData.filter(r => r.handle === DEFAULT_PROFILE.username));
+              setSavedRecipes([]);
+          } finally {
+              setIsLoading(false);
+          }
+      };
+      fetchProfileData();
+      
+      // CLEANUP LOCAL STORAGE MOCK
+      localStorage.removeItem('userProfileData');
+      localStorage.removeItem('userRecipes');
+      localStorage.removeItem('savedRecipes');
+      
+    }, [isCurrentUser, profileUsername]);
+
+  // --- HANDLERS (handleOpenEdit, handleChange, handleSave, handleFollowClick) ---
   const handleOpenEdit = () => {
     setEditFormData(profileData); 
     setEditImagePreview(profileData.photo); 
@@ -107,7 +105,6 @@ const ProfilePage = ({ isCurrentUser }) => {
     if (file) setEditImagePreview(URL.createObjectURL(file));
   };
   
-  // --- FUNGSI SIMPAN PERMANEN (API) ---
   const handleSave = async () => {
     const payload = { ...editFormData, photo: editImagePreview }; 
     const authToken = localStorage.getItem('authToken');
@@ -137,6 +134,7 @@ const ProfilePage = ({ isCurrentUser }) => {
         setIsFollowing(!isFollowing); 
     } catch (err) { alert('Gagal memproses Ikuti.'); }
   };
+
 
   if (isLoading) {
       return <div className="feed-area" style={{ textAlign: 'center', marginTop: '20px' }}>Memuat Profil...</div>;
@@ -225,10 +223,10 @@ const ProfilePage = ({ isCurrentUser }) => {
           {isCurrentUser && (
               <div className="tab-menu">
                 <div className={`tab-item ${activeTab === "resep" ? "active" : ""}`} onClick={() => setActiveTab("resep")}>
-                   Resep Saya ({myUploadedRecipes.length})
+                   Resep Saya ({uploadedRecipes.length})
                 </div>
                 <div className={`tab-item ${activeTab === "saved" ? "active" : ""}`} onClick={() => setActiveTab("saved")}>
-                   Disimpan ({savedRecipesList.length})
+                   Disimpan ({savedRecipes.length})
                 </div>
                 <div className="tab-underline" style={{ left: activeTab === "resep" ? "0%" : "50%" }}></div>
               </div>
@@ -239,9 +237,9 @@ const ProfilePage = ({ isCurrentUser }) => {
             
             {activeTab === "resep" || !isCurrentUser ? (
               /* TAB: RESEP SAYA (Default jika profil orang lain) */
-              myUploadedRecipes.length > 0 ? (
+              uploadedRecipes.length > 0 ? (
                 <div className="recipe-grid-profile">
-                    {myUploadedRecipes.map((recipe) => (
+                    {uploadedRecipes.map((recipe) => (
                         <RecipeCardProfile key={recipe.id} recipe={recipe} />
                     ))}
                 </div>
@@ -257,9 +255,9 @@ const ProfilePage = ({ isCurrentUser }) => {
               )
             ) : (
               /* TAB: DISIMPAN (HANYA UNTUK PROFIL SENDIRI) */
-              savedRecipesList.length > 0 ? (
+              savedRecipes.length > 0 ? (
                 <div className="recipe-grid-profile"> 
-                  {savedRecipesList.map((recipe) => (
+                  {savedRecipes.map((recipe) => (
                     <RecipeCardProfile key={recipe.id} recipe={recipe} />
                   ))}
                 </div>
