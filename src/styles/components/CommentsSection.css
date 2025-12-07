@@ -1,0 +1,121 @@
+/* src/styles/components/CommentsSection.css */
+
+.comments-section {
+  margin-top: 40px;
+  border-top: 1px solid #eee;
+  padding-top: 20px;
+}
+
+.comments-header {
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #333;
+}
+
+/* Form Input Komentar */
+.comment-form {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 30px;
+  align-items: flex-start;
+}
+
+.comment-input-wrapper {
+  flex-grow: 1;
+  position: relative;
+}
+
+.comment-input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  resize: none;
+  font-family: inherit;
+  font-size: 0.95rem;
+  outline: none;
+  background-color: #fff;
+}
+
+.comment-input:focus {
+  border-color: #38761d;
+}
+
+.btn-send-comment {
+  background-color: #38761d;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  height: fit-content;
+}
+
+.btn-send-comment:hover {
+  background-color: #2b5c16;
+}
+
+/* List Komentar */
+.comment-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.comment-item {
+  display: flex;
+  gap: 15px;
+}
+
+.comment-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #eee;
+  flex-shrink: 0;
+  background-size: cover; /* Tambahan biar gambar pas */
+}
+
+.comment-content {
+  flex-grow: 1;
+}
+
+/* Update Bagian Nama User */
+.comment-author-row {
+  display: flex;
+  align-items: baseline; /* Biar sejajar teksnya */
+  gap: 6px; /* Jarak antara nama dan username */
+  margin-bottom: 4px;
+}
+
+.comment-name {
+  font-weight: bold;
+  color: #333;
+  font-size: 0.95rem;
+}
+
+.comment-username {
+  font-weight: normal;
+  color: #888; /* Warna abu-abu biar beda */
+  font-size: 0.85rem;
+}
+
+/* Pastikan style text dan time tetap ada */
+.comment-text {
+  color: #555;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.comment-time {
+  font-size: 0.8rem;
+  color: #999;
+  margin-top: 5px;
+  display: block;
+}

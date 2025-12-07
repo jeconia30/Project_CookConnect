@@ -1901,3 +1901,184 @@ footer p {
   min-height: 100vh;
   background-color: #f9f9f9; /* Biar beda dikit sama container putih */
 }
+
+/* =========================================
+   RECIPE DETAIL PAGE STYLES (RE-ADDED)
+   ========================================= */
+
+/* --- PASTIKAN INI ADA DI PALING BAWAH APP.CSS --- */
+
+/* 1. BACKGROUND HALAMAN (ABU-ABU) */
+.loggedin-body {
+  background-color: #f0f2f5 !important; /* Pakai !important biar maksa warnanya keluar */
+  min-height: 100vh;
+}
+
+/* 2. KOTAK RESEP (PUTIH & TIMBUL) */
+.recipe-detail-container {
+  background-color: #ffffff !important; /* Warna kertas putih */
+  border-radius: 16px;
+  padding: 40px;
+  
+  /* Efek Timbul (Shadow & Border) */
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08); 
+  border: 1px solid #e0e0e0; 
+  
+  flex: 1;
+  margin-bottom: 20px;
+  position: relative;
+}
+
+/* Fix untuk Mobile biar gak dempet */
+@media (max-width: 768px) {
+  .recipe-detail-container {
+    padding: 20px;
+    box-shadow: none;
+    border: none;
+  }
+}
+
+.recipe-detail-header { margin-bottom: 20px; }
+
+/* --- HEADER BAGIAN ATAS (JUDUL & BACK BUTTON) --- */
+
+.recipe-title-group {
+  /* Pastikan pakai Flexbox */
+  display: flex !important;       
+  flex-direction: row !important; /* Wajib baris ke samping */
+  align-items: center !important; /* Rata tengah vertikal */
+  justify-content: flex-start !important;
+  
+  /* Jarak aman biar gak dempet/tertimpa */
+  gap: 15px !important; 
+  
+  margin-bottom: 20px;
+  position: relative; /* Pastikan container jadi patokan */
+}
+
+.back-button {
+  /* Matikan posisi absolute kalau ada sisa lama */
+  position: static !important; 
+  transform: none !important;
+  
+  /* Style tombol */
+  background: transparent;
+  border: none;
+  font-size: 2rem; /* Ukuran panah */
+  line-height: 1;
+  color: #333;
+  cursor: pointer;
+  padding: 0;
+  margin: 0;
+  
+  /* Biar gak ketarik lebar */
+  flex-shrink: 0; 
+  width: auto;
+  height: auto;
+}
+
+.recipe-detail-title {
+  /* Matikan posisi absolute kalau ada sisa lama */
+  position: static !important;
+  
+  font-size: 2rem;
+  font-weight: 800; /* Tebal */
+  color: #222;
+  margin: 0;
+  line-height: 1.2;
+}
+
+/* User Profile Section */
+.post-header.revised {
+  display: flex; align-items: center; gap: 12px; margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid #eee;
+}
+
+.profile-pic-small {
+  width: 40px; height: 40px; border-radius: 50%; background-color: #ddd; background-size: cover; background-position: center;
+}
+
+.user-details-column { display: flex; flex-direction: column; }
+
+.user-details-top {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 5px;
+}
+
+/* Nama User (Tebal Hitam) */
+.user-details-top strong {
+  font-weight: 700;
+  color: #222;
+}
+
+/* Username (Tipis Abu-abu) */
+.user-details-top .username {
+  font-weight: 400;
+  color: #777;
+}
+.username { color: #666; }
+
+.follow-button.follow.small {
+  padding: 2px 8px; font-size: 0.75rem; background: #e8f5e9; color: #38761d; border: 1px solid #38761d; border-radius: 4px; cursor: pointer;
+}
+
+/* Tombol Ikuti (Teks Hijau Tanpa Kotak) */
+.follow-button.text-only {
+  background: transparent !important;
+  border: none !important;
+  color: #38761d !important; /* Hijau CookConnect */
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  padding: 0;
+  margin-left: 5px; /* Jarak dikit dari username */
+}
+
+.follow-button.text-only:hover {
+  text-decoration: underline; /* Garis bawah pas di-hover */
+}
+
+/* Spacer dot antar elemen (opsional) */
+.dot-separator {
+  color: #ccc;
+  font-size: 0.8rem;
+}
+
+.post-meta { font-size: 0.8rem; color: #999; margin-top: 2px; }
+
+/* Hero Image */
+.recipe-hero-image {
+  width: 100%; height: 400px; object-fit: cover; border-radius: 12px; margin-bottom: 20px;
+}
+
+/* Actions Bar */
+.post-actions.detail-page-actions {
+  display: flex; justify-content: space-around; padding: 15px 0; border-top: 1px solid #eee; border-bottom: 1px solid #eee; margin-bottom: 25px;
+}
+
+.post-actions button, .post-actions a {
+  background: none; border: none; font-size: 0.95rem; color: #555; cursor: pointer; display: flex; align-items: center; gap: 8px; text-decoration: none;
+}
+
+.like-active { color: #e91e63 !important; }
+.save-active { color: #38761d !important; }
+
+/* Info Stats */
+.recipe-meta-info {
+  display: flex; justify-content: space-between; background: #f9f9f9; padding: 20px; border-radius: 10px; margin: 20px 0; text-align: center;
+}
+
+.recipe-meta-info i { font-size: 1.5rem; color: #38761d; margin-bottom: 5px; display: block;}
+
+/* Ingredients & Steps */
+.recipe-main-content-wrapper { margin-top: 30px; }
+.recipe-ingredients, .recipe-instructions { margin-bottom: 30px; }
+.recipe-ingredients h3, .recipe-instructions h3 { color: #38761d; margin-bottom: 15px; }
+.recipe-ingredients ul, .recipe-instructions ol { padding-left: 20px; line-height: 1.8; color: #444; }
+
+/* Video Links */
+.video-link-list { list-style: none; padding: 0; display: flex; gap: 10px; flex-wrap: wrap; }
+.video-link-list a { padding: 10px 15px; border-radius: 5px; color: white; text-decoration: none; display: flex; align-items: center; gap: 8px; font-size: 0.9rem; }
+.video-link-tiktok { background: #000; } 
+.video-link-youtube { background: #ff0000; }
