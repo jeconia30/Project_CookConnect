@@ -75,7 +75,10 @@ const RecipeDetail = () => {
         const response = await api.get(`/recipes/${id}`, {
           headers: { Authorization: `Bearer ${authToken}` },
         });
-        const apiRecipe = response.data;
+
+        // ✅ PERBAIKAN DI SINI: Ambil data dari wrapper
+        const apiRecipe = response.data?.data || response.data;
+
         setRecipe(apiRecipe);
 
         setIsLiked(apiRecipe.is_liked || false);
@@ -83,13 +86,14 @@ const RecipeDetail = () => {
         setIsSaved(apiRecipe.is_saved || false);
         setIsFollowing(apiRecipe.is_following || false);
       } catch (error) {
+        console.error("Error loading recipe:", error);
         setRecipe(MOCK_RECIPE);
       } finally {
         setIsLoading(false);
       }
     };
     fetchRecipe();
-    fetchComments(); // Panggil fetch comments saat halaman dimuat
+    fetchComments();
   }, [id, authToken]);
 
   // --- HANDLER SUBMIT KOMENTAR (API) ---
