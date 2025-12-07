@@ -2082,3 +2082,216 @@ footer p {
 .video-link-list a { padding: 10px 15px; border-radius: 5px; color: white; text-decoration: none; display: flex; align-items: center; gap: 8px; font-size: 0.9rem; }
 .video-link-tiktok { background: #000; } 
 .video-link-youtube { background: #ff0000; }
+
+/* =========================================
+   HANYA TAMBAHAN: STYLE POP-UP EDIT PROFILE
+   ========================================= */
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6); /* Latar belakang gelap */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.modal-content {
+  background: white;
+  width: 90%;
+  max-width: 500px;
+  border-radius: 12px;
+  padding: 30px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+  position: relative;
+  animation: popIn 0.3s ease;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+@keyframes popIn {
+  from { transform: scale(0.9); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 10px;
+}
+
+.modal-title {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #333;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #888;
+}
+
+.modal-form-group {
+  margin-bottom: 15px;
+}
+
+.modal-form-group label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: #555;
+}
+
+.modal-form-group input, 
+.modal-form-group textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 0.95rem;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.btn-cancel {
+  padding: 8px 16px;
+  background: #f0f0f0;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  color: #555;
+}
+
+.btn-save {
+  padding: 8px 16px;
+  background: #38761d;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  color: white;
+}
+
+/* =========================================
+   TAMBAHAN STYLE UNTUK ISI MODAL (LENGKAP)
+   ========================================= */
+
+/* --- AREA UPLOAD FOTO DI MODAL --- */
+.modal-image-upload-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 25px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #eee;
+}
+
+.modal-profile-pic-preview {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #eee;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  margin-bottom: 15px;
+}
+
+.modal-change-pic-btn {
+  background-color: #f0f2f5;
+  color: #333;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: background 0.2s;
+}
+
+.modal-change-pic-btn:hover {
+  background-color: #e0e0e0;
+}
+
+/* --- INPUT SOSIAL MEDIA DI MODAL --- */
+.modal-section-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #333;
+  margin-top: 25px;
+  margin-bottom: 15px;
+}
+
+/* Wrapper biar ikon ada di dalam input */
+.modal-social-input-wrapper {
+  position: relative;
+  margin-bottom: 12px;
+}
+
+/* Ikonnya */
+.modal-social-input-wrapper i {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #888;
+  font-size: 1.1rem;
+}
+
+/* Inputnya dikasih padding kiri biar teks gak nabrak ikon */
+.modal-social-input-wrapper input {
+  width: 100%;
+  padding: 10px 10px 10px 40px !important; /* Padding kiri 40px */
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 0.95rem;
+}
+/* =========================================================
+   FIX: FORCE WHITE INPUTS IN MODAL (Override Dark Mode)
+   ========================================================= */
+
+/* Paksa semua input dan textarea di dalam modal jadi PUTIH */
+.modal-form-group input, 
+.modal-form-group textarea,
+.modal-social-input-wrapper input {
+  background-color: #ffffff !important; /* Latar Putih Mutlak */
+  color: #333333 !important;            /* Teks Hitam Mutlak */
+  border: 1px solid #ccc !important;    /* Pastikan border tetap terlihat */
+}
+
+/* Pastikan saat diklik (Focus) warnanya tidak berubah aneh */
+.modal-form-group input:focus, 
+.modal-form-group textarea:focus,
+.modal-social-input-wrapper input:focus {
+  background-color: #ffffff !important;
+  color: #333333 !important;
+  border-color: #38761d !important; /* Border hijau saat ngetik */
+  box-shadow: 0 0 0 3px rgba(56, 118, 29, 0.1) !important;
+}
+
+/* Pastikan placeholder (teks bayangan) warnanya abu-abu normal */
+.modal-form-group input::placeholder,
+.modal-form-group textarea::placeholder,
+.modal-social-input-wrapper input::placeholder {
+  color: #999999 !important;
+  opacity: 1;
+}
