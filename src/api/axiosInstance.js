@@ -1,5 +1,6 @@
 import axios from 'axios';
 
+// Instance utama untuk JSON
 const api = axios.create({
   baseURL: 'http://localhost:5000/api',
   headers: {

@@ -1,13 +1,18 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../api/axiosInstance";
-import { uploadRecipeImage } from "../services/uploadService";
+import { uploadRecipeImage } from "../services/uploadService"; // Pastikan import ini ada
 import "../styles/app.css";
 
 function CreateRecipe() {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [uploadingImage, setUploadingImage] = useState(false);
+
+  // State untuk gambar
+  const [uploadingImage, setUploadingImage] = useState(false);
+  const [recipeImage, setRecipeImage] = useState(null); // File object (untuk preview)
+  const [recipeImageUrl, setRecipeImageUrl] = useState(null); // URL dari server (untuk submit)
 
   const [ingredients, setIngredients] = useState([""]);
   const [steps, setSteps] = useState([""]);
@@ -101,16 +106,24 @@ function CreateRecipe() {
     e.preventDefault();
     setIsLoading(true);
 
-    const finalIngredients = ingredients.filter((item) => item.trim() !== "");
-    const finalSteps = steps.filter((step) => step.trim() !== "");
     const authToken = localStorage.getItem("authToken");
-
     if (!authToken) {
-      alert("Anda harus login untuk menerbitkan resep.");
+      alert("Sesi habis. Silakan login ulang.");
       setIsLoading(false);
       return;
     }
 
+    // Validasi Gambar
+    if (!recipeImageUrl) {
+      alert(
+        "Harap tunggu upload gambar selesai atau pilih gambar terlebih dahulu."
+      );
+      setIsLoading(false);
+      return;
+    }
+
+    const finalIngredients = ingredients.filter((item) => item.trim() !== "");
+    const finalSteps = steps.filter((step) => step.trim() !== "");
     if (!recipeImageUrl) {
       alert("Gambar resep wajib diupload!");
       setIsLoading(false);
@@ -140,7 +153,7 @@ function CreateRecipe() {
       alert("Resep berhasil diterbitkan!");
       navigate("/feed");
     } catch (error) {
-      console.error("Error Create Recipe:", error.response || error);
+      console.error("Error Create Recipe:", error);
       alert(
         "Gagal menerbitkan resep: " + (error.response?.data?.error || error.message)
       );
@@ -150,11 +163,7 @@ function CreateRecipe() {
   };
 
   const handleCancel = () => {
-    if (
-      window.confirm("Yakin ingin membatalkan resep? Semua input akan hilang.")
-    ) {
-      navigate("/feed");
-    }
+    if (window.confirm("Batalkan pembuatan resep?")) navigate("/feed");
   };
 
   return (

@@ -117,8 +117,10 @@ const RegisterForm = ({ onToggle }) => {
   const [showConfirm, setShowConfirm] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
+  // 1. Tambahkan state untuk 'username'
   const [formData, setFormData] = useState({
     name: "",
+    username: "", // TAMBAHAN BARU
     email: "",
     password: "",
     confirmPassword: "",
@@ -127,24 +129,36 @@ const RegisterForm = ({ onToggle }) => {
   const handleChange = (e) => {
     let key = "";
     if (e.target.id === "reg-name") key = "name";
+    else if (e.target.id === "reg-username") key = "username"; // HANDLER BARU
     else if (e.target.id === "reg-email") key = "email";
     else if (e.target.id === "reg-password") key = "password";
     else if (e.target.id === "reg-password-confirm") key = "confirmPassword";
+
     setFormData({ ...formData, [key]: e.target.value });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Validasi Password Match
     if (formData.password !== formData.confirmPassword) {
       alert("Password dan Konfirmasi tidak cocok!");
       return;
     }
+
+    // Validasi Panjang Password (Sesuai Backend)
+    if (formData.password.length < 8) {
+      alert("Password minimal 8 karakter!");
+      return;
+    }
+
     setIsLoading(true);
 
     try {
-      // PANGGIL API REGISTER
+      // 2. Sesuaikan Payload dengan Backend (full_name & username)
       const response = await api.post("/auth/register", {
-        name: formData.name,
+        full_name: formData.name, // Backend minta 'full_name', bukan 'name'
+        username: formData.username, // Backend wajibkan ini
         email: formData.email,
         password: formData.password,
       });
@@ -157,7 +171,12 @@ const RegisterForm = ({ onToggle }) => {
       navigate("/setup-profile");
     } catch (error) {
       console.error("Register Error:", error.response || error);
-      alert("Registrasi gagal! Email mungkin sudah terdaftar.");
+      // Tampilkan pesan error spesifik dari backend jika ada
+      const errorMsg =
+        error.response?.data?.message || error.response?.data?.errors
+          ? JSON.stringify(error.response.data.errors)
+          : "Registrasi gagal!";
+      alert(`Gagal: ${errorMsg}`);
     } finally {
       setIsLoading(false);
     }
@@ -169,8 +188,26 @@ const RegisterForm = ({ onToggle }) => {
       <h2>Buat Akun Baru</h2>
 
       <div className="form-group">
-        <label htmlFor="reg-name">Nama</label>
-        <input type="text" id="reg-name" required onChange={handleChange} />
+        <label htmlFor="reg-name">Nama Lengkap</label>
+        <input
+          type="text"
+          id="reg-name"
+          required
+          onChange={handleChange}
+          placeholder="Contoh: Budi Santoso"
+        />
+      </div>
+
+      {/* 3. INPUT USERNAME BARU */}
+      <div className="form-group">
+        <label htmlFor="reg-username">Username</label>
+        <input
+          type="text"
+          id="reg-username"
+          required
+          onChange={handleChange}
+          placeholder="Contoh: budi_123 (huruf kecil & angka)"
+        />
       </div>
 
       <div className="form-group">
@@ -179,7 +216,7 @@ const RegisterForm = ({ onToggle }) => {
       </div>
 
       <div className="form-group">
-        <label htmlFor="reg-password">Password</label>
+        <label htmlFor="reg-password">Password (Min. 8 Karakter)</label>
         <div className="password-wrapper">
           <input
             type={showPassword ? "text" : "password"}
