@@ -38,8 +38,8 @@ const RecipeCardFeed = ({ recipe }) => {
 
   const handleLike = () => {
     const endpoint = isLiked
-      ? ('/interactions/like', { user_id, recipe_id })
-      : ('/interactions/like', { user_id, recipe_id })
+      ? `/recipes/${recipe.id}/unlike`
+      : `/recipes/${recipe.id}/like`;
     handleAction(endpoint, "Suka", () => {
       setIsLiked(!isLiked);
       setLikeCount((prev) => prev + (isLiked ? -1 : 1));
