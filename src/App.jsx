@@ -1,5 +1,6 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
+import api from './api/axiosInstance';
 import './styles/app.css';
 
 // Import Components

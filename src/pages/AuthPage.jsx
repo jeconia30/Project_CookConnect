@@ -1,31 +1,50 @@
-import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom'; // Wajib import ini
-import '../styles/app.css';
+import React, { useState } from "react";
+import { useNavigate, Link } from "react-router-dom"; // Wajib import ini
+import api from "../api/axiosInstance";
+import "../styles/app.css";
 
 const LoginForm = ({ onToggle }) => {
   const navigate = useNavigate();
-  
-  // State untuk input & toggle password
   const [showPassword, setShowPassword] = useState(false);
-  const [formData, setFormData] = useState({
-    email: '',
-    password: ''
-  });
+  const [formData, setFormData] = useState({ email: "", password: "" });
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleChange = (e) => {
-    // id input harus sesuai (login-email -> email, login-password -> password)
-    // atau kita sesuaikan id-nya biar simpel
-    const key = e.target.id === 'login-email' ? 'email' : 'password';
+    const key = e.target.id === "login-email" ? "email" : "password";
     setFormData({ ...formData, [key]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Di sini nanti logika API ke Backend
-    console.log("Login Data:", formData);
-    
-    // Simulasi Login Sukses -> Pindah ke Feed
-    navigate('/feed');
+    setIsLoading(true);
+
+    try {
+      // PANGGIL API LOGIN
+      const response = await api.post("/auth/login", {
+        username_or_email: formData.email, // Sesuaikan dengan key di backend
+        password: formData.password,
+      });
+
+      // SIMPAN TOKEN & DATA USER
+      const token = response.data.token;
+      localStorage.setItem("authToken", token);
+
+      // Simpan data profil dasar jika dikembalikan dari login
+      if (response.data.user_data) {
+        localStorage.setItem(
+          "userProfileData",
+          JSON.stringify(response.data.user_data)
+        );
+      }
+
+      alert("Login berhasil!");
+      navigate("/feed");
+    } catch (error) {
+      console.error("Login Error:", error.response || error);
+      alert("Login gagal! Cek email/password Anda.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -35,34 +54,36 @@ const LoginForm = ({ onToggle }) => {
 
       <div className="form-group">
         <label htmlFor="login-email">Email/Username</label>
-        <input 
+        <input
           type="text" // Bisa text/email
-          id="login-email" 
+          id="login-email"
           value={formData.email}
           onChange={handleChange}
-          required 
+          required
         />
       </div>
-      
+
       <div className="form-group">
         <label htmlFor="login-password">Password</label>
         <div className="password-wrapper">
-          <input 
+          <input
             type={showPassword ? "text" : "password"} // Logika Show/Hide
-            id="login-password" 
+            id="login-password"
             value={formData.password}
             onChange={handleChange}
-            required 
+            required
           />
           {/* Ikon Mata diklik -> ubah state showPassword */}
           <i
-            className={`fas ${showPassword ? "fa-eye" : "fa-eye-slash"} password-toggle-icon`}
+            className={`fas ${
+              showPassword ? "fa-eye" : "fa-eye-slash"
+            } password-toggle-icon`}
             onClick={() => setShowPassword(!showPassword)}
-            style={{ cursor: 'pointer' }}
+            style={{ cursor: "pointer" }}
           ></i>
         </div>
       </div>
-      
+
       <div className="form-extra">
         {/* Pakai Link agar tidak reload */}
         <Link to="/forgot-password" className="forgot-password">
@@ -88,7 +109,7 @@ const LoginForm = ({ onToggle }) => {
       </a>
 
       <p className="auth-toggle">
-        Belum punya akun?{' '}
+        Belum punya akun?{" "}
         <a href="#" onClick={onToggle}>
           Daftar di sini
         </a>
@@ -99,44 +120,54 @@ const LoginForm = ({ onToggle }) => {
 
 const RegisterForm = ({ onToggle }) => {
   const navigate = useNavigate();
-  
-  // State password visibility
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
-  // State Input
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    password: '',
-    confirmPassword: ''
+    name: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
   });
 
   const handleChange = (e) => {
-    // Mapping ID ke key state (agak manual karena ID kamu spesifik)
-    let key = '';
-    if (e.target.id === 'reg-name') key = 'name';
-    else if (e.target.id === 'reg-email') key = 'email';
-    else if (e.target.id === 'reg-password') key = 'password';
-    else if (e.target.id === 'reg-password-confirm') key = 'confirmPassword';
-    
+    let key = "";
+    if (e.target.id === "reg-name") key = "name";
+    else if (e.target.id === "reg-email") key = "email";
+    else if (e.target.id === "reg-password") key = "password";
+    else if (e.target.id === "reg-password-confirm") key = "confirmPassword";
     setFormData({ ...formData, [key]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    // Validasi sederhana
     if (formData.password !== formData.confirmPassword) {
       alert("Password dan Konfirmasi tidak cocok!");
       return;
     }
+    setIsLoading(true);
 
-    console.log("Register Data:", formData);
-    
-    // Simulasi Register Sukses -> Pindah ke Setup Profile
-    // Sesuai cerita: "Setelah registrasi... user dimintai melengkapi profil"
-    navigate('/setup-profile');
+    try {
+      // PANGGIL API REGISTER
+      const response = await api.post("/auth/register", {
+        name: formData.name,
+        email: formData.email,
+        password: formData.password,
+      });
+
+      // SIMPAN TOKEN
+      const token = response.data.token;
+      localStorage.setItem("authToken", token);
+
+      alert("Registrasi berhasil! Lanjutkan melengkapi profil.");
+      navigate("/setup-profile");
+    } catch (error) {
+      console.error("Register Error:", error.response || error);
+      alert("Registrasi gagal! Email mungkin sudah terdaftar.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -157,16 +188,18 @@ const RegisterForm = ({ onToggle }) => {
       <div className="form-group">
         <label htmlFor="reg-password">Password</label>
         <div className="password-wrapper">
-          <input 
-            type={showPassword ? "text" : "password"} 
-            id="reg-password" 
-            required 
-            onChange={handleChange} 
+          <input
+            type={showPassword ? "text" : "password"}
+            id="reg-password"
+            required
+            onChange={handleChange}
           />
           <i
-            className={`fas ${showPassword ? "fa-eye" : "fa-eye-slash"} password-toggle-icon`}
+            className={`fas ${
+              showPassword ? "fa-eye" : "fa-eye-slash"
+            } password-toggle-icon`}
             onClick={() => setShowPassword(!showPassword)}
-            style={{ cursor: 'pointer' }}
+            style={{ cursor: "pointer" }}
           ></i>
         </div>
       </div>
@@ -174,30 +207,36 @@ const RegisterForm = ({ onToggle }) => {
       <div className="form-group">
         <label htmlFor="reg-password-confirm">Konfirmasi Password</label>
         <div className="password-wrapper">
-          <input 
-            type={showConfirm ? "text" : "password"} 
-            id="reg-password-confirm" 
-            required 
-            onChange={handleChange} 
+          <input
+            type={showConfirm ? "text" : "password"}
+            id="reg-password-confirm"
+            required
+            onChange={handleChange}
           />
           <i
-            className={`fas ${showConfirm ? "fa-eye" : "fa-eye-slash"} password-toggle-icon`}
+            className={`fas ${
+              showConfirm ? "fa-eye" : "fa-eye-slash"
+            } password-toggle-icon`}
             onClick={() => setShowConfirm(!showConfirm)}
-            style={{ cursor: 'pointer' }}
+            style={{ cursor: "pointer" }}
           ></i>
         </div>
       </div>
 
       <p className="auth-policy">
-        Dengan mendaftar, Anda menyetujui{' '}
-        <Link to="/terms" target="_blank">Syarat & Ketentuan</Link>
-        {' '}serta{' '}
-        <Link to="/privacy" target="_blank">Kebijakan Privasi</Link>
-        {' '}kami.
+        Dengan mendaftar, Anda menyetujui{" "}
+        <Link to="/terms" target="_blank">
+          Syarat & Ketentuan
+        </Link>{" "}
+        serta{" "}
+        <Link to="/privacy" target="_blank">
+          Kebijakan Privasi
+        </Link>{" "}
+        kami.
       </p>
 
-      <button type="submit" className="cta-button auth-button">
-        Register
+      <button type="submit" className="cta-button auth-button" disabled={isLoading}>
+        {isLoading ? 'Memproses...' : 'Register'}
       </button>
 
       <div className="auth-divider">
@@ -213,7 +252,7 @@ const RegisterForm = ({ onToggle }) => {
       </a>
 
       <p className="auth-toggle">
-        Sudah punya akun?{' '}
+        Sudah punya akun?{" "}
         <a href="#" onClick={onToggle}>
           Login di sini
         </a>
