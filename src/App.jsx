@@ -1,55 +1,88 @@
 import React from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import './styles/App.css';
+import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
+import './styles/app.css';
 
+// Import Components
+import Layout from './components/Layout'; // BARU
 import LandingPage from './pages/LandingPage.jsx';
-import Profile from './pages/Profile.jsx';
-import CreateRecipe from './pages/CreateRecipe.jsx';
 import AuthPage from './pages/AuthPage.jsx';
 import ForgotPassword from './pages/ForgotPassword.jsx';
-import ResetPassword from './pages/ResetPassword';
-import MyProfile from './pages/My-profile.jsx';
-import FeedPage from './pages/FeedPage.jsx'; 
+import ResetPassword from './pages/ResetPassword.jsx';
 import SetupProfile from './pages/SetupProfile.jsx';
+import NotificationPage from './pages/NotificationPage.jsx';
+import FeedPage from './pages/FeedPage.jsx'; 
+import CreateRecipe from './pages/CreateRecipe.jsx';
 import RecipeDetail from './pages/RecipeDetail.jsx';
+import ProfilePage from './pages/ProfilePage.jsx'; // KONSOLIDASI
+
+// --- KOMPONEN UX: SMOOTH SCROLL TO HASH ---
+const ScrollToHash = () => {
+  const location = useLocation();
+  React.useEffect(() => {
+    if (location.hash) {
+      const element = document.querySelector(location.hash);
+      if (element) {
+        // Smooth scroll ke elemen dengan ID yang cocok
+        element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    } else {
+        // Gulir ke atas halaman saat pindah route non-hash
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }, [location]);
+
+  return null;
+};
+// --- END SMOOTH SCROLL ---
 
 
 function App() {
   return (
     <BrowserRouter>
+      <ScrollToHash /> 
+      
       <Routes>
-        {/* Rute Halaman Depan (index.html) */}
+        {/* === PUBLIC ROUTES (No Layout) === */}
         <Route path="/" element={<LandingPage />} />
-        
-        {/* Rute Halaman Autentikasi (login.html, forgot-password.html, setup-profile.html) */}
         <Route path="/login" element={<AuthPage />} /> 
-
         <Route path="/forgot-password" element={<ForgotPassword />} />
-
         <Route path="/reset-password" element={<ResetPassword />} />
-
         <Route path="/setup-profile" element={<SetupProfile />} />
         
-        {/* Rute Halaman Utama Setelah Login (feed.html) */}
-        <Route path="/feed" element={<FeedPage />} />
-        
-        {/* Rute Halaman Buat Resep (create-recipe.html) */}
-        <Route path="/create" element={<CreateRecipe />} />
-        
-        {/* Rute Halaman Profil Pribadi (my-profile.html) */}
-        <Route path="/profile/me" element={<Profile isCurrentUser={true} />} />
-        
-        {/* Rute Halaman Profil Orang Lain (profile.html) */}
-        <Route path="/profile/:username" element={<Profile isCurrentUser={false} />} />
-        
-        {/* Rute Halaman Detail Resep (recipe-detail.html) */}
-        <Route path="/recipe/:id" element={<RecipeDetail />} />
+        {/* === PROTECTED ROUTES (Menggunakan Layout Component) === */}
+        <Route element={<Layout />}>
+             
+            <Route path="/feed" element={<FeedPage />} />
 
-        {/* ➤ RUTE BARU UNTUK my-profile.jsx */}
-        <Route path="/my-profile" element={<MyProfile />} />
+            <Route path="/notifications" element={<NotificationPage />} />
+            
+            {/* Create Recipe dibungkus di div agar mengambil seluruh lebar di dalam Layout */}
+            <Route path="/create" element={
+                <div style={{ flexGrow: 1, maxWidth: '100%' }}> 
+                    <CreateRecipe /> 
+                </div>
+            } />
+            
+            {/* Detail Resep */}
+            <Route path="/recipe/:id" element={<RecipeDetail />} />
+
+            {/* ROUTE PROFIL KONSOLIDASI */}
+            {/* Profil Sendiri (isCurrentUser=true) */}
+            <Route path="/profile/me" element={<ProfilePage isCurrentUser={true} />} />
+            
+            {/* Profil Orang Lain (isCurrentUser=false) */}
+            <Route path="/profile/:username" element={<ProfilePage isCurrentUser={false} />} />
+            
+        </Route>
         
-        {/* Rute Catch-all untuk 404 */}
-        <Route path="*" element={<h1>404 Not Found</h1>} />
+        {/* Route Catch-all (404) */}
+        <Route path="*" element={
+          <div style={{ textAlign: 'center', marginTop: '50px' }}>
+            <h1>404 - Halaman Tidak Ditemukan</h1>
+            <p>Sepertinya kamu tersesat di dapur orang lain.</p>
+            <a href="/feed" style={{ color: '#38761d', fontWeight: 'bold' }}>Kembali ke Feed</a>
+          </div>
+        } />
       </Routes>
     </BrowserRouter>
   );

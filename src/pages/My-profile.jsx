@@ -1,37 +1,61 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "../styles/app.css"; // Pastikan CSS tambahan tadi sudah disimpan
+import "../styles/app.css"; 
+import { recipesData } from "../data/recipes"; 
+import RecipeCardProfile from "../components/RecipeCardProfile"; // Component resep grid
 
 // Gambar Default
 import defaultProfilePic from "../assets/geprek.jpeg"; 
+
+// Data Default Profil (Fallback jika belum ada di localStorage)
+const DEFAULT_PROFILE = {
+    name: "Sari (Contoh)",
+    username: "sari_masak",
+    bio: "Hobi masak simpel yang enak! Ibu dari 2 anak. Suka berbagi resep harian anti-gagal.",
+    photo: defaultProfilePic,
+    pronouns: "dia/mereka", // Tambahkan pronouns jika kamu punya inputnya di form
+    // Data Link Sosial Media
+    tiktok: "https://tiktok.com/@sari_masak",
+    instagram: "https://instagram.com/sari_masak",
+    linkedin: "",
+    website: ""
+};
 
 const MyProfile = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("resep");
   const [menuOpen, setMenuOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
+  const [savedRecipesList, setSavedRecipesList] = useState([]);
 
-  // --- STATE DATA PROFIL UTAMA (LENGKAP) ---
-  const [profileData, setProfileData] = useState({
-    name: "Sari (Contoh)",
-    username: "sari_masak",
-    bio: "Hobi masak simpel yang enak! Ibu dari 2 anak. Suka berbagi resep harian anti-gagal.",
-    photo: defaultProfilePic,
-    // Data Link Sosial Media
-    tiktok: "https://tiktok.com/@sari_masak",
-    instagram: "https://instagram.com/sari_masak",
-    linkedin: "",
-    website: ""
+  // --- 1. STATE DATA PROFIL UTAMA (DARI LOCALSTORAGE) ---
+  const [profileData, setProfileData] = useState(() => {
+      const savedData = localStorage.getItem('userProfileData');
+      return savedData ? JSON.parse(savedData) : DEFAULT_PROFILE;
   });
 
   // --- STATE UNTUK FORM EDIT (SEMENTARA) ---
   const [editFormData, setEditFormData] = useState(profileData);
-  // State khusus untuk preview gambar di modal
-  const [editImagePreview, setEditImagePreview] = useState(null);
+  const [editImagePreview, setEditImagePreview] = useState(profileData.photo);
+  
+  // --- EFEK LOAD DATA SIMPANAN & RESEP SAYA (DARI LOCALSTORAGE) ---
+  React.useEffect(() => {
+    // Ambil ID resep yang disimpan dari LocalStorage
+    const savedIds = JSON.parse(localStorage.getItem('savedRecipes')) || [];
+    // Filter data resep asli berdasarkan ID yang disimpan
+    const filteredRecipes = recipesData.filter(recipe => savedIds.includes(recipe.id));
+    setSavedRecipesList(filteredRecipes);
+    
+    // Selain itu, kita juga perbarui data profil saat halaman dimuat
+    const initialLoadData = localStorage.getItem('userProfileData');
+    if(initialLoadData) {
+        setProfileData(JSON.parse(initialLoadData));
+    }
+
+  }, [activeTab]);
 
   // --- FUNGSI-FUNGSI ---
 
-  // 1. Buka Modal & Siapkan Data
   const handleOpenEdit = () => {
     setEditFormData(profileData); // Copy data asli ke form
     setEditImagePreview(profileData.photo); // Set preview awal sama dengan foto sekarang
@@ -39,32 +63,38 @@ const MyProfile = () => {
     setMenuOpen(false);
   };
 
-  // 2. Handle Ketik di Input Teks
   const handleChange = (e) => {
     setEditFormData({ ...editFormData, [e.target.name]: e.target.value });
   };
 
-  // 3. Handle Pilih File Gambar Baru
   const handleEditImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      // Buat URL preview sementara dari file yang dipilih
       setEditImagePreview(URL.createObjectURL(file));
-      // Nanti di sini logic upload ke backend beneran
+      // Di sini nanti logic upload ke backend beneran
     }
   };
 
-  // 4. Simpan Perubahan
+  // --- 2. FUNGSI SIMPAN PERMANEN KE LOCALSTORAGE ---
   const handleSave = () => {
-    // Update profileData utama dengan data dari form DAN gambar baru
-    setProfileData({
-      ...editFormData,
-      photo: editImagePreview // Pakai gambar dari preview terakhir
-    });
+    const newProfileData = {
+        ...editFormData,
+        photo: editImagePreview // Gunakan gambar dari preview terakhir
+    };
     
-    alert("Profil berhasil diperbarui! (Simulasi)");
+    // 1. Update state React
+    setProfileData(newProfileData);
+    
+    // 2. Simpan PERMANEN ke localStorage
+    localStorage.setItem('userProfileData', JSON.stringify(newProfileData));
+    
+    alert("Profil berhasil diperbarui secara permanen!");
     setIsEditOpen(false); // Tutup modal
   };
+
+  // --- MOCK DATA RESEP SAYA (Termasuk resep dari Create Recipe) ---
+  // Kita ambil resep dari userRecipes yang dibuat di fitur Create Recipe
+  const myUploadedRecipes = JSON.parse(localStorage.getItem('userRecipes')) || [];
 
 
   return (
@@ -83,7 +113,7 @@ const MyProfile = () => {
       {/* COVER */}
       <div className="myprofile-cover"></div>
 
-      {/* MAIN PROFILE INFO (MENGGUNAKAN profileData UTAMA) */}
+      {/* MAIN PROFILE INFO */}
       <div className="myprofile-main">
         <img src={profileData.photo} alt="Profile" className="myprofile-photo" />
 
@@ -102,7 +132,7 @@ const MyProfile = () => {
           <button className="myprofile-create-btn" onClick={() => navigate('/create')}>
             Buat Resep
           </button>
-
+          
           {/* DOT MENU */}
           <button
             className="myprofile-dot-btn"
@@ -114,15 +144,20 @@ const MyProfile = () => {
           {/* DROPDOWN */}
           <div className={`myprofile-dropdown ${menuOpen ? "show" : ""}`}>
             <button onClick={handleOpenEdit}>Edit Profil</button> 
-            <button onClick={() => navigate('/login')}>Logout</button>
+            {/* Tombol Logout akan menghapus semua data simulasi */}
+            <button onClick={() => {
+                localStorage.removeItem('userProfileData');
+                localStorage.removeItem('savedRecipes');
+                localStorage.removeItem('userRecipes');
+                navigate('/login');
+            }}>Logout</button>
             <button className="danger">Hapus Akun</button>
           </div>
         </div>
       </div>
 
-      {/* SOSIAL MEDIA BOX (DINAMIS BERDASARKAN DATA) */}
+      {/* SOSIAL MEDIA BOX (DINAMIS) */}
       <div className="social-box-area">
-        {/* Hanya tampilkan jika linknya ada isinya */}
         {profileData.tiktok && (
           <a href={profileData.tiktok} target="_blank" rel="noreferrer" className="social-item">
             <i className="fab fa-tiktok"></i> TikTok
@@ -143,10 +178,9 @@ const MyProfile = () => {
             <i className="fas fa-globe"></i> Website
           </a>
         )}
-        {/* Tombol tambah jika belum lengkap (opsional) */}
-        {(!profileData.tiktok || !profileData.instagram || !profileData.linkedin || !profileData.website) && (
+         {(!profileData.tiktok && !profileData.instagram && !profileData.linkedin && !profileData.website) && (
            <button onClick={handleOpenEdit} className="social-item" style={{background:'none', border:'2px dashed #ccc', color:'#888', cursor:'pointer'}}>
-             <i className="fas fa-plus"></i> Tambah
+             <i className="fas fa-plus"></i> Tambah Tautan
            </button>
         )}
       </div>
@@ -154,39 +188,62 @@ const MyProfile = () => {
       {/* TAB MENU */}
       <div className="tab-menu">
         <div className={`tab-item ${activeTab === "resep" ? "active" : ""}`} onClick={() => setActiveTab("resep")}>
-           Resep Saya
+           Resep Saya ({myUploadedRecipes.length})
         </div>
         <div className={`tab-item ${activeTab === "saved" ? "active" : ""}`} onClick={() => setActiveTab("saved")}>
-           Disimpan
+           Disimpan ({savedRecipesList.length})
         </div>
         <div className="tab-underline" style={{ left: activeTab === "resep" ? "0%" : "50%" }}></div>
       </div>
 
-      {/* CONTENT PLACEHOLDER */}
-      <div className="myprofile-empty-section">
+      {/* CONTENT SECTION (MENAMPILKAN RESEP SAYA & SIMPANAN) */}
+      <div className="profile-container" style={{boxShadow: 'none', maxWidth: '100%', padding: '20px 0'}}> 
+        
         {activeTab === "resep" ? (
-          <div className="empty-box">
-            <i className="fas fa-book-open empty-icon"></i>
-            <h3>Belum ada resep yang dibagikan</h3>
-            <p>Saat Anda membagikan resep, resep itu akan muncul di sini.</p>
-          </div>
+          /* TAB: RESEP SAYA */
+          myUploadedRecipes.length > 0 ? (
+            <div className="recipe-grid-profile">
+                {myUploadedRecipes.map((recipe) => (
+                    <RecipeCardProfile key={recipe.id} recipe={recipe} />
+                ))}
+            </div>
+          ) : (
+            <div className="myprofile-empty-section">
+               <div className="empty-box">
+                  <i className="fas fa-book-open empty-icon"></i>
+                  <h3>Belum ada resep yang dibagikan</h3>
+                  <p>Saat Anda membagikan resep, resep itu akan muncul di sini.</p>
+                  <button className="cta-button" onClick={() => navigate('/create')} style={{marginTop: '15px'}}>Buat Resep Pertama</button>
+               </div>
+            </div>
+          )
         ) : (
-          <div className="empty-box">
-            <i className="fas fa-bookmark empty-icon"></i>
-            <h3>Belum ada resep tersimpan</h3>
-            <p>Resep yang Anda simpan akan muncul di sini.</p>
-          </div>
+          /* TAB: DISIMPAN */
+          savedRecipesList.length > 0 ? (
+            <div className="recipe-grid-profile"> 
+              {savedRecipesList.map((recipe) => (
+                <RecipeCardProfile key={recipe.id} recipe={recipe} />
+              ))}
+            </div>
+          ) : (
+            <div className="myprofile-empty-section">
+              <div className="empty-box">
+                <i className="fas fa-bookmark empty-icon"></i>
+                <h3>Belum ada resep tersimpan</h3>
+                <p>Simpan resep dari Feed agar muncul di sini.</p>
+              </div>
+            </div>
+          )
         )}
       </div>
 
 
       {/* ======================================= */}
-      {/* MODAL POP-UP EDIT PROFILE (LENGKAP)     */}
+      {/* MODAL POP-UP EDIT PROFILE (KODE LAMA DENGAN PERBAIKAN)     */}
       {/* ======================================= */}
       
       {isEditOpen && (
         <div className="modal-overlay" onClick={() => setIsEditOpen(false)}>
-          {/* stopPropagation biar klik di form gak nutup modal */}
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             
             <div className="modal-header">
@@ -198,13 +255,10 @@ const MyProfile = () => {
               
               {/* 1. BAGIAN UPLOAD FOTO */}
               <div className="modal-image-upload-section">
-                {/* Preview Gambar */}
                 <img src={editImagePreview} alt="Preview" className="modal-profile-pic-preview" />
                 
-                {/* Tombol & Input File */}
                 <label htmlFor="modal-edit-pic" className="modal-change-pic-btn">
                   <i className="fas fa-camera"></i> Ubah Foto
-                  {/* Input file disembunyikan */}
                   <input 
                     type="file" 
                     id="modal-edit-pic" 
@@ -225,6 +279,11 @@ const MyProfile = () => {
                 <label>Username</label>
                 <input type="text" name="username" value={editFormData.username} onChange={handleChange} />
               </div>
+              
+              <div className="modal-form-group">
+                <label>Kata Ganti</label>
+                <input type="text" name="pronouns" placeholder="cth: dia/mereka" value={editFormData.pronouns} onChange={handleChange} />
+              </div>
 
               <div className="modal-form-group">
                 <label>Bio</label>
@@ -243,7 +302,7 @@ const MyProfile = () => {
                 <i className="fab fa-instagram"></i>
                 <input type="text" name="instagram" placeholder="Link Instagram" value={editFormData.instagram} onChange={handleChange} />
               </div>
-
+              
               <div className="modal-form-group modal-social-input-wrapper">
                 <i className="fab fa-linkedin"></i>
                 <input type="text" name="linkedin" placeholder="Link LinkedIn" value={editFormData.linkedin} onChange={handleChange} />

@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom'; // Pastikan import ini ada
 import '../styles/components/RecipeCardFeed.css';
 
 const RecipeCardFeed = ({ recipe }) => {
@@ -6,7 +7,10 @@ const RecipeCardFeed = ({ recipe }) => {
   const [likeCount, setLikeCount] = useState(recipe.likes);
   const [isFollowing, setIsFollowing] = useState(false);
   const [isShared, setIsShared] = useState(false);
-  const [isSaved, setIsSaved] = useState(false);
+  const [isSaved, setIsSaved] = useState(() => {
+    const savedRecipes = JSON.parse(localStorage.getItem('savedRecipes')) || [];
+    return savedRecipes.includes(recipe.id);
+  });
 
   const handleLike = () => {
     if (isLiked) {
@@ -19,10 +23,23 @@ const RecipeCardFeed = ({ recipe }) => {
 
   const handleShare = () => {
     setIsShared(!isShared);
+    alert("Tautan resep disalin!"); // Opsional: Feedback user
   };
 
   const handleSave = () => {
-    setIsSaved(!isSaved);
+    const currentSaved = JSON.parse(localStorage.getItem('savedRecipes')) || [];
+    
+    if (isSaved) {
+      // Kalau sudah disimpan -> Hapus dari daftar (Unsave)
+      const newSaved = currentSaved.filter(id => id !== recipe.id);
+      localStorage.setItem('savedRecipes', JSON.stringify(newSaved));
+      setIsSaved(false);
+    } else {
+      // Kalau belum -> Tambahkan ke daftar
+      currentSaved.push(recipe.id);
+      localStorage.setItem('savedRecipes', JSON.stringify(currentSaved));
+      setIsSaved(true);
+    }
   };
 
   const formatNumber = (num) => {
@@ -34,11 +51,14 @@ const RecipeCardFeed = ({ recipe }) => {
 
   return (
     <div className="feed-card">
+      {/* 1. BAGIAN ATAS: PROFIL (TETAP TERPISAH AGAR BISA KLIK NAMA/FOLLOW) */}
       <div className="card-header">
         <div className="user-profile">
           <img src={recipe.avatar} alt="avatar" className="avatar" />
           <div className="user-info">
-            <span className="username">{recipe.author}</span>
+            <Link to={`/profile/${recipe.handle}`} className="username" style={{textDecoration: 'none', color: '#000'}}>
+              {recipe.author}
+            </Link>
             <div className="handle-row">
                 <span className="handle">@{recipe.handle}</span>
                 <span className="separator"> • </span>
@@ -54,29 +74,38 @@ const RecipeCardFeed = ({ recipe }) => {
         </div>
       </div>
 
-      <h2 className="recipe-title">{recipe.title}</h2>
+      {/* 2. AREA KLIK UTAMA (JUDUL, GAMBAR, DESKRIPSI) */}
+      {/* Kita bungkus semua ini dalam satu Link agar area klik luas */}
+      <Link 
+        to={`/recipe/${recipe.id}`} 
+        style={{ textDecoration: 'none', color: 'inherit', display: 'block' }}
+      >
+        <h2 className="recipe-title">{recipe.title}</h2>
 
-      <div className="card-body">
-        <div className="recipe-steps">
-          <ol>
-            {recipe.steps.map((step, idx) => (
-              <li key={idx}>{step}</li>
-            ))}
-          </ol>
+        <div className="card-body">
+          <div className="recipe-steps">
+            <ol>
+              {recipe.steps.slice(0, 3).map((step, idx) => ( // Opsional: Limit langkah di feed biar rapi
+                <li key={idx}>{step}</li>
+              ))}
+            </ol>
+          </div>
+          <div className="recipe-img-wrapper">
+            <img src={recipe.image} alt={recipe.title} className="recipe-img" />
+          </div>
         </div>
-        <div className="recipe-img-wrapper">
-          <img src={recipe.image} alt={recipe.title} className="recipe-img" />
-        </div>
-      </div>
 
-      <div className="card-desc">
-        <p>{recipe.description}</p>
-        <p className="hashtags">{recipe.hashtags}</p>
-      </div>
+        <div className="card-desc">
+          <p>{recipe.description}</p>
+          <p className="hashtags">{recipe.hashtags}</p>
+        </div>
+      </Link>
 
       <hr className="divider" />
 
+      {/* 3. FOOTER (TOMBOL AKSI) */}
       <div className="card-footer">
+        {/* Tombol Like */}
         <button 
           className={`action-btn ${isLiked ? 'liked' : ''}`} 
           onClick={handleLike}
@@ -92,13 +121,19 @@ const RecipeCardFeed = ({ recipe }) => {
           <span>{formatNumber(likeCount)} Suka</span>
         </button>
 
-        <button className="action-btn">
+        {/* Tombol Komentar -> Langsung ke Section Komentar */}
+        <Link 
+          to={`/recipe/${recipe.id}#comments-section`} 
+          className="action-btn"
+          style={{ textDecoration: 'none' }}
+        >
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#666" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
           </svg>
           <span>{recipe.comments} Komentar</span>
-        </button>
+        </Link>
 
+        {/* Tombol Bagikan */}
         <button 
           className={`action-btn ${isShared ? 'shared' : ''}`}
           onClick={handleShare}
@@ -119,15 +154,15 @@ const RecipeCardFeed = ({ recipe }) => {
           <span>Bagikan</span>
         </button>
 
-        {/* REVISI: TOMBOL SIMPAN JADI HIJAU */}
+        {/* Tombol Simpan */}
         <button 
           className={`action-btn ${isSaved ? 'saved' : ''}`}
           onClick={handleSave}
         >
            <svg 
             width="24" height="24" viewBox="0 0 24 24" 
-            fill={isSaved ? "#38761d" : "none"}     /* Fill Hijau */
-            stroke={isSaved ? "#38761d" : "#666"}   /* Garis Hijau */
+            fill={isSaved ? "#38761d" : "none"} 
+            stroke={isSaved ? "#38761d" : "#666"} 
             strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
            >
             <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>

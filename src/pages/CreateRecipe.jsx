@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-import "../styles/app.css";
-// Pastikan path import ini benar sesuai folder kamu
-import NavbarLoggedin from "../components/Navbar"; 
-import Footer from "../components/Footer"; 
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import "../styles/app.css"; 
 
 function CreateRecipe() {
+  const navigate = useNavigate(); // Inisiasi useNavigate
+
   const [ingredients, setIngredients] = useState([""]);
   const [steps, setSteps] = useState([""]);
   const [recipeImage, setRecipeImage] = useState(null);
@@ -12,6 +12,9 @@ function CreateRecipe() {
   const [recipeInfo, setRecipeInfo] = useState({
       title: "",
       shortDescription: "", 
+      linkYoutube: "", // Tambahkan state untuk link video
+      linkTiktok: "",
+      linkInstagram: "",
   });
 
   const [details, setDetails] = useState({
@@ -73,20 +76,68 @@ function CreateRecipe() {
   const handleImageChange = (event) => {
     const file = event.target.files[0];
     if (file) {
-      setRecipeImage(file);
+      // Untuk simulasi, kita pakai URL sementara dari file
+      setRecipeImage(URL.createObjectURL(file)); 
     }
+  };
+
+  // --- LOGIKA UTAMA: TERBITKAN RESEP ---
+  const handleSubmit = (e) => {
+      e.preventDefault();
+
+      // 1. Ambil data resep yang sudah ada dari localStorage
+      const existingRecipes = JSON.parse(localStorage.getItem('userRecipes')) || [];
+
+      // 2. Buat objek resep baru
+      const newRecipe = {
+          id: Date.now(), // ID unik
+          author: "Saya (User Baru)",
+          handle: "user_baru",
+          time: "Baru saja",
+          avatar: "https://ui-avatars.com/api/?name=User+Baru&background=random", // Avatar dummy
+          title: recipeInfo.title,
+          steps: steps.filter(step => step.trim() !== ""), // Bersihkan langkah kosong
+          description: recipeInfo.shortDescription,
+          hashtags: "#resepbaru #cookconnect",
+          image: recipeImage || 'https://placehold.co/600x400', // Gunakan gambar atau placeholder
+          likes: 0,
+          comments: 0,
+          details: details,
+          videos: {
+              youtube: recipeInfo.linkYoutube,
+              tiktok: recipeInfo.linkTiktok,
+              instagram: recipeInfo.linkInstagram
+          }
+      };
+
+      // 3. Tambahkan resep baru ke daftar dan simpan kembali
+      existingRecipes.unshift(newRecipe); // Tambahkan di awal agar muncul duluan
+      localStorage.setItem('userRecipes', JSON.stringify(existingRecipes));
+
+      alert('Resep berhasil diterbitkan! Kembali ke Feed.');
+      
+      // 4. Navigasi ke Feed
+      navigate('/feed');
+  };
+  
+  // Fungsi untuk tombol Batal
+  const handleCancel = () => {
+      if (window.confirm("Yakin ingin membatalkan resep? Semua input akan hilang.")) {
+          navigate('/feed'); // Kembali ke feed
+      }
   };
 
   return (
     <div className="form-body">
       {/* 1. Navbar di Atas */}
-      <NavbarLoggedin />
+   
 
       <div className="form-container">
         
         {/* Header dengan tombol kembali */}
         <div className="form-header">
-          <span className="back-arrow">←</span> 
+          {/* Tambahkan onClick ke panah kembali */}
+          <span className="back-arrow" onClick={() => navigate(-1)} style={{cursor: 'pointer'}}>←</span> 
           <div className="header-text-container">
             <h2 className="header-title">Buat Resep Baru Anda</h2>
             <p className="header-subtitle">Bagikan resep terbaik Anda kepada dunia dan inspirasi para CookConnectors lainnya!</p>
@@ -94,7 +145,7 @@ function CreateRecipe() {
         </div>
 
         {/* Input Foto */}
-        <label className="label">Foto Utama Resep</label>
+        <label className="label">Foto Utama Resep (Wajib)</label>
         <div className="image-upload-box">
           <input 
             type="file" 
@@ -105,8 +156,12 @@ function CreateRecipe() {
           />
           <label htmlFor="recipe-image-upload" className="upload-label">
             <span className="camera-icon">📸</span> 
-            <p>Klik untuk mengunggah foto [cth: .jpg, .png]</p>
-            {recipeImage && <p className="selected-image-name">{recipeImage.name}</p>}
+            {recipeImage ? (
+                <img src={recipeImage} alt="Preview Resep" style={{maxWidth: '100px', maxHeight: '100px', borderRadius: '8px', objectFit: 'cover', marginTop: '10px'}} />
+            ) : (
+                <p>Klik untuk mengunggah foto [cth: .jpg, .png]</p>
+            )}
+            {recipeImage && <p className="selected-image-name">Foto berhasil diunggah!</p>}
           </label>
         </div>
 
@@ -119,9 +174,10 @@ function CreateRecipe() {
           value={recipeInfo.title}
           onChange={handleRecipeInfoChange}
           placeholder="Cth: Ayam Geprek Sambal Matah" 
+          required
         />
 
-        <label className="label">Deskripsi Singkat (Caption)</label>
+        <label className="label">Deskripsi Singkat (Caption) - Opsional</label>
         <input 
           className="input" 
           type="text" 
@@ -134,6 +190,8 @@ function CreateRecipe() {
         {/* Detail Resep */}
         <label className="label sub-header">Detail Resep</label> 
         <div className="detail-row">
+          {/* Total Waktu, Porsi, Kesulitan (Wajib) */}
+          {/* ... (bagian ini tidak diubah, tetap sama) ... */}
           <div className="detail-col"> 
             <label className="sub-label">Total Waktu</label>
             <input 
@@ -143,6 +201,7 @@ function CreateRecipe() {
               value={details.totalTime}
               onChange={handleDetailChange}
               placeholder="Cth: 30 Menit" 
+              required
             />
           </div>
 
@@ -155,6 +214,7 @@ function CreateRecipe() {
               value={details.servingSize}
               onChange={handleDetailChange}
               placeholder="Cth: 2 orang" 
+              required
             />
           </div>
 
@@ -176,7 +236,7 @@ function CreateRecipe() {
         </div>
         
         {/* Bahan-Bahan */}
-        <label className="label">Bahan-Bahan</label> 
+        <label className="label">Bahan-Bahan (Minimal 1)</label> 
         <div className="list">
           {ingredients.map((item, index) => (
             <div className="row" key={index}>
@@ -186,6 +246,7 @@ function CreateRecipe() {
                 value={item}
                 onChange={(e) => handleIngredientChange(index, e.target.value)}
                 placeholder={index === 0 ? "Cth: 200gr Daging Ayam" : `Bahan ${index + 1}`} 
+                required // Bahan pertama wajib
               />
               {ingredients.length > 1 && (
                 <div className="trash-box" onClick={() => handleDeleteIngredient(index)}>
@@ -194,11 +255,11 @@ function CreateRecipe() {
               )}
             </div>
           ))}
-          <button className="add-btn" onClick={handleAddIngredient}>+ Tambah Bahan</button> 
+          <button type="button" className="add-btn" onClick={handleAddIngredient}>+ Tambah Bahan</button> 
         </div>
 
         {/* Langkah Memasak */}
-        <label className="label">Langkah-Langkah</label> 
+        <label className="label">Langkah-Langkah (Minimal 1)</label> 
         <div className="list">
           {steps.map((step, index) => (
             <div className="row" key={index}>
@@ -208,6 +269,7 @@ function CreateRecipe() {
                 value={step}
                 onChange={(e) => handleStepChange(index, e.target.value)}
                 placeholder={index === 0 ? "Cth: Panaskan minyak di wajan" : `Langkah ${index + 1}`} 
+                required // Langkah pertama wajib
               />
               {steps.length > 1 && (
                 <div className="trash-box" onClick={() => handleDeleteStep(index)}>
@@ -216,7 +278,7 @@ function CreateRecipe() {
               )}
             </div>
           ))}
-          <button className="add-btn" onClick={handleAddStep}>+ Tambah Langkah</button>
+          <button type="button" className="add-btn" onClick={handleAddStep}>+ Tambah Langkah</button>
         </div>
 
         {/* Link Video */}
@@ -224,29 +286,51 @@ function CreateRecipe() {
         
         <div className="link-input-wrapper"> 
           <i className="fab fa-youtube link-icon youtube-icon"></i> 
-          <input className="input link-input" type="text" placeholder="Cth: https://youtube.com/watch?v=..." />
+          <input 
+            className="input link-input" 
+            type="text" 
+            placeholder="Cth: https://youtube.com/watch?v=..." 
+            name="linkYoutube"
+            onChange={handleRecipeInfoChange}
+          />
         </div>
 
         <div className="link-input-wrapper">
           <i className="fab fa-tiktok link-icon tiktok-icon"></i> 
-          <input className="input link-input" type="text" placeholder="Cth: https://tiktok.com/@username/video/..." />
+          <input 
+            className="input link-input" 
+            type="text" 
+            placeholder="Cth: https://tiktok.com/@username/video/..." 
+            name="linkTiktok"
+            onChange={handleRecipeInfoChange}
+          />
         </div>
 
         <div className="link-input-wrapper">
           <i className="fab fa-instagram link-icon instagram-icon"></i> 
-          <input className="input link-input" type="text" placeholder="Cth: https://instagram.com/p/..." />
+          <input 
+            className="input link-input" 
+            type="text" 
+            placeholder="Cth: https://instagram.com/p/..." 
+            name="linkInstagram"
+            onChange={handleRecipeInfoChange}
+          />
         </div>
 
-        {/* Tombol Aksi */}
-        <div className="button-row">
-          <button className="cancel-btn">Batal</button>
-          <button className="save-btn">Terbitkan Resep</button> 
-        </div>
+        {/* Tombol Aksi - Dibungkus oleh FORM (kita perlu form tag di sini) */}
+        {/* Karena komponen ini tidak dibungkus <form> secara keseluruhan, kita ganti div dengan form dan onSubmit */}
+        <form onSubmit={handleSubmit}>
+          {/* Ini adalah tombol Batal yang kita ganti type-nya jadi button agar tidak trigger submit */}
+          <div className="button-row">
+            <button type="button" className="cancel-btn" onClick={handleCancel}>Batal</button>
+            <button type="submit" className="save-btn">Terbitkan Resep</button> 
+          </div>
+        </form>
 
       </div>
 
       {/* 2. Footer di Bawah */}
-      <Footer />
+
       
     </div>
   );

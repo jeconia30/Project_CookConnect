@@ -1,32 +1,21 @@
-import React from 'react';
-import Navbar from '../components/Navbar'; 
-import Footer from '../components/Footer'; 
-import Sidebar from '../components/Sidebar';
+import React, { useState, useEffect } from 'react'; 
 import RecipeCardFeed from '../components/RecipeCardFeed';
-import { recipesData } from '../data/recipes';
+import { getRecipesData } from '../data/recipes'; 
 
 const FeedPage = () => {
+  const [feedRecipes, setFeedRecipes] = useState([]);
+  
+  useEffect(() => {
+    setFeedRecipes(getRecipesData());
+  }, []); 
+  
+  // Hanya kembalikan konten area feed
   return (
-    <>
-      <Navbar /> 
-      <div className="feed-page-wrapper">
-        <div className="feed-layout-container">
-          
-          <div className="sidebar-area">
-            <Sidebar />
-          </div>
-
-          <div className="feed-area">
-            {recipesData.map((recipe) => (
-              <RecipeCardFeed key={recipe.id} recipe={recipe} />
-            ))}
-          </div>
-          
-        </div>
-      </div>
-
-      <Footer />
-    </>
+    <div className="feed-area">
+      {feedRecipes.map((recipe) => ( 
+        <RecipeCardFeed key={recipe.id} recipe={recipe} />
+      ))}
+    </div>
   );
 };
 
