@@ -20,22 +20,15 @@ const LoginForm = ({ onToggle }) => {
 
     try {
       // PANGGIL API LOGIN
+      // Di LoginForm handleSubmit:
       const response = await api.post("/auth/login", {
-        username_or_email: formData.email, // Sesuaikan dengan key di backend
+        username_or_email: formData.email,
         password: formData.password,
       });
 
-      // SIMPAN TOKEN & DATA USER
-      const token = response.data.token;
+      const { token, user_data } = response.data;
       localStorage.setItem("authToken", token);
-
-      // Simpan data profil dasar jika dikembalikan dari login
-      if (response.data.user_data) {
-        localStorage.setItem(
-          "userProfileData",
-          JSON.stringify(response.data.user_data)
-        );
-      }
+      localStorage.setItem("userProfileData", JSON.stringify(user_data));
 
       alert("Login berhasil!");
       navigate("/feed");
@@ -235,8 +228,12 @@ const RegisterForm = ({ onToggle }) => {
         kami.
       </p>
 
-      <button type="submit" className="cta-button auth-button" disabled={isLoading}>
-        {isLoading ? 'Memproses...' : 'Register'}
+      <button
+        type="submit"
+        className="cta-button auth-button"
+        disabled={isLoading}
+      >
+        {isLoading ? "Memproses..." : "Register"}
       </button>
 
       <div className="auth-divider">
