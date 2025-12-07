@@ -61,11 +61,11 @@ const RecipeDetail = () => {
   // --- FETCH COMMENTS FUNCTION ---
   const fetchComments = async () => {
     try {
-      // PANGGIL API UNTUK AMBIL KOMENTAR
+      // Ubah endpoint ke /comments/recipe/:id sesuai backend
       const commentsRes = await api.get(`/comments/recipe/${id}`);
-      setComments(commentsRes.data.comments || dummyComments);
+      setComments(commentsRes.data.comments || []);
     } catch (error) {
-      setComments(dummyComments); // Fallback to mock comments
+      console.error(error);
     }
   };
 
@@ -94,19 +94,21 @@ const RecipeDetail = () => {
 
   // --- HANDLER SUBMIT KOMENTAR (API) ---
   const handleSubmitComment = async () => {
-    if (!authToken) {
-      alert("Anda harus login untuk berkomentar.");
-      return;
-    }
+    if (!authToken) return alert("Login dulu!");
     setIsSubmitting(true);
 
     try {
-      const payload = { text: commentInput };
-
-      // 1. PANGGIL API POST KOMENTAR
-      await api.post(`/comments/recipe/${id}`, payload, {
-        headers: { Authorization: `Bearer ${authToken}` },
-      });
+      // Ubah endpoint ke /comments dan kirim recipe_id di body
+      await api.post(
+        `/comments`,
+        {
+          recipe_id: id,
+          content: commentInput,
+        },
+        {
+          headers: { Authorization: `Bearer ${authToken}` },
+        }
+      );
 
       // 2. Fetch ulang komentar atau update state secara lokal
       // Untuk pengalaman yang lebih baik, kita update lokal dulu
