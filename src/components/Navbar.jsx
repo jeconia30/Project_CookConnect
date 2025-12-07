@@ -6,10 +6,23 @@ const NavbarLoggedin = () => {
   const [keyword, setKeyword] = useState('');
   const navigate = useNavigate(); 
   const authToken = localStorage.getItem('authToken');
-  // Ambil data profil dari LocalStorage untuk gambar/username
-  const userProfileData = JSON.parse(localStorage.getItem('userProfileData') || '{}'); 
-  const profilePhoto = userProfileData.photo || null;
-  const username = userProfileData.username || "guest";
+
+  // --- KODE BARU (LEBIH AMAN) ---
+  let userProfileData = {};
+  try {
+    const storedData = localStorage.getItem('userProfileData');
+    // Cek jika data ada dan bukan string "undefined"
+    if (storedData && storedData !== "undefined") {
+      userProfileData = JSON.parse(storedData);
+    }
+  } catch (error) {
+    console.error("Gagal parsing data profil:", error);
+    // Jika error, data otomatis jadi {} (objek kosong)
+  }
+  // ------------------------------
+
+  const profilePhoto = userProfileData?.photo || null; // Gunakan optional chaining (?.)
+  const username = userProfileData?.username || "guest";
 
   // Fungsi untuk menangani pencarian
   const handleSearch = (e) => {
