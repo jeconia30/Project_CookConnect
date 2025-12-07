@@ -1,25 +1,17 @@
-// src/components/ProtectedRoute.jsx
 import React from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
 
-// --- GANTI SELURUH ISI FILE INI UNTUK BYPASS SEMENTARA ---
-
 const ProtectedRoute = ({ children }) => {
-  // OPSI 1: BYPASS TOTAL UNTUK TESTING
-  // Kembalikan anak komponen secara langsung, abaikan pengecekan token.
-  // HANYA UNTUK DEVELOPMENT!
-  return children ? children : <Outlet />;
-  
-  /* // OPSI 2: KODE ASLI (JIKA INGIN KEMBALI MENGGUNAKAN LOGIKA PENCEKALAN)
   const authToken = localStorage.getItem('authToken');
 
+  // Jika tidak ada token, redirect ke login
   if (!authToken) {
-    console.log("Redirecting to login: No token found.");
+    console.warn('⚠️ No auth token found. Redirecting to login...');
     return <Navigate to="/login" replace />;
   }
 
+  // Jika ada token, tampilkan children atau outlet
   return children ? children : <Outlet />;
-  */
 };
 
 export default ProtectedRoute;

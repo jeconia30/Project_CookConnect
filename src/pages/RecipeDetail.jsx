@@ -62,7 +62,7 @@ const RecipeDetail = () => {
   const fetchComments = async () => {
     try {
       // PANGGIL API UNTUK AMBIL KOMENTAR
-      const commentsRes = await api.get(`/recipes/${id}/comments`);
+      const commentsRes = await api.get(`/comments/recipe/${id}`);
       setComments(commentsRes.data.comments || dummyComments);
     } catch (error) {
       setComments(dummyComments); // Fallback to mock comments
@@ -104,7 +104,7 @@ const RecipeDetail = () => {
       const payload = { text: commentInput };
 
       // 1. PANGGIL API POST KOMENTAR
-      await api.post(`/recipes/${id}/comments`, payload, {
+      await api.post(`/comments/recipe/${id}`, payload, {
         headers: { Authorization: `Bearer ${authToken}` },
       });
 
