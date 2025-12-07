@@ -7,7 +7,6 @@ import "../styles/app.css";
 function CreateRecipe() {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
-  const [uploadingImage, setUploadingImage] = useState(false);
 
   // State untuk gambar
   const [uploadingImage, setUploadingImage] = useState(false);
@@ -16,8 +15,6 @@ function CreateRecipe() {
 
   const [ingredients, setIngredients] = useState([""]);
   const [steps, setSteps] = useState([""]);
-  const [recipeImage, setRecipeImage] = useState(null);
-  const [recipeImageUrl, setRecipeImageUrl] = useState(null);
 
   const [recipeInfo, setRecipeInfo] = useState({
     title: "",
@@ -87,15 +84,15 @@ function CreateRecipe() {
     const file = event.target.files[0];
     if (file) {
       setRecipeImage(file);
-      
+
       // Auto-upload gambar ke Supabase
       setUploadingImage(true);
       try {
         const result = await uploadRecipeImage(file);
         setRecipeImageUrl(result.url);
-        console.log('Gambar resep uploaded:', result.url);
+        console.log("Gambar resep uploaded:", result.url);
       } catch (error) {
-        alert('Gagal upload gambar: ' + error.message);
+        alert("Gagal upload gambar: " + error.message);
       } finally {
         setUploadingImage(false);
       }
@@ -155,7 +152,8 @@ function CreateRecipe() {
     } catch (error) {
       console.error("Error Create Recipe:", error);
       alert(
-        "Gagal menerbitkan resep: " + (error.response?.data?.error || error.message)
+        "Gagal menerbitkan resep: " +
+          (error.response?.data?.error || error.message)
       );
     } finally {
       setIsLoading(false);
@@ -213,7 +211,9 @@ function CreateRecipe() {
             ) : (
               <p>Klik untuk mengunggah foto [cth: .jpg, .png]</p>
             )}
-            {uploadingImage && <p className="selected-image-name">Mengupload...</p>}
+            {uploadingImage && (
+              <p className="selected-image-name">Mengupload...</p>
+            )}
             {recipeImageUrl && (
               <p className="selected-image-name">✓ Foto berhasil diunggah!</p>
             )}
@@ -391,9 +391,9 @@ function CreateRecipe() {
           <button type="button" className="cancel-btn" onClick={handleCancel}>
             Batal
           </button>
-          <button 
-            type="submit" 
-            className="save-btn" 
+          <button
+            type="submit"
+            className="save-btn"
             disabled={isLoading || uploadingImage || !recipeImageUrl}
           >
             {isLoading ? "Menerbitkan..." : "Terbitkan Resep"}
