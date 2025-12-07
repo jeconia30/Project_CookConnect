@@ -11,13 +11,7 @@ import ResetPassword from './pages/ResetPassword';
 import MyProfile from './pages/My-profile.jsx';
 import FeedPage from './pages/FeedPage.jsx'; 
 import SetupProfile from './pages/SetupProfile.jsx';
-
-// // Asumsi: Halaman ini akan segera dibuat dari file login.html
-// const LoginPage = () => <div>Halaman Login (Belum dibuat)</div>; 
-// // Asumsi: Halaman ini akan segera dibuat dari file feed.html
-// const FeedPage = () => <div>Halaman Feed (Belum dibuat)</div>; 
-// Asumsi: Halaman ini akan segera dibuat dari file recipe-detail.html
-const RecipeDetail = () => <div>Halaman Detail Resep (Belum dibuat)</div>; 
+import RecipeDetail from './pages/RecipeDetail.jsx';
 
 
 function App() {
