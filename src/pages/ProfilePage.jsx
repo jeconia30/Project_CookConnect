@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate, Link, useParams } from "react-router-dom";
 import "../styles/app.css"; 
-import { initialRecipesData, getRecipesData } from "../data/recipes";
+import { initialRecipesData } from '../data/recipes';
+import api from "../api/axiosInstance";
 import RecipeCardProfile from "../components/RecipeCardProfile"; 
 
 // Gambar Default
@@ -9,135 +10,137 @@ import defaultProfilePic from "../assets/geprek.jpeg";
 
 // Data Default Profil (Fallback jika belum ada di localStorage)
 const DEFAULT_PROFILE = {
-    name: "Sari (Contoh)",
-    username: "sari_masak",
-    bio: "Hobi masak simpel yang enak! Ibu dari 2 anak. Suka berbagi resep harian anti-gagal.",
+    name: "Pengguna Mock",
+    username: "mock_user",
+    bio: "Data profil gagal dimuat dari API.",
     photo: defaultProfilePic,
-    pronouns: "dia/mereka",
-    tiktok: "https://tiktok.com/@sari_masak",
-    instagram: "https://instagram.com/sari_masak",
+    pronouns: "", 
+    tiktok: "",
+    instagram: "",
     linkedin: "",
     website: ""
 };
 
-// --- LOGIKA PERSISTENCE FOLLOW ---
-const handleFollowToggle = (isCurrentUser, profileHandle) => {
-    if (isCurrentUser) return true; 
-
-    const followedUsers = JSON.parse(localStorage.getItem('followedUsers')) || [];
-    const isCurrentlyFollowing = followedUsers.includes(profileHandle);
-
-    if (isCurrentlyFollowing) {
-        if (window.confirm(`Yakin ingin berhenti mengikuti @${profileHandle}?`)) {
-            const newFollowed = followedUsers.filter(handle => handle !== profileHandle);
-            localStorage.setItem('followedUsers', JSON.stringify(newFollowed));
-            return false;
-        }
-        return true; 
-    } else {
-        followedUsers.push(profileHandle);
-        localStorage.setItem('followedUsers', JSON.stringify(followedUsers));
-        return true;
-    }
-}
-
-
-// --- COMPONENT PROFILE UTAMA YANG DIKONSOLIDASI ---
 const ProfilePage = ({ isCurrentUser }) => { 
   const navigate = useNavigate();
-  const { username: profileUsername } = useParams(); // Ambil username dari URL (jika bukan /profile/me)
+  const { username: profileUsername } = useParams(); 
   const [activeTab, setActiveTab] = useState("resep");
   const [menuOpen, setMenuOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
-  const [savedRecipesList, setSavedRecipesList] = useState([]);
   
-  // 1. Inisiasi data Profil
-  const [profileData, setProfileData] = useState(() => {
-      if (isCurrentUser) {
-          const savedData = localStorage.getItem('userProfileData');
-          return savedData ? JSON.parse(savedData) : DEFAULT_PROFILE;
-      }
-      // Mock data untuk profil orang lain
-      const mockOtherUser = {
-          name: "Budi (Rendang)",
-          username: profileUsername || "budi_rendang",
-          bio: "Spesialis masakan Padang. Rendang adalah hidupku!",
-          photo: "https://ui-avatars.com/api/?name=Budi+Rendang&background=random",
-          pronouns: "dia",
-          tiktok: "https://tiktok.com/@budi_rendang",
-          instagram: "",
-          linkedin: "https://linkedin.com/in/budi",
-          website: ""
-      };
-      return mockOtherUser;
-  });
+  const [profileData, setProfileData] = useState(DEFAULT_PROFILE);
+  const [uploadedRecipes, setUploadedRecipes] = useState([]);
+  const [savedRecipes, setSavedRecipes] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  
+  const [isFollowing, setIsFollowing] = useState(false);
+  
+  // --- STATE UNTUK FORM EDIT (API) ---
+  const [editFormData, setEditFormData] = useState(DEFAULT_PROFILE);
+  const [editImagePreview, setEditImagePreview] = useState(DEFAULT_PROFILE.photo);
+  
 
-  // State untuk Follow Status
-  const [isFollowing, setIsFollowing] = useState(() => {
-    if (isCurrentUser) return false;
-    const followedUsers = JSON.parse(localStorage.getItem('followedUsers')) || [];
-    return followedUsers.includes(profileUsername);
-  });
-  // ... (State Edit Form tetap sama) ...
-  const [editFormData, setEditFormData] = useState(profileData);
-  const [editImagePreview, setEditImagePreview] = useState(profileData.photo);
-  
-  
-  // --- EFEK LOAD DATA & FOLLOW STATUS ---
-  React.useEffect(() => {
-    // 1. Ambil Data Resep Disimpan (Hanya untuk profil sendiri)
-    if (isCurrentUser) {
-        const savedIds = JSON.parse(localStorage.getItem('savedRecipes')) || [];
-        
-        // --- PERBAIKAN LOGIKA: Gunakan getRecipesData() untuk filter yang komprehensif ---
-        const allAvailableRecipes = getRecipesData(); 
-        const filteredRecipes = allAvailableRecipes.filter(recipe => savedIds.includes(recipe.id));
-        setSavedRecipesList(filteredRecipes);
-    }
+  // --- FETCH DATA DARI API ---
+  useEffect(() => {
+    const userToFetch = isCurrentUser ? 'me' : profileUsername;
+    const authToken = localStorage.getItem('authToken');
+    
+    const fetchProfileData = async () => {
+        setIsLoading(true);
+        try {
+            // 1. Ambil data Profil & Status Follow/Save
+            const profileRes = await api.get(`/users/${userToFetch}`, {
+                 headers: { Authorization: `Bearer ${authToken}` }
+            });
+            const profile = profileRes.data.profile || profileRes.data;
+            setProfileData(profile); 
+            
+            // Set status interaksi awal
+            setIsFollowing(profile.is_following || false);
 
-    // 2. Cek Status Follow (Jika ini bukan profil sendiri)
-    if (!isCurrentUser) {
-        const followedUsers = JSON.parse(localStorage.getItem('followedUsers')) || [];
-        setIsFollowing(followedUsers.includes(profileData.username));
-    }
-  },[isCurrentUser, profileData.username]);
-  
-  
+            // 2. Ambil Resep yang Di-upload
+            const uploadedRes = await api.get(`/users/${userToFetch}/recipes`, {
+                headers: { Authorization: `Bearer ${authToken}` }
+            });
+            setUploadedRecipes(uploadedRes.data.recipes || []);
+
+            // 3. Ambil Resep Disimpan (Hanya untuk profil sendiri)
+            if (isCurrentUser) {
+                const savedRes = await api.get(`/users/me/saved-recipes`, {
+                    headers: { Authorization: `Bearer ${authToken}` }
+                });
+                setSavedRecipes(savedRes.data.recipes || []);
+            }
+
+        } catch (err) {
+            console.error("Fetch Profile Error:", err.response || err);
+            // Fallback ke mock data jika API gagal
+            setProfileData(DEFAULT_PROFILE);
+            setUploadedRecipes(initialRecipesData.filter(r => r.handle === DEFAULT_PROFILE.username));
+            setSavedRecipes([]);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+    fetchProfileData();
+    
+    // CLEANUP SEMUA LOCAL STORAGE MOCK
+    // Kita pastikan semua data yang berhubungan dengan profil dihapus karena sekarang menggunakan API
+    localStorage.removeItem('userProfileData');
+    localStorage.removeItem('userRecipes');
+    localStorage.removeItem('savedRecipes');
+    
+  }, [isCurrentUser, profileUsername]);
+
   // --- HANDLERS ---
-  // ... (handleOpenEdit, handleChange, handleEditImageChange tetap sama) ...
   const handleOpenEdit = () => {
-      setEditFormData(profileData);
-      setEditImagePreview(profileData.photo);
-      setIsEditOpen(true);
-      setMenuOpen(false);
+    setEditFormData(profileData); 
+    setEditImagePreview(profileData.photo); 
+    setIsEditOpen(true);
+    setMenuOpen(false);
   };
   const handleChange = (e) => {
-      setEditFormData({ ...editFormData, [e.target.name]: e.target.value });
+    setEditFormData({ ...editFormData, [e.target.name]: e.target.value });
   };
   const handleEditImageChange = (e) => {
-      const file = e.target.files[0];
-      if (file) setEditImagePreview(URL.createObjectURL(file));
-  };
-  const handleSave = () => {
-      const newProfileData = { ...editFormData, photo: editImagePreview };
-      setProfileData(newProfileData);
-      localStorage.setItem('userProfileData', JSON.stringify(newProfileData));
-      alert("Profil berhasil diperbarui secara permanen!");
-      setIsEditOpen(false); 
-  };
-  const handleFollowClick = () => {
-      const newStatus = handleFollowToggle(isCurrentUser, profileData.username);
-      setIsFollowing(newStatus); 
+    const file = e.target.files[0];
+    if (file) setEditImagePreview(URL.createObjectURL(file));
   };
   
-  // --- DATA RESEP DARI LOCALSTORAGE ---
-  const allRecipes = getRecipesData();
-  const myUploadedRecipes = allRecipes.filter(recipe => {
-      if (isCurrentUser) {
-          return recipe.author === profileData.name; // Filter berdasarkan nama user yang login
-      }
-      return recipe.handle === profileData.username;
-  });
+  // --- FUNGSI SIMPAN PERMANEN (API) ---
+  const handleSave = async () => {
+    const payload = { ...editFormData, photo: editImagePreview }; 
+    const authToken = localStorage.getItem('authToken');
+    if (!authToken) return alert("Sesi habis. Silakan login ulang.");
+    
+    try {
+        await api.put(`/users/me/profile`, payload, {
+            headers: { Authorization: `Bearer ${authToken}` }
+        });
+        setProfileData(payload); // Update UI
+        alert("Profil berhasil diperbarui!");
+        setIsEditOpen(false);
+    } catch (err) {
+        alert("Gagal memperbarui profil.");
+    }
+  };
+
+  const handleFollowClick = async () => {
+    const authToken = localStorage.getItem('authToken');
+    if (!authToken) return alert("Anda harus login untuk Ikuti.");
+    
+    try {
+        const action = isFollowing ? 'unfollow' : 'follow';
+        await api.post(`/users/${profileData.username}/${action}`, {}, { 
+            headers: { Authorization: `Bearer ${authToken}` } 
+        });
+        setIsFollowing(!isFollowing); 
+    } catch (err) { alert('Gagal memproses Ikuti.'); }
+  };
+
+  if (isLoading) {
+      return <div className="feed-area" style={{ textAlign: 'center', marginTop: '20px' }}>Memuat Profil...</div>;
+  }
 
 
   return (

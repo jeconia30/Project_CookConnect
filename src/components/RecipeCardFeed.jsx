@@ -1,50 +1,72 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom'; // Pastikan import ini ada
-import '../styles/components/RecipeCardFeed.css';
+import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom"; // Pastikan import ini ada
+import api from "../api/axiosInstance";
+import "../styles/components/RecipeCardFeed.css";
 
 const RecipeCardFeed = ({ recipe }) => {
-  const [isLiked, setIsLiked] = useState(false);
-  const [likeCount, setLikeCount] = useState(recipe.likes);
-  const [isFollowing, setIsFollowing] = useState(false);
-  const [isShared, setIsShared] = useState(false);
-  const [isSaved, setIsSaved] = useState(() => {
-    const savedRecipes = JSON.parse(localStorage.getItem('savedRecipes')) || [];
-    return savedRecipes.includes(recipe.id);
-  });
+  const authToken = localStorage.getItem("authToken");
 
-  const handleLike = () => {
-    if (isLiked) {
-      setLikeCount(prev => prev - 1);
-    } else {
-      setLikeCount(prev => prev + 1);
+  // STATE INTERAKSI (Diasumsikan API mengembalikan status awal di object recipe)
+  // Karena mock data di FeedPage tidak menyediakan, kita menggunakan fallback
+  const [isLiked, setIsLiked] = useState(recipe.is_liked || false);
+  const [likeCount, setLikeCount] = useState(recipe.likes);
+  const [isFollowing, setIsFollowing] = useState(recipe.is_following || false);
+  const [isShared, setIsShared] = useState(false);
+  const [isSaved, setIsSaved] = useState(recipe.is_saved || false);
+
+  // --- HANDLER API SIMULASI ---
+  const handleAction = async (endpoint, actionName, successCallback) => {
+    if (!authToken) {
+      alert("Anda harus login untuk melakukan aksi ini.");
+      return;
     }
-    setIsLiked(!isLiked);
+    try {
+      await api.post(
+        endpoint,
+        {},
+        { headers: { Authorization: `Bearer ${authToken}` } }
+      );
+      successCallback();
+    } catch (err) {
+      alert(`Gagal memproses ${actionName}.`);
+    }
   };
 
-  const handleShare = () => {
-    setIsShared(!isShared);
-    alert("Tautan resep disalin!"); // Opsional: Feedback user
+  const handleLike = () => {
+    const endpoint = isLiked
+      ? `/recipes/${recipe.id}/unlike`
+      : `/recipes/${recipe.id}/like`;
+    handleAction(endpoint, "Suka", () => {
+      setIsLiked(!isLiked);
+      setLikeCount((prev) => prev + (isLiked ? -1 : 1));
+    });
   };
 
   const handleSave = () => {
-    const currentSaved = JSON.parse(localStorage.getItem('savedRecipes')) || [];
-    
-    if (isSaved) {
-      // Kalau sudah disimpan -> Hapus dari daftar (Unsave)
-      const newSaved = currentSaved.filter(id => id !== recipe.id);
-      localStorage.setItem('savedRecipes', JSON.stringify(newSaved));
-      setIsSaved(false);
-    } else {
-      // Kalau belum -> Tambahkan ke daftar
-      currentSaved.push(recipe.id);
-      localStorage.setItem('savedRecipes', JSON.stringify(currentSaved));
-      setIsSaved(true);
-    }
+    const endpoint = isSaved
+      ? `/recipes/${recipe.id}/unsave`
+      : `/recipes/${recipe.id}/save`;
+    handleAction(endpoint, "Simpan", () => {
+      setIsSaved(!isSaved);
+    });
+  };
+
+  const handleFollow = () => {
+    const endpoint = isFollowing
+      ? `/users/${recipe.handle}/unfollow`
+      : `/users/${recipe.handle}/follow`;
+    handleAction(endpoint, "Ikuti", () => {
+      setIsFollowing(!isFollowing);
+    });
+  };
+
+  const handleShare = () => {
+    alert("Tautan resep disalin!");
   };
 
   const formatNumber = (num) => {
     if (num >= 1000) {
-      return (num / 1000).toFixed(1).replace(/\.0$/, '') + 'K';
+      return (num / 1000).toFixed(1).replace(/\.0$/, "") + "K";
     }
     return num;
   };
@@ -56,18 +78,22 @@ const RecipeCardFeed = ({ recipe }) => {
         <div className="user-profile">
           <img src={recipe.avatar} alt="avatar" className="avatar" />
           <div className="user-info">
-            <Link to={`/profile/${recipe.handle}`} className="username" style={{textDecoration: 'none', color: '#000'}}>
+            <Link
+              to={`/profile/${recipe.handle}`}
+              className="username"
+              style={{ textDecoration: "none", color: "#000" }}
+            >
               {recipe.author}
             </Link>
             <div className="handle-row">
-                <span className="handle">@{recipe.handle}</span>
-                <span className="separator"> • </span>
-                <button 
-                  className={`text-btn ${isFollowing ? 'grey' : 'green'}`}
-                  onClick={() => setIsFollowing(!isFollowing)}
-                >
-                  {isFollowing ? 'Mengikuti' : 'Ikuti'}
-                </button>
+              <span className="handle">@{recipe.handle}</span>
+              <span className="separator"> • </span>
+              <button
+                className={`text-btn ${isFollowing ? "grey" : "green"}`}
+                onClick={() => setIsFollowing(!isFollowing)}
+              >
+                {isFollowing ? "Mengikuti" : "Ikuti"}
+              </button>
             </div>
             <span className="time">{recipe.time}</span>
           </div>
@@ -76,18 +102,23 @@ const RecipeCardFeed = ({ recipe }) => {
 
       {/* 2. AREA KLIK UTAMA (JUDUL, GAMBAR, DESKRIPSI) */}
       {/* Kita bungkus semua ini dalam satu Link agar area klik luas */}
-      <Link 
-        to={`/recipe/${recipe.id}`} 
-        style={{ textDecoration: 'none', color: 'inherit', display: 'block' }}
+      <Link
+        to={`/recipe/${recipe.id}`}
+        style={{ textDecoration: "none", color: "inherit", display: "block" }}
       >
         <h2 className="recipe-title">{recipe.title}</h2>
 
         <div className="card-body">
           <div className="recipe-steps">
             <ol>
-              {recipe.steps.slice(0, 3).map((step, idx) => ( // Opsional: Limit langkah di feed biar rapi
-                <li key={idx}>{step}</li>
-              ))}
+              {recipe.steps.slice(0, 3).map(
+                (
+                  step,
+                  idx // Opsional: Limit langkah di feed biar rapi
+                ) => (
+                  <li key={idx}>{step}</li>
+                )
+              )}
             </ol>
           </div>
           <div className="recipe-img-wrapper">
@@ -106,15 +137,19 @@ const RecipeCardFeed = ({ recipe }) => {
       {/* 3. FOOTER (TOMBOL AKSI) */}
       <div className="card-footer">
         {/* Tombol Like */}
-        <button 
-          className={`action-btn ${isLiked ? 'liked' : ''}`} 
+        <button
+          className={`action-btn ${isLiked ? "liked" : ""}`}
           onClick={handleLike}
         >
-          <svg 
-            width="24" height="24" viewBox="0 0 24 24" 
-            fill={isLiked ? "#e74c3c" : "none"} 
-            stroke={isLiked ? "#e74c3c" : "#666"} 
-            strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+          <svg
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill={isLiked ? "#e74c3c" : "none"}
+            stroke={isLiked ? "#e74c3c" : "#666"}
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
           >
             <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
           </svg>
@@ -122,28 +157,40 @@ const RecipeCardFeed = ({ recipe }) => {
         </button>
 
         {/* Tombol Komentar -> Langsung ke Section Komentar */}
-        <Link 
-          to={`/recipe/${recipe.id}#comments-section`} 
+        <Link
+          to={`/recipe/${recipe.id}#comments-section`}
           className="action-btn"
-          style={{ textDecoration: 'none' }}
+          style={{ textDecoration: "none" }}
         >
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#666" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <svg
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="#666"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
             <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
           </svg>
           <span>{recipe.comments} Komentar</span>
         </Link>
 
         {/* Tombol Bagikan */}
-        <button 
-          className={`action-btn ${isShared ? 'shared' : ''}`}
+        <button
+          className={`action-btn ${isShared ? "shared" : ""}`}
           onClick={handleShare}
         >
-          <svg 
-            width="24" height="24" viewBox="0 0 24 24" 
-            fill="none" 
+          <svg
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
             stroke={isShared ? "#007bff" : "#666"}
             strokeWidth={isShared ? "2.5" : "2"}
-            strokeLinecap="round" strokeLinejoin="round"
+            strokeLinecap="round"
+            strokeLinejoin="round"
           >
             <circle cx="18" cy="5" r="3"></circle>
             <circle cx="6" cy="12" r="3"></circle>
@@ -155,21 +202,24 @@ const RecipeCardFeed = ({ recipe }) => {
         </button>
 
         {/* Tombol Simpan */}
-        <button 
-          className={`action-btn ${isSaved ? 'saved' : ''}`}
+        <button
+          className={`action-btn ${isSaved ? "saved" : ""}`}
           onClick={handleSave}
         >
-           <svg 
-            width="24" height="24" viewBox="0 0 24 24" 
-            fill={isSaved ? "#38761d" : "none"} 
-            stroke={isSaved ? "#38761d" : "#666"} 
-            strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
-           >
+          <svg
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill={isSaved ? "#38761d" : "none"}
+            stroke={isSaved ? "#38761d" : "#666"}
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
             <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
           </svg>
-           <span>{isSaved ? 'Disimpan' : 'Simpan'}</span>
+          <span>{isSaved ? "Disimpan" : "Simpan"}</span>
         </button>
-
       </div>
     </div>
   );

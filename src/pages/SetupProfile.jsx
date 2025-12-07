@@ -1,24 +1,26 @@
-import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import '../styles/app.css';
+import React, { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import api from "../api/axiosInstance";
+import "../styles/app.css";
 
 // Hapus import yang tidak perlu (mocked backend)
-// import api from '../api/axiosInstance'; 
-// import { supabase } from '../utils/supabaseClient'; 
+// import api from '../api/axiosInstance';
+// import { supabase } from '../utils/supabaseClient';
 
 const SetupProfile = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const userId = "CURRENT_USER_ID"; // Placeholder untuk ID yang seharusnya diambil dari Token
 
   const [formData, setFormData] = useState({
-    full_name: '',
-    username: '', 
-    pronouns: '', 
-    bio: '',
-    link_tiktok: '',
-    link_instagram: '',
-    link_linkedin: '',
-    link_other: ''
+    full_name: "",
+    username: "",
+    pronouns: "",
+    bio: "",
+    link_tiktok: "",
+    link_instagram: "",
+    link_linkedin: "",
+    link_other: "",
   });
 
   const [imageFile, setImageFile] = useState(null);
@@ -41,29 +43,36 @@ const SetupProfile = () => {
     setLoading(true);
 
     try {
-      // 1. Buat Objek Profil Sesuai Format yang disimpan di LocalStorage
-      const initialProfileData = {
-        name: formData.full_name || formData.username, 
-        username: formData.username, 
+      // 1. Dapatkan Auth Token
+      const authToken = localStorage.getItem("authToken");
+      if (!authToken) throw new Error("Token otentikasi tidak ditemukan.");
+
+      // 2. Kirim data profil ke API
+      const payload = {
+        full_name: formData.full_name,
+        username: formData.username,
         bio: formData.bio,
-        // Gunakan imagePreview (Blob URL) atau avatar placeholder
-        photo: imagePreview || 'https://ui-avatars.com/api/?name=' + (formData.full_name || formData.username) + '&background=random',
         pronouns: formData.pronouns,
-        tiktok: formData.link_tiktok,
-        instagram: formData.link_instagram,
-        linkedin: formData.link_linkedin,
-        website: formData.link_other
+        link_tiktok: formData.link_tiktok,
+        link_instagram: formData.link_instagram,
+        link_linkedin: formData.link_linkedin,
+        link_other: formData.link_other,
+        avatar_url: imagePreview || null, // Photo upload harus dihandle di sini (di real project)
       };
-      
-      // 2. Simpan ke LocalStorage
-      localStorage.setItem('userProfileData', JSON.stringify(initialProfileData));
 
-      alert('Setup Profil berhasil! Anda akan diarahkan ke Feed.');
-      navigate('/feed'); 
+      // PANGGIL API UNTUK UPDATE PROFIL
+      await api.put(`/users/${userId}/profile`, payload, {
+        headers: { Authorization: `Bearer ${authToken}` },
+      });
 
+      // Hapus data mock lama dari LocalStorage
+      localStorage.removeItem("userProfileData");
+
+      alert("Setup Profil berhasil! Mulai menjelajah CookConnect.");
+      navigate("/feed");
     } catch (error) {
-      console.error('Error:', error);
-      alert('Gagal setup profil. Cek console.');
+      console.error("Error Setup Profile:", error.response || error);
+      alert("Gagal update profil. Pastikan username belum dipakai.");
     } finally {
       setLoading(false);
     }
@@ -74,7 +83,16 @@ const SetupProfile = () => {
       <header className="login-header">
         <div className="container">
           <Link to="/" className="logo-link">
-            <div className="logo" style={{fontSize: '1.5rem', fontWeight: 'bold', color: '#38761d'}}>CookConnect</div>
+            <div
+              className="logo"
+              style={{
+                fontSize: "1.5rem",
+                fontWeight: "bold",
+                color: "#38761d",
+              }}
+            >
+              CookConnect
+            </div>
           </Link>
         </div>
       </header>
@@ -88,33 +106,68 @@ const SetupProfile = () => {
           <h2 className="profile-setup-title">Lengkapi Profil Anda</h2>
 
           <div className="profile-pic-upload-area">
-            <div className={`profile-pic-large ${!imagePreview ? 'profile-placeholder' : ''}`}>
+            <div
+              className={`profile-pic-large ${
+                !imagePreview ? "profile-placeholder" : ""
+              }`}
+            >
               {imagePreview && <img src={imagePreview} alt="Preview" />}
             </div>
             <label htmlFor="profile-pic" className="change-pic-button">
               <i className="fas fa-camera"></i> Ubah Foto Profil
-              <input type="file" id="profile-pic" accept="image/*" className="hidden-file-input" onChange={handleImageChange} />
+              <input
+                type="file"
+                id="profile-pic"
+                accept="image/*"
+                className="hidden-file-input"
+                onChange={handleImageChange}
+              />
             </label>
           </div>
 
           <div className="form-group">
             <label htmlFor="full_name">Nama</label>
-            <input type="text" id="full_name" placeholder="Nama Lengkap Anda" value={formData.full_name} onChange={handleChange} />
+            <input
+              type="text"
+              id="full_name"
+              placeholder="Nama Lengkap Anda"
+              value={formData.full_name}
+              onChange={handleChange}
+            />
           </div>
 
           <div className="form-group">
             <label htmlFor="username">Username *</label>
-            <input type="text" id="username" placeholder="cth: chefbudi_123" required value={formData.username} onChange={handleChange} />
+            <input
+              type="text"
+              id="username"
+              placeholder="cth: chefbudi_123"
+              required
+              value={formData.username}
+              onChange={handleChange}
+            />
           </div>
 
           <div className="form-group">
             <label htmlFor="pronouns">Kata Ganti</label>
-            <input type="text" id="pronouns" placeholder="cth: dia/mereka" value={formData.pronouns} onChange={handleChange} />
+            <input
+              type="text"
+              id="pronouns"
+              placeholder="cth: dia/mereka"
+              value={formData.pronouns}
+              onChange={handleChange}
+            />
           </div>
 
           <div className="form-group">
             <label htmlFor="bio">Bio Singkat</label>
-            <textarea id="bio" rows="3" placeholder="Ceritakan sedikit tentang diri Anda..." value={formData.bio} onChange={handleChange}></textarea>
+            <textarea
+              id="bio"
+              rows="3"
+              placeholder="Ceritakan sedikit tentang diri Anda..."
+              value={formData.bio}
+              onChange={handleChange}
+            ></textarea>
           </div>
 
           <div className="form-group social-links-group">
@@ -122,32 +175,60 @@ const SetupProfile = () => {
 
             <div className="social-input-wrapper">
               <i className="fab fa-tiktok"></i>
-              <input type="url" id="link_tiktok" placeholder="Link profil TikTok Anda" value={formData.link_tiktok} onChange={handleChange} />
+              <input
+                type="url"
+                id="link_tiktok"
+                placeholder="Link profil TikTok Anda"
+                value={formData.link_tiktok}
+                onChange={handleChange}
+              />
             </div>
 
             <div className="social-input-wrapper">
               <i className="fab fa-instagram"></i>
-              <input type="url" id="link_instagram" placeholder="Link profil Instagram Anda" value={formData.link_instagram} onChange={handleChange} />
+              <input
+                type="url"
+                id="link_instagram"
+                placeholder="Link profil Instagram Anda"
+                value={formData.link_instagram}
+                onChange={handleChange}
+              />
             </div>
 
             <div className="social-input-wrapper">
               <i className="fab fa-linkedin"></i>
-              <input type="url" id="link_linkedin" placeholder="Link profil LinkedIn Anda" value={formData.link_linkedin} onChange={handleChange} />
+              <input
+                type="url"
+                id="link_linkedin"
+                placeholder="Link profil LinkedIn Anda"
+                value={formData.link_linkedin}
+                onChange={handleChange}
+              />
             </div>
 
             <div className="social-input-wrapper">
               <i className="fas fa-link"></i>
-              <input type="url" id="link_other" placeholder="Link lainnya" value={formData.link_other} onChange={handleChange} />
+              <input
+                type="url"
+                id="link_other"
+                placeholder="Link lainnya"
+                value={formData.link_other}
+                onChange={handleChange}
+              />
             </div>
           </div>
 
-          <button type="submit" className="cta-button auth-button" disabled={loading}>
-            {loading ? 'Menyimpan...' : 'Simpan Profil & Mulai'}
+          <button
+            type="submit"
+            className="cta-button auth-button"
+            disabled={loading}
+          >
+            {loading ? "Menyimpan..." : "Simpan Profil & Mulai"}
           </button>
         </form>
       </div>
 
-      <footer style={{textAlign: 'center', marginTop: '30px', color: '#666'}}>
+      <footer style={{ textAlign: "center", marginTop: "30px", color: "#666" }}>
         <p>&copy; 2025 CookConnect.</p>
       </footer>
     </div>
