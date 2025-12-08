@@ -36,16 +36,7 @@ const FeedPage = () => {
         setError(`Gagal mengambil data. Menampilkan data mock.`);
 
         // Fallback ke data mock
-        if (query) {
-          const filteredMock = initialRecipesData.filter(
-            (r) =>
-              r.title.toLowerCase().includes(query.toLowerCase()) ||
-              r.description.toLowerCase().includes(query.toLowerCase())
-          );
-          setFeedRecipes(filteredMock);
-        } else {
-          setFeedRecipes(initialRecipesData);
-        }
+        
       } finally {
         setIsLoading(false);
       }
