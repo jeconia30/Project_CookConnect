@@ -1,17 +1,20 @@
-import axios from "axios";
+import axios from 'axios';
 
-// Instance utama untuk JSON
+// Gunakan Environment Variable
+const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
+
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api",
+  baseURL: BASE_URL,
   headers: {
-    "Content-Type": "application/json",
+    'Content-Type': 'application/json',
   },
 });
 
-// Axios khusus untuk upload (multipart/form-data)
 const uploadApi = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api",
+  baseURL: BASE_URL,
 });
+
+// ... sisanya sama (interceptor, dll)
 
 // Interceptor: tambah token ke request
 api.interceptors.request.use(
