@@ -25,7 +25,7 @@ const LoginForm = ({ onToggle }) => {
       });
 
       // ✅ PERBAIKAN UTAMA: Akses .data.data
-      const { token, user } = response.data.data; 
+      const { token, user } = response.data.data;
 
       if (token) {
         localStorage.setItem("authToken", token);
@@ -35,7 +35,6 @@ const LoginForm = ({ onToggle }) => {
       } else {
         throw new Error("Token kosong dari server");
       }
-
     } catch (error) {
       console.error("Login Error:", error.response || error);
       alert("Login gagal! Cek email/password Anda.");
@@ -81,12 +80,17 @@ const LoginForm = ({ onToggle }) => {
       </div>
 
       <div className="form-extra">
-        <Link to="/forgot-password" class="forgot-password">
+        <Link to="/forgot-password" className="forgot-password">
+          {" "}
           Lupa Password?
         </Link>
       </div>
 
-      <button type="submit" className="cta-button auth-button" disabled={isLoading}>
+      <button
+        type="submit"
+        className="cta-button auth-button"
+        disabled={isLoading}
+      >
         {isLoading ? "Memproses..." : "Login"}
       </button>
 
@@ -94,7 +98,11 @@ const LoginForm = ({ onToggle }) => {
         <span>ATAU</span>
       </div>
 
-      <a href="#" className="cta-button google-auth-button" onClick={(e) => e.preventDefault()}>
+      <a
+        href="#"
+        className="cta-button google-auth-button"
+        onClick={(e) => e.preventDefault()}
+      >
         <i className="fab fa-google"></i> Login dengan Google
       </a>
 
@@ -167,12 +175,11 @@ const RegisterForm = ({ onToggle }) => {
       } else {
         throw new Error("Token kosong dari server");
       }
-
     } catch (error) {
       console.error("Register Error:", error.response || error);
       let errorMsg = "Registrasi gagal!";
       if (error.response?.data?.message) {
-          errorMsg = error.response.data.message;
+        errorMsg = error.response.data.message;
       }
       alert(`Gagal: ${errorMsg}`);
     } finally {
