@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate, Link } from "react-router-dom"; // Wajib import ini
+import { useNavigate, Link } from "react-router-dom";
 import api from "../api/axiosInstance";
 import "../styles/app.css";
 
@@ -19,19 +19,23 @@ const LoginForm = ({ onToggle }) => {
     setIsLoading(true);
 
     try {
-      // PANGGIL API LOGIN
-      // Di LoginForm handleSubmit:
       const response = await api.post("/auth/login", {
         username_or_email: formData.email,
         password: formData.password,
       });
 
-      const { token, user_data } = response.data;
-      localStorage.setItem("authToken", token);
-      localStorage.setItem("userProfileData", JSON.stringify(user_data));
+      // ✅ PERBAIKAN UTAMA: Akses .data.data
+      const { token, user } = response.data.data; 
 
-      alert("Login berhasil!");
-      navigate("/feed");
+      if (token) {
+        localStorage.setItem("authToken", token);
+        localStorage.setItem("userProfileData", JSON.stringify(user));
+        alert("Login berhasil!");
+        navigate("/feed");
+      } else {
+        throw new Error("Token kosong dari server");
+      }
+
     } catch (error) {
       console.error("Login Error:", error.response || error);
       alert("Login gagal! Cek email/password Anda.");
@@ -48,7 +52,7 @@ const LoginForm = ({ onToggle }) => {
       <div className="form-group">
         <label htmlFor="login-email">Email/Username</label>
         <input
-          type="text" // Bisa text/email
+          type="text"
           id="login-email"
           value={formData.email}
           onChange={handleChange}
@@ -60,13 +64,12 @@ const LoginForm = ({ onToggle }) => {
         <label htmlFor="login-password">Password</label>
         <div className="password-wrapper">
           <input
-            type={showPassword ? "text" : "password"} // Logika Show/Hide
+            type={showPassword ? "text" : "password"}
             id="login-password"
             value={formData.password}
             onChange={handleChange}
             required
           />
-          {/* Ikon Mata diklik -> ubah state showPassword */}
           <i
             className={`fas ${
               showPassword ? "fa-eye" : "fa-eye-slash"
@@ -78,26 +81,20 @@ const LoginForm = ({ onToggle }) => {
       </div>
 
       <div className="form-extra">
-        {/* Pakai Link agar tidak reload */}
-        <Link to="/forgot-password" className="forgot-password">
+        <Link to="/forgot-password" class="forgot-password">
           Lupa Password?
         </Link>
       </div>
 
-      <button type="submit" className="cta-button auth-button">
-        Login
+      <button type="submit" className="cta-button auth-button" disabled={isLoading}>
+        {isLoading ? "Memproses..." : "Login"}
       </button>
 
       <div className="auth-divider">
         <span>ATAU</span>
       </div>
 
-      <a
-        href="https://accounts.google.com/"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="cta-button google-auth-button"
-      >
+      <a href="#" className="cta-button google-auth-button" onClick={(e) => e.preventDefault()}>
         <i className="fab fa-google"></i> Login dengan Google
       </a>
 
@@ -117,10 +114,9 @@ const RegisterForm = ({ onToggle }) => {
   const [showConfirm, setShowConfirm] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  // 1. Tambahkan state untuk 'username'
   const [formData, setFormData] = useState({
     name: "",
-    username: "", // TAMBAHAN BARU
+    username: "",
     email: "",
     password: "",
     confirmPassword: "",
@@ -129,7 +125,7 @@ const RegisterForm = ({ onToggle }) => {
   const handleChange = (e) => {
     let key = "";
     if (e.target.id === "reg-name") key = "name";
-    else if (e.target.id === "reg-username") key = "username"; // HANDLER BARU
+    else if (e.target.id === "reg-username") key = "username";
     else if (e.target.id === "reg-email") key = "email";
     else if (e.target.id === "reg-password") key = "password";
     else if (e.target.id === "reg-password-confirm") key = "confirmPassword";
@@ -140,13 +136,11 @@ const RegisterForm = ({ onToggle }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validasi Password Match
     if (formData.password !== formData.confirmPassword) {
       alert("Password dan Konfirmasi tidak cocok!");
       return;
     }
 
-    // Validasi Panjang Password (Sesuai Backend)
     if (formData.password.length < 8) {
       alert("Password minimal 8 karakter!");
       return;
@@ -155,27 +149,31 @@ const RegisterForm = ({ onToggle }) => {
     setIsLoading(true);
 
     try {
-      // 2. Sesuaikan Payload dengan Backend (full_name & username)
       const response = await api.post("/auth/register", {
-        full_name: formData.name, // Backend minta 'full_name', bukan 'name'
-        username: formData.username, // Backend wajibkan ini
+        full_name: formData.name,
+        username: formData.username,
         email: formData.email,
         password: formData.password,
       });
 
-      // SIMPAN TOKEN
-      const token = response.data.token;
-      localStorage.setItem("authToken", token);
+      // ✅ PERBAIKAN UTAMA: Akses .data.data
+      const { token, user } = response.data.data;
 
-      alert("Registrasi berhasil! Lanjutkan melengkapi profil.");
-      navigate("/setup-profile");
+      if (token) {
+        localStorage.setItem("authToken", token);
+        localStorage.setItem("userProfileData", JSON.stringify(user));
+        alert("Registrasi berhasil! Lanjutkan melengkapi profil.");
+        navigate("/setup-profile");
+      } else {
+        throw new Error("Token kosong dari server");
+      }
+
     } catch (error) {
       console.error("Register Error:", error.response || error);
-      // Tampilkan pesan error spesifik dari backend jika ada
-      const errorMsg =
-        error.response?.data?.message || error.response?.data?.errors
-          ? JSON.stringify(error.response.data.errors)
-          : "Registrasi gagal!";
+      let errorMsg = "Registrasi gagal!";
+      if (error.response?.data?.message) {
+          errorMsg = error.response.data.message;
+      }
       alert(`Gagal: ${errorMsg}`);
     } finally {
       setIsLoading(false);
@@ -198,7 +196,6 @@ const RegisterForm = ({ onToggle }) => {
         />
       </div>
 
-      {/* 3. INPUT USERNAME BARU */}
       <div className="form-group">
         <label htmlFor="reg-username">Username</label>
         <input

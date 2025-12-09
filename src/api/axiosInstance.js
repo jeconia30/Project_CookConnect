@@ -26,9 +26,21 @@ api.interceptors.request.use(
 
 uploadApi.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem("authToken");
-    if (token) config.headers.Authorization = `Bearer ${token}`;
-    delete config.headers["Content-Type"];
+    const token = localStorage.getItem('authToken');
+    
+    // --- TAMBAHAN LOGGING (CCTV) ---
+    console.log("=== DEBUG UPLOAD ===");
+    console.log("Token di LocalStorage:", token);
+    
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+      console.log("Header Authorization dikirim:", config.headers.Authorization);
+    } else {
+      console.warn("⚠️ PERINGATAN: Tidak ada token yang dikirim!");
+    }
+    // -------------------------------
+
+    delete config.headers['Content-Type'];
     return config;
   },
   (error) => Promise.reject(error)
