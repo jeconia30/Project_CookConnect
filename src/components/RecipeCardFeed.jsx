@@ -8,12 +8,23 @@ const RecipeCardFeed = ({ recipe }) => {
 
   const authToken = localStorage.getItem("authToken");
   
-  // 1. Ambil data user yang sedang login untuk cek profil sendiri
+  // Ambil data user yang sedang login
   const currentUserData = JSON.parse(localStorage.getItem('userProfileData') || '{}');
   const currentUsername = currentUserData.username;
+
+  // --- PENYESUAIAN DATA (MAPPING) ---
+  // Prioritaskan nama asli (full_name/user_fullname) daripada author (yang mungkin username)
+  const displayName = recipe.user_fullname || recipe.full_name || recipe.name || recipe.author || "Pengguna";
   
-  // Boolean: apakah ini resep milik user yang sedang login?
-  const isOwnRecipe = currentUsername === recipe.handle;
+  // Prioritaskan username asli
+  const displayHandle = recipe.username || recipe.handle || "user";
+  
+  // Prioritaskan avatar_url (standar backend)
+  const displayAvatar = recipe.avatar_url || recipe.avatar || "https://placehold.co/50";
+  // ----------------------------------
+  
+  // Cek apakah ini resep sendiri
+  const isOwnRecipe = currentUsername === displayHandle;
 
   const parseList = (data) => {
     if (!data) return [];
@@ -33,7 +44,7 @@ const RecipeCardFeed = ({ recipe }) => {
   const steps = parseList(recipe.steps);
 
   const [isLiked, setIsLiked] = useState(recipe.is_liked || false);
-  const [likeCount, setLikeCount] = useState(recipe.likes || 0);
+  const [likeCount, setLikeCount] = useState(recipe.like_count || recipe.likes || 0); // Update juga counter likes
   const [isFollowing, setIsFollowing] = useState(recipe.is_following || false);
   const [isSaved, setIsSaved] = useState(recipe.is_saved || false);
 
@@ -56,7 +67,7 @@ const RecipeCardFeed = ({ recipe }) => {
   };
 
   const handleFollow = () => {
-    const endpoint = isFollowing ? `/users/${recipe.handle}/unfollow` : `/users/${recipe.handle}/follow`;
+    const endpoint = isFollowing ? `/users/${displayHandle}/unfollow` : `/users/${displayHandle}/follow`;
     handleAction(endpoint, () => setIsFollowing(!isFollowing));
   };
 
@@ -66,13 +77,15 @@ const RecipeCardFeed = ({ recipe }) => {
     <div className="feed-card">
       <div className="card-header">
         <div className="user-profile">
-          <img src={recipe.avatar || "https://placehold.co/50"} alt="avatar" className="avatar" />
+          <img src={displayAvatar} alt="avatar" className="avatar" />
           <div className="user-info">
-            <Link to={`/profile/${recipe.handle}`} className="username">{recipe.author}</Link>
+            {/* GANTI: Gunakan displayName untuk teks tebal */}
+            <Link to={`/profile/${displayHandle}`} className="username">{displayName}</Link>
+            
             <div className="handle-row">
-              <span className="handle">@{recipe.handle}</span>
+              {/* GANTI: Gunakan displayHandle untuk @username */}
+              <span className="handle">@{displayHandle}</span>
               
-              {/* LOGIKA: Sembunyikan tombol jika profil sendiri */}
               {!isOwnRecipe && (
                 <>
                   <span className="separator">•</span>
@@ -83,7 +96,7 @@ const RecipeCardFeed = ({ recipe }) => {
               )}
               
             </div>
-            <span className="time">{recipe.time}</span>
+            <span className="time">{recipe.time || new Date(recipe.created_at).toLocaleDateString()}</span>
           </div>
         </div>
       </div>
@@ -92,11 +105,8 @@ const RecipeCardFeed = ({ recipe }) => {
         <div className="card-body">
           {/* Kolom Kiri: Teks */}
           <div className="recipe-text-content">
-            
-            {/* URUTAN 1: JUDUL */}
             <h2 className="recipe-title">{recipe.title}</h2>
 
-            {/* URUTAN 2: CARA BUAT */}
             {steps.length > 0 ? (
               <div className="preview-section">
                 <strong><i className="fas fa-list"></i> Cara Buat:</strong>
@@ -119,16 +129,18 @@ const RecipeCardFeed = ({ recipe }) => {
               </div>
             ) : null}
 
-            {/* URUTAN 3: DESKRIPSI */}
             <p className="card-desc-only">
               {recipe.description ? recipe.description : "Tidak ada deskripsi singkat."}
             </p>
-
           </div>
 
-          {/* Kolom Kanan: Foto (45% lebar) */}
+          {/* Kolom Kanan: Foto */}
           <div className="recipe-img-wrapper">
-            <img src={recipe.image || "https://placehold.co/300"} alt={recipe.title} className="recipe-img" />
+            <img 
+              src={recipe.image_url || recipe.image || "https://placehold.co/300"} 
+              alt={recipe.title} 
+              className="recipe-img" 
+            />
           </div>
         </div>
       </Link>
@@ -138,8 +150,6 @@ const RecipeCardFeed = ({ recipe }) => {
           <i className={isLiked ? "fas fa-heart" : "far fa-heart"}></i> 
           <span>{formatNumber(likeCount)} Suka</span>
         </button>
-        
-        {/* Hapus garis bawah komentar */}
         <Link 
           to={`/recipe/${recipe.id}#comments-section`} 
           className="action-btn"
@@ -148,7 +158,6 @@ const RecipeCardFeed = ({ recipe }) => {
           <i className="far fa-comment"></i> 
           <span>{recipe.comments || 0} Komentar</span>
         </Link>
-
         <button className="action-btn" onClick={() => alert('Disalin!')}>
           <i className="far fa-share-square"></i>
           <span>Bagikan</span>
