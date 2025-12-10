@@ -240,7 +240,52 @@ const RecipeDetail = () => {
               <ol>{recipe.steps?.map((step, idx) => <li key={idx}>{step}</li>)}</ol>
             </div>
           </div>
+{(recipe.video_url || recipe.tiktok_url || recipe.instagram_url) && (
+            <div className="recipe-links-section" style={{ marginTop: '30px', marginBottom: '20px' }}>
+              <h3 style={{ fontSize: '1.1rem', color: '#333', marginBottom: '15px' }}>
+                <i className="fas fa-link"></i> Tonton Tutorial
+              </h3>
+              <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+                
+                {/* Link YouTube */}
+                {recipe.video_url && (
+                  <a href={recipe.video_url} target="_blank" rel="noopener noreferrer" 
+                     style={{
+                       display: 'flex', alignItems: 'center', gap: '8px',
+                       padding: '10px 16px', borderRadius: '8px',
+                       backgroundColor: '#ff0000', color: 'white', textDecoration: 'none', fontWeight: 'bold'
+                     }}>
+                    <i className="fab fa-youtube"></i> YouTube
+                  </a>
+                )}
 
+                {/* Link TikTok */}
+                {recipe.tiktok_url && (
+                  <a href={recipe.tiktok_url} target="_blank" rel="noopener noreferrer" 
+                     style={{
+                       display: 'flex', alignItems: 'center', gap: '8px',
+                       padding: '10px 16px', borderRadius: '8px',
+                       backgroundColor: '#000000', color: 'white', textDecoration: 'none', fontWeight: 'bold'
+                     }}>
+                    <i className="fab fa-tiktok"></i> TikTok
+                  </a>
+                )}
+
+                {/* Link Instagram */}
+                {recipe.instagram_url && (
+                  <a href={recipe.instagram_url} target="_blank" rel="noopener noreferrer" 
+                     style={{
+                       display: 'flex', alignItems: 'center', gap: '8px',
+                       padding: '10px 16px', borderRadius: '8px',
+                       background: 'linear-gradient(45deg, #f09433 0%,#e6683c 25%,#dc2743 50%,#cc2366 75%,#bc1888 100%)', 
+                       color: 'white', textDecoration: 'none', fontWeight: 'bold'
+                     }}>
+                    <i className="fab fa-instagram"></i> Instagram
+                  </a>
+                )}
+              </div>
+            </div>
+          )}
           {/* REVISI NO. 3: Komentar (Sudah dimapping fotonya di fungsi fetchComments) */}
           <CommentsSection
             comments={comments}

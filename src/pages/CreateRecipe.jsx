@@ -137,12 +137,16 @@ function CreateRecipe() {
         title: recipeInfo.title,
         description: recipeInfo.shortDescription,
         image_url: recipeImageUrl,
-        ingredients: finalIngredients, // Kirim array string
+        ingredients: finalIngredients,
         steps: finalSteps,
         total_time: parseInt(details.totalTime) || 0,
         servings: parseInt(details.servingSize) || 0,
         difficulty: details.difficulty,
+        
+        // UPDATE BAGIAN INI:
         video_url: recipeInfo.linkYoutube || null,
+        tiktok_url: recipeInfo.linkTiktok || null,     // Tambahkan ini
+        instagram_url: recipeInfo.linkInstagram || null // Tambahkan ini
       };
 
       await api.post("/recipes", payload, {
