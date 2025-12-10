@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import api from "../api/axiosInstance";
 import { uploadRecipeImage } from "../services/uploadService"; 
 import "../styles/app.css";
+import { showPopup, showConfirm } from "../utils/swal"; // IMPOR POPUP
 
 function CreateRecipe() {
   const navigate = useNavigate();
@@ -13,7 +14,7 @@ function CreateRecipe() {
   const [recipeImage, setRecipeImage] = useState(null); 
   const [recipeImageUrl, setRecipeImageUrl] = useState(null); 
 
-  // UBAH: State ingredients sekarang menyimpan object { name, quantity }
+  // Ingredients { name, quantity }
   const [ingredients, setIngredients] = useState([{ name: "", quantity: "" }]);
   
   const [steps, setSteps] = useState([""]);
@@ -48,7 +49,6 @@ function CreateRecipe() {
     }));
   };
 
-  // UBAH: Handler untuk input bahan yang terpisah (Nama & Kuantitas)
   const handleIngredientChange = (index, field, value) => {
     const newIngredients = [...ingredients];
     newIngredients[index][field] = value;
@@ -61,7 +61,6 @@ function CreateRecipe() {
     setSteps(newSteps);
   };
 
-  // UBAH: Menambah baris bahan baru dengan format object kosong
   const handleAddIngredient = () => {
     setIngredients([...ingredients, { name: "", quantity: "" }]);
   };
@@ -94,7 +93,7 @@ function CreateRecipe() {
         setRecipeImageUrl(result.url);
         console.log("Gambar resep uploaded:", result.url);
       } catch (error) {
-        alert("Gagal upload gambar: " + error.message);
+        showPopup("Gagal Upload", "Gagal upload gambar: " + error.message, "error");
       } finally {
         setUploadingImage(false);
       }
@@ -107,19 +106,17 @@ function CreateRecipe() {
 
     const authToken = localStorage.getItem("authToken");
     if (!authToken) {
-      alert("Sesi habis. Silakan login ulang.");
+      showPopup("Sesi Habis", "Silakan login ulang.", "warning");
       setIsLoading(false);
       return;
     }
 
     if (!recipeImageUrl) {
-      alert("Harap tunggu upload gambar selesai atau pilih gambar terlebih dahulu.");
+      showPopup("Belum Ada Foto", "Harap tunggu upload gambar selesai atau pilih gambar terlebih dahulu.", "warning");
       setIsLoading(false);
       return;
     }
 
-    // UBAH: Gabungkan Quantity dan Name menjadi satu string sebelum dikirim ke backend
-    // Format: "200gr Daging Ayam"
     const finalIngredients = ingredients
       .filter(item => item.name.trim() !== "" || item.quantity.trim() !== "")
       .map(item => `${item.quantity.trim()} ${item.name.trim()}`.trim());
@@ -127,7 +124,7 @@ function CreateRecipe() {
     const finalSteps = steps.filter((step) => step.trim() !== "");
 
     if (finalIngredients.length === 0) {
-        alert("Mohon isi minimal satu bahan (Nama Bahan).");
+        showPopup("Bahan Kosong", "Mohon isi minimal satu bahan (Nama Bahan).", "warning");
         setIsLoading(false);
         return;
     }
@@ -142,11 +139,9 @@ function CreateRecipe() {
         total_time: parseInt(details.totalTime) || 0,
         servings: parseInt(details.servingSize) || 0,
         difficulty: details.difficulty,
-        
-        // UPDATE BAGIAN INI:
         video_url: recipeInfo.linkYoutube || null,
-        tiktok_url: recipeInfo.linkTiktok || null,     // Tambahkan ini
-        instagram_url: recipeInfo.linkInstagram || null // Tambahkan ini
+        tiktok_url: recipeInfo.linkTiktok || null,
+        instagram_url: recipeInfo.linkInstagram || null
       };
 
       await api.post("/recipes", payload, {
@@ -156,21 +151,31 @@ function CreateRecipe() {
         },
       });
 
-      alert("Resep berhasil diterbitkan!");
+      await showPopup("Berhasil!", "Resep berhasil diterbitkan!", "success");
       navigate("/feed");
     } catch (error) {
       console.error("Error Create Recipe:", error);
-      alert(
-        "Gagal menerbitkan resep: " +
-          (error.response?.data?.error || error.message)
+      showPopup(
+        "Gagal",
+        "Gagal menerbitkan resep: " + (error.response?.data?.error || error.message),
+        "error"
       );
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleCancel = () => {
-    if (window.confirm("Batalkan pembuatan resep?")) navigate("/feed");
+  const handleCancel = async () => {
+    // PENGGANTI WINDOW.CONFIRM
+    const isConfirmed = await showConfirm(
+        "Batalkan Resep?", 
+        "Data yang sudah diisi akan hilang.", 
+        "Ya, Batalkan"
+    );
+
+    if (isConfirmed) {
+        navigate("/feed");
+    }
   };
 
   return (
@@ -205,7 +210,6 @@ function CreateRecipe() {
           />
           <label htmlFor="recipe-image-upload" className="upload-label">
             
-            {/* LOGIKA TAMPILAN GAMBAR */}
             {recipeImage ? (
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                 <img
@@ -305,7 +309,6 @@ function CreateRecipe() {
         <div className="list">
           {ingredients.map((item, index) => (
             <div className="row" key={index}>
-              {/* INPUT 1: KUANTITAS (Kecil di kiri) */}
               <input
                 className="input"
                 style={{ width: "25%", minWidth: "80px" }} 
@@ -315,7 +318,6 @@ function CreateRecipe() {
                 placeholder="Takaran" 
               />
               
-              {/* INPUT 2: NAMA BAHAN (Lebar di kanan) */}
               <input
                 className="input flex-grow"
                 type="text"

@@ -4,6 +4,7 @@ import "../styles/app.css";
 import api from "../api/axiosInstance";
 import RecipeCardProfile from "../components/RecipeCardProfile";
 import { uploadProfileAvatar } from "../services/uploadService"; 
+import { showPopup, showConfirm } from "../utils/swal"; // IMPOR POPUP
 
 import defaultProfilePic from "../assets/geprek.jpeg";
 
@@ -121,7 +122,7 @@ const ProfilePage = ({ isCurrentUser }) => {
         setEditFormData((prev) => ({ ...prev, avatar_url: result.url }));
         setEditImagePreview(result.url);
       } catch (error) {
-        alert("Gagal mengupload foto.");
+        showPopup("Gagal", "Gagal mengupload foto.", "error");
       } finally {
         setUploadingImage(false);
       }
@@ -147,7 +148,6 @@ const ProfilePage = ({ isCurrentUser }) => {
         headers: { Authorization: `Bearer ${authToken}` },
       });
 
-      // UPDATE STATE COMPONENT
       setProfileData((prev) => ({
         ...prev,
         ...payload,
@@ -164,32 +164,42 @@ const ProfilePage = ({ isCurrentUser }) => {
       };
       localStorage.setItem('userProfileData', JSON.stringify(newStorage));
 
-      alert("Profil berhasil diperbarui!");
+      await showPopup("Sukses!", "Profil berhasil diperbarui.", "success");
       setIsEditOpen(false);
       window.location.reload(); 
 
     } catch (err) {
-      alert("Gagal memperbarui profil.");
+      showPopup("Gagal", "Gagal memperbarui profil.", "error");
     }
   };
 
   const handleDeleteAccount = async () => {
-    if (!window.confirm("Yakin ingin menghapus akun? SEMUA DATA HILANG PERMANEN.")) return;
+    // PENGGANTI WINDOW.CONFIRM
+    const confirmed = await showConfirm(
+        "Hapus Akun Permanen?",
+        "Aksi ini tidak bisa dibatalkan. Semua resep dan data Anda akan hilang.",
+        "Ya, Hapus!",
+        "Batal"
+    );
+
+    if (!confirmed) return;
+
     const authToken = localStorage.getItem("authToken");
     try {
       await api.delete(`/users/${profileData.id}`, {
         headers: { Authorization: `Bearer ${authToken}` },
       });
       localStorage.clear();
+      await showPopup("Sampai Jumpa", "Akun Anda telah dihapus.", "success");
       navigate("/login");
     } catch (error) {
-      alert("Gagal menghapus akun.");
+      showPopup("Gagal", "Gagal menghapus akun.", "error");
     }
   };
 
   const handleFollowClick = async () => {
     const authToken = localStorage.getItem("authToken");
-    if (!authToken) return alert("Login dulu.");
+    if (!authToken) return showPopup("Login Dulu", "Anda harus login untuk mengikuti user.", "warning");
     try {
       const action = isFollowing ? "unfollow" : "follow";
       await api.post(`/users/${profileData.username}/${action}`, {}, {
@@ -202,7 +212,7 @@ const ProfilePage = ({ isCurrentUser }) => {
         followers_count: prev.followers_count + (isFollowing ? -1 : 1),
       }));
     } catch (err) {
-      alert("Gagal memproses.");
+      showPopup("Gagal", "Gagal memproses permintaan.", "error");
     }
   };
 
