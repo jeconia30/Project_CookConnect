@@ -120,7 +120,7 @@ function LandingPage() {
           <div
             className="hero-illustration"
             style={{
-              backgroundImage: `url('https://i.pinimg.com/1200x/bd/e5/12/bde5123b32122d235c5fc8c3fb367417.jpg')`,
+              backgroundImage: `url('https://i.pinimg.com/736x/1e/18/ac/1e18aca3d53126cc7df3174ce1b7638c.jpg')`,
               backgroundSize: "cover",
               backgroundPosition: "center",
             }}
@@ -145,27 +145,34 @@ function LandingPage() {
 
               <div className="contact-social-list" style={{ 
                   display: 'flex', 
-                  flexDirection: 'column', 
-                  alignItems: 'center',
-                  gap: '20px' 
+                  flexDirection: 'row',      
+                  justifyContent: 'center',   
+                  gap: '40px',                
+                  marginTop: '20px'
               }}>
                 
                 <a href="https://wa.me/081362533730" target="_blank" rel="noopener noreferrer" 
-                   style={{ display: 'flex', alignItems: 'center', gap: '15px', textDecoration: 'none', fontSize: '1.2rem', color: '#555', padding: '10px 20px', borderRadius: '10px', backgroundColor: 'white', boxShadow: '0 2px 8px rgba(0,0,0,0.05)', width: 'fit-content', minWidth: '250px' }}>
-                  <i className="fab fa-whatsapp" style={{ fontSize: '1.8rem', color: '#25D366' }}></i>
-                  <span style={{ fontWeight: '500' }}>WhatsApp</span>
+                   style={{ textDecoration: 'none', color: '#38761d', fontSize: '3.5rem', transition: 'transform 0.2s' }}
+                   onMouseEnter={(e) => e.target.style.transform = 'scale(1.1)'}
+                   onMouseLeave={(e) => e.target.style.transform = 'scale(1)'}
+                >
+                  <i className="fab fa-whatsapp"></i>
                 </a>
 
                 <a href="https://instagram.com/lemarilama.preloved" target="_blank" rel="noopener noreferrer" 
-                   style={{ display: 'flex', alignItems: 'center', gap: '15px', textDecoration: 'none', fontSize: '1.2rem', color: '#555', padding: '10px 20px', borderRadius: '10px', backgroundColor: 'white', boxShadow: '0 2px 8px rgba(0,0,0,0.05)', width: 'fit-content', minWidth: '250px' }}>
-                  <i className="fab fa-instagram" style={{ fontSize: '1.8rem', color: '#E1306C' }}></i>
-                  <span style={{ fontWeight: '500' }}>@cookconnect</span>
+                   style={{ textDecoration: 'none', color: '#38761d', fontSize: '3.5rem', transition: 'transform 0.2s' }}
+                   onMouseEnter={(e) => e.target.style.transform = 'scale(1.1)'}
+                   onMouseLeave={(e) => e.target.style.transform = 'scale(1)'}
+                >
+                  <i className="fab fa-instagram"></i>
                 </a>
 
                 <a href="https://www.tiktok.com/@puttripaadaang?is_from_webapp=1&sender_device=pc" target="_blank" rel="noopener noreferrer" 
-                   style={{ display: 'flex', alignItems: 'center', gap: '15px', textDecoration: 'none', fontSize: '1.2rem', color: '#555', padding: '10px 20px', borderRadius: '10px', backgroundColor: 'white', boxShadow: '0 2px 8px rgba(0,0,0,0.05)', width: 'fit-content', minWidth: '250px' }}>
-                  <i className="fab fa-tiktok" style={{ fontSize: '1.8rem', color: '#000' }}></i>
-                  <span style={{ fontWeight: '500' }}>@cookconnect</span>
+                   style={{ textDecoration: 'none', color: '#38761d', fontSize: '3.5rem', transition: 'transform 0.2s' }}
+                   onMouseEnter={(e) => e.target.style.transform = 'scale(1.1)'}
+                   onMouseLeave={(e) => e.target.style.transform = 'scale(1)'}
+                >
+                  <i className="fab fa-tiktok"></i>
                 </a>
 
               </div>
