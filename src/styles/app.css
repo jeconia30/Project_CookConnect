@@ -1872,36 +1872,46 @@ footer p {
 .user-details-column { display: flex; flex-direction: column; }
 
 .user-details-top {
-  display: flex;
-  align-items: center;
+  display: flex !important;
+  flex-direction: row !important;
+  
+  /* UBAH DARI center KE baseline AGAR TEKS RATA BAWAH */
+  align-items: baseline !important; 
+  
   gap: 8px;
-  margin-bottom: 5px;
+  margin-bottom: 2px;
+  flex-wrap: wrap;
 }
 
+/* Pastikan reset margin untuk elemen di dalamnya */
 .user-details-top strong {
-  font-weight: 700;
+  margin: 0 !important;
+  font-size: 1.1rem;
   color: #222;
+  line-height: 1; 
 }
 
 .user-details-top .username {
-  font-weight: 400;
-  color: #777;
+  margin: 0 !important;
+  font-size: 0.95rem;
+  color: #666;
 }
-.username { color: #666; }
 
 .follow-button.text-only {
   background: transparent !important;
   border: none !important;
   color: #38761d !important;
-  font-weight: 600;
-  font-size: 0.9rem;
+  font-weight: 700;
+  font-size: 0.95rem;
   cursor: pointer;
-  padding: 0;
-  margin-left: 5px;
-}
-
-.follow-button.text-only:hover {
-  text-decoration: underline;
+  
+  /* Reset padding/margin agar tombol tidak punya "ruang hantu" */
+  padding: 0 !important;
+  margin: 0 !important;
+  line-height: 1 !important; 
+  
+  /* Tweak sedikit posisi vertikal jika font button beda jenis */
+  position: relative;
 }
 
 .dot-separator {
