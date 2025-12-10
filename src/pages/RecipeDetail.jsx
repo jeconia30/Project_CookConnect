@@ -20,7 +20,7 @@ const RecipeDetail = () => {
   // Data User Login
   const authToken = localStorage.getItem("authToken");
   const currentUserData = JSON.parse(localStorage.getItem('userProfileData') || '{}');
-  const currentUsername = currentUserData.username; // Username yang sedang login
+  const currentUsername = currentUserData.username; 
 
   // State Interaksi
   const [isLiked, setIsLiked] = useState(false);
@@ -34,11 +34,10 @@ const RecipeDetail = () => {
       const commentsRes = await api.get(`/comments/recipe/${id}`);
       const rawComments = commentsRes.data.comments || [];
       
-      // REVISI NO. 3: Mapping data komentar agar foto muncul
+      // ✅ PERBAIKAN 1: Tambahkan c.avatar (karena backend kirim 'avatar')
       const mappedComments = rawComments.map(c => ({
         ...c,
-        // Backend mungkin kirim 'avatar_url', 'photo', atau 'user_avatar'. Kita cek semua.
-        avatar: c.avatar_url || c.photo || c.user_avatar || "https://placehold.co/50",
+        avatar: c.avatar || c.avatar_url || c.photo || "https://placehold.co/50",
         name: c.user_fullname || c.name || "User",
         username: c.username || "user"
       }));
@@ -58,16 +57,15 @@ const RecipeDetail = () => {
           headers: { Authorization: `Bearer ${authToken}` },
         });
 
+        // Cek struktur response (kadang dibungkus data, kadang langsung)
         const apiRecipe = response.data?.data || response.data;
         setRecipe(apiRecipe);
 
-        // Set state awal interaksi
         setIsLiked(apiRecipe.is_liked || false);
         setLikeCount(apiRecipe.like_count || apiRecipe.likes || 0);
         setIsSaved(apiRecipe.is_saved || false);
         setIsFollowing(apiRecipe.is_following || false);
 
-        // Ambil komentar setelah resep berhasil dimuat
         fetchComments();
       } catch (err) {
         console.error("Error loading recipe:", err);
@@ -92,7 +90,7 @@ const RecipeDetail = () => {
         { headers: { Authorization: `Bearer ${authToken}` } }
       );
       
-      // Optimistic Update: Tambah komentar baru ke list tanpa reload
+      // Optimistic Update
       const newComment = {
         id: Date.now(),
         name: currentUserData?.full_name || "Anda",
@@ -130,7 +128,8 @@ const RecipeDetail = () => {
 
   const handleFollow = () => {
     if (!recipe) return;
-    const targetUser = recipe.username || recipe.author_username; 
+    // Gunakan displayUsername yang sudah benar
+    const targetUser = recipe.username || recipe.author; 
     const endpoint = isFollowing ? `/users/${targetUser}/unfollow` : `/users/${targetUser}/follow`;
     handleAction(endpoint, "Follow", () => setIsFollowing(!isFollowing));
   };
@@ -141,13 +140,23 @@ const RecipeDetail = () => {
   if (isLoading) return <div className="feed-area" style={{ textAlign: "center", marginTop: "50px" }}>Memuat...</div>;
   if (error || !recipe) return <div className="feed-area" style={{ textAlign: "center", marginTop: "50px", padding: "20px" }}><h2>🚫 Oops!</h2><p>{error || "Resep tidak ditemukan."}</p><button className="cta-button" onClick={() => navigate("/feed")} style={{ marginTop: "20px" }}>Kembali ke Feed</button></div>;
 
-  // --- LOGIKA TAMPILAN ---
-  const displayFullname = recipe.user_fullname || recipe.full_name || recipe.author_name || "Nama Pengguna";
-  const displayUsername = recipe.username || recipe.author_username; // Username pemilik resep
-  const displayAvatar = recipe.avatar_url || recipe.user_avatar || "https://placehold.co/50";
+  // --- ⚠️ PERBAIKAN UTAMA DI SINI ---
   
-  // REVISI NO. 1 (Bagian 2): Cek apakah ini resep sendiri
-  const isOwnRecipe = currentUsername === displayUsername;
+  // 1. Ambil nama lengkap (Prioritas: user_fullname dari backend)
+  const displayFullname = recipe.user_fullname || recipe.full_name || recipe.author_name || "Nama Pengguna";
+  
+  // 2. Ambil username (Prioritas: recipe.username, kalau null ambil recipe.author)
+  // Backend kamu mengirim field 'author' yang isinya username.
+  const displayUsername = recipe.username || recipe.author || "user"; 
+  
+  // 3. Ambil Avatar
+  const displayAvatar = recipe.avatar_url || recipe.avatar || recipe.user_avatar || "https://placehold.co/50";
+  
+  // 4. Logic Tombol Ikuti
+  // Pastikan currentUsername dan displayUsername tidak undefined saat dibandingkan
+  const isOwnRecipe = (currentUsername && displayUsername) 
+    ? currentUsername.trim().toLowerCase() === displayUsername.trim().toLowerCase()
+    : false;
 
   return (
     <div className="loggedin-body">
@@ -173,7 +182,8 @@ const RecipeDetail = () => {
                   {/* Nama Lengkap */}
                   <strong>{displayFullname}</strong>
                   
-                  {/* REVISI NO. 1 (Bagian 1): Username dihilangkan, hanya ada titik separator jika tombol follow muncul */}
+                  {/* Username (Sudah diperbaiki mappingnya) */}
+                  <span className="username">@{displayUsername}</span>
                   
                   {/* Tombol Follow: Hanya muncul jika BUKAN resep sendiri */}
                   {!isOwnRecipe && (
@@ -195,7 +205,6 @@ const RecipeDetail = () => {
             </div>
           </div>
 
-          {/* REVISI NO. 2: Gambar Resep (Class CSS sudah diupdate jadi 1:1) */}
           <img
             src={recipe.image_url}
             alt={recipe.title}
@@ -222,14 +231,12 @@ const RecipeDetail = () => {
 
           <div className="recipe-caption-full"><p>{recipe.description}</p></div>
 
-          {/* Info Stats (Waktu, Porsi, Level) */}
           <div className="recipe-meta-info">
              <div><i className="fas fa-clock"></i> <strong>Waktu</strong><br />{recipe.total_time} Menit</div>
              <div><i className="fas fa-utensils"></i> <strong>Porsi</strong><br />{recipe.servings} Orang</div>
              <div><i className="fas fa-star"></i> <strong>Level</strong><br />{recipe.difficulty}</div>
           </div>
 
-          {/* Bahan & Langkah */}
           <div className="recipe-main-content-wrapper">
             <div className="recipe-ingredients">
               <h3><i className="fas fa-shopping-cart"></i> Bahan-Bahan</h3>
@@ -294,6 +301,7 @@ const RecipeDetail = () => {
             commentInput={commentInput}
             setCommentInput={setCommentInput}
             isLoading={isSubmitting}
+            currentUserAvatar={currentUserData?.avatar_url || currentUserData?.photo || "https://placehold.co/50"}
           />
         </div>
       </main>

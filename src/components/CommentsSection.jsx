@@ -1,6 +1,7 @@
 // src/components/CommentsSection.jsx
 
 import React from 'react';
+import { Link } from 'react-router-dom';
 import '../styles/components/CommentsSection.css';
 
 const CommentsSection = ({ 
@@ -9,7 +10,8 @@ const CommentsSection = ({
     onCommentSubmit, 
     commentInput, 
     setCommentInput,
-    isLoading 
+    isLoading,
+    currentUserAvatar // 1. TANGKAP PROPS BARU DI SINI
 }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -24,9 +26,14 @@ const CommentsSection = ({
         <i className="fas fa-comments"></i> {commentCount || comments.length} Komentar
       </div>
 
-      {/* FORM SUBMISSION BARU */}
+      {/* FORM SUBMISSION */}
       <form className="comment-form" onSubmit={handleSubmit}>
-        <div className="comment-avatar"></div> 
+        
+        {/* 2. UPDATE BAGIAN INI AGAR FOTO MUNCUL */}
+        <div className="comment-avatar"
+             style={{ backgroundImage: `url(${currentUserAvatar})` }}>
+        </div> 
+        
         <div className="comment-input-wrapper">
            <textarea 
               className="comment-input" 
@@ -46,13 +53,17 @@ const CommentsSection = ({
         {comments.length > 0 ? (
             comments.map((comment, index) => (
               <div className="comment-item" key={comment.id || index}>
-                <div className="comment-avatar" 
-                     style={{ backgroundImage: `url(${comment.avatar || 'https://placehold.co/40'})` }}>
-                </div> 
+                <Link to={`/profile/${comment.username}`}>
+                  <div className="comment-avatar" 
+                       style={{ backgroundImage: `url(${comment.avatar || 'https://placehold.co/40'})` }}>
+                  </div> 
+                </Link>
                 
                 <div className="comment-content">
                   <div className="comment-author-row">
-                    <span className="comment-name">{comment.name || comment.username}</span>
+                    <Link to={`/profile/${comment.username}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                      <span className="comment-name">{comment.name || comment.username}</span>
+                    </Link>
                     <span className="comment-username">@{comment.username}</span>
                   </div>
                   
