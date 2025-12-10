@@ -134,7 +134,7 @@ const ProfilePage = ({ isCurrentUser }) => {
       full_name: editFormData.name,
       username: editFormData.username,
       bio: editFormData.bio,
-      pronouns: "", // Kosongkan
+      pronouns: editFormData.pronouns,
       avatar_url: editFormData.avatar_url || profileData.avatar_url,
       link_tiktok: editFormData.tiktok,
       link_instagram: editFormData.instagram,
@@ -151,15 +151,22 @@ const ProfilePage = ({ isCurrentUser }) => {
         ...prev,
         ...payload,
         name: payload.full_name,
-        photo: payload.avatar_url || prev.photo,
-        link_tiktok: payload.link_tiktok,
-        link_instagram: payload.link_instagram,
-        link_linkedin: payload.link_linkedin,
-        link_other: payload.link_other,
+        photo: payload.avatar_url || prev.photo, 
       }));
+
+      const oldStorage = JSON.parse(localStorage.getItem('userProfileData') || '{}');
+      const newStorage = { 
+          ...oldStorage, 
+          ...payload, 
+          avatar_url: payload.avatar_url,
+          photo: payload.avatar_url 
+      };
+      localStorage.setItem('userProfileData', JSON.stringify(newStorage));
 
       alert("Profil berhasil diperbarui!");
       setIsEditOpen(false);
+      window.location.reload(); 
+
     } catch (err) {
       alert("Gagal memperbarui profil.");
     }
@@ -207,44 +214,21 @@ const ProfilePage = ({ isCurrentUser }) => {
 
   return (
     <div className="feed-area" style={{ maxWidth: "100%", flexGrow: 1 }}>
-      <div className="myprofile-page" style={{ maxWidth: "900px", margin: "0 auto", background: "white" }}>
+      <div className="myprofile-page">
         
-        {/* HEADER */}
-        <div className="myprofile-cover" style={{ height: "190px" }}>
-          <button className="myprofile-back-btn" onClick={() => navigate(-1)} style={{ position: "absolute", top: "15px", left: "15px", zIndex: 10 }}>
+        {/* HEADER COVER */}
+        <div className="myprofile-cover">
+          <button className="myprofile-back-btn" onClick={() => navigate(-1)}>
             <i className="fas fa-arrow-left"></i>
           </button>
-          <div className="myprofile-header-text" style={{ position: "absolute", top: "15px", left: "50px", zIndex: 10 }}>
-            <strong>Profil {isCurrentUser ? "Saya" : profileData.name}</strong>
-          </div>
         </div>
 
-        {/* INFO UTAMA */}
-        <div className="myprofile-main" style={{ borderBottom: isCurrentUser ? "1px solid #ddd" : "none" }}>
+        {/* INFO PROFIL */}
+        <div className="myprofile-main">
           <img src={profileData.photo} alt="Profile" className="myprofile-photo" />
 
-          <div className="myprofile-info">
-            <h2 className="myprofile-name">{profileData.name}</h2>
-            
-            {/* USERNAME PINDAH KESINI (Di bawah Nama) */}
-            <div className="myprofile-username" style={{ marginTop: "0px", marginBottom: "10px", color: "#666" }}>
-              @{profileData.username}
-            </div>
-
-            <div style={{ display: "flex", gap: "20px", marginTop: "8px", alignItems: "center" }}>
-              <div className="myprofile-followers" style={{ display: 'flex', gap: '5px' }}>
-                <strong>{profileData.followers_count}</strong> <span style={{ color: "#666" }}>Pengikut</span>
-              </div>
-              <div className="myprofile-following" style={{ display: 'flex', gap: '5px' }}>
-                <strong>{profileData.following_count}</strong> <span style={{ color: "#666" }}>Mengikuti</span>
-              </div>
-            </div>
-
-            <p className="myprofile-bio" style={{ marginTop: "15px" }}>{profileData.bio}</p>
-          </div>
-
-          {/* TOMBOL AKSI */}
-          <div className="myprofile-buttons" style={{ position: isCurrentUser ? "absolute" : "static", top: "25px", right: "25px" }}>
+          {/* TOMBOL EDIT/FOLLOW */}
+          <div className="myprofile-buttons" style={{ position: 'absolute', top: '20px', right: '30px' }}>
             {isCurrentUser ? (
               <>
                 <button className="myprofile-create-btn" onClick={() => navigate("/create")}>
@@ -268,48 +252,71 @@ const ProfilePage = ({ isCurrentUser }) => {
                   color: isFollowing ? "#2e7d32" : "white",
                   border: isFollowing ? "1px solid #2e7d32" : "none",
                   padding: "8px 24px",
+                  borderRadius: "20px",
+                  fontWeight: "bold"
                 }}
               >
                 {isFollowing ? "Mengikuti" : "Ikuti"}
               </button>
             )}
           </div>
+
+          <div className="myprofile-info-wrapper">
+            <h2 className="myprofile-name">{profileData.name}</h2>
+            
+            <div className="user-stats-row">
+              <div className="myprofile-username">@{profileData.username}</div>
+              <div className="stats-group">
+                <div className="stat-item">
+                  <strong>{profileData.followers_count}</strong> Pengikut
+                </div>
+                <div className="stat-item">
+                  <strong>{profileData.following_count}</strong> Mengikuti
+                </div>
+              </div>
+            </div>
+
+            <p className="myprofile-bio">
+              {profileData.bio || "Belum ada bio."}
+            </p>
+
+            <div className="divider-line"></div>
+
+            {/* LINK SOSMED */}
+            <div className="social-box-area">
+              {(profileData.link_tiktok || profileData.tiktok) && (
+                <a href={profileData.link_tiktok || profileData.tiktok} target="_blank" rel="noreferrer" className="social-item">
+                  <i className="fab fa-tiktok"></i> TikTok
+                </a>
+              )}
+              {(profileData.link_instagram || profileData.instagram) && (
+                <a href={profileData.link_instagram || profileData.instagram} target="_blank" rel="noreferrer" className="social-item">
+                  <i className="fab fa-instagram"></i> Instagram
+                </a>
+              )}
+              {(profileData.link_linkedin || profileData.linkedin) && (
+                <a href={profileData.link_linkedin || profileData.linkedin} target="_blank" rel="noreferrer" className="social-item">
+                  <i className="fab fa-linkedin"></i> LinkedIn
+                </a>
+              )}
+              {(profileData.link_other || profileData.website) && (
+                <a href={profileData.link_other || profileData.website} target="_blank" rel="noreferrer" className="social-item">
+                  <i className="fas fa-globe"></i> Website
+                </a>
+              )}
+
+              {isCurrentUser && !profileData.link_tiktok && !profileData.link_instagram && !profileData.link_linkedin && !profileData.link_other && (
+                  <button onClick={handleOpenEdit} className="social-item" style={{ background: "none", border: "2px dashed #ccc", color: "#888", cursor: "pointer" }}>
+                    <i className="fas fa-plus"></i> Link
+                  </button>
+                )}
+            </div>
+          </div>
         </div>
 
-        {/* LINK SOSMED */}
-        {/* Tambahkan padding di CSS untuk social-box-area agar sejajar dengan konten bawah */}
-        <div className="social-box-area">
-          {(profileData.link_tiktok || profileData.tiktok) && (
-            <a href={profileData.link_tiktok || profileData.tiktok} target="_blank" rel="noreferrer" className="social-item">
-              <i className="fab fa-tiktok"></i> TikTok
-            </a>
-          )}
-          {(profileData.link_instagram || profileData.instagram) && (
-            <a href={profileData.link_instagram || profileData.instagram} target="_blank" rel="noreferrer" className="social-item">
-              <i className="fab fa-instagram"></i> Instagram
-            </a>
-          )}
-          {(profileData.link_linkedin || profileData.linkedin) && (
-            <a href={profileData.link_linkedin || profileData.linkedin} target="_blank" rel="noreferrer" className="social-item">
-              <i className="fab fa-linkedin"></i> LinkedIn
-            </a>
-          )}
-          {(profileData.link_other || profileData.website) && (
-            <a href={profileData.link_other || profileData.website} target="_blank" rel="noreferrer" className="social-item">
-              <i className="fas fa-globe"></i> Website
-            </a>
-          )}
-
-          {isCurrentUser && !profileData.link_tiktok && !profileData.link_instagram && !profileData.link_linkedin && !profileData.link_other && (
-              <button onClick={handleOpenEdit} className="social-item" style={{ background: "none", border: "2px dashed #ccc", color: "#888", cursor: "pointer" }}>
-                <i className="fas fa-plus"></i> Tambah Tautan
-              </button>
-            )}
-        </div>
-
-        {/* TAB MENU */}
+        {/* TAB MENU - HANYA UNTUK USER SENDIRI */}
         {isCurrentUser && (
-          <div className="tab-menu">
+          <div className="tab-menu" style={{ marginTop: '10px' }}>
             <div className={`tab-item ${activeTab === "resep" ? "active" : ""}`} onClick={() => setActiveTab("resep")}>
               Resep Saya ({uploadedRecipes.length})
             </div>
@@ -320,8 +327,13 @@ const ProfilePage = ({ isCurrentUser }) => {
           </div>
         )}
 
-        {/* KONTEN RESEP */}
-        <div className="profile-container" style={{ boxShadow: "none", maxWidth: "100%", padding: "20px 0" }}>
+        {/* JUDUL BAGIAN RESEP (HANYA MUNCUL JIKA BUKAN PROFIL SENDIRI) */}
+        {!isCurrentUser && (
+          <h3 className="section-title-center">Resep Diposting</h3>
+        )}
+
+        {/* KONTEN RESEP (3 KOLOM) */}
+        <div className="profile-container" style={{ boxShadow: "none", maxWidth: "100%", padding: "0" }}>
           {activeTab === "resep" || !isCurrentUser ? (
             uploadedRecipes.length > 0 ? (
               <div className="recipe-grid-profile">
@@ -333,7 +345,7 @@ const ProfilePage = ({ isCurrentUser }) => {
               <div className="myprofile-empty-section">
                 <div className="empty-box">
                   <i className="fas fa-book-open empty-icon"></i>
-                  <h3>Belum ada resep.</h3>
+                  <h3>Belum ada resep diposting.</h3>
                   {isCurrentUser && (
                     <button className="cta-button" onClick={() => navigate("/create")} style={{ marginTop: "15px" }}>
                       Buat Resep Pertama
@@ -382,12 +394,8 @@ const ProfilePage = ({ isCurrentUser }) => {
                   <label>Username</label>
                   <input type="text" name="username" value={editFormData.username} onChange={handleChange} />
                 </div>
-                
-                {/* Bagian Kata Ganti DIHAPUS */}
-
                 <div className="modal-form-group">
                   <label>Bio</label>
-                  {/* UBAH TEXTAREA JADI INPUT */}
                   <input type="text" name="bio" value={editFormData.bio} onChange={handleChange} />
                 </div>
                 <h4 className="modal-section-title">Sosial Media</h4>
