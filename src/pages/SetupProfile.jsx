@@ -24,7 +24,7 @@ const SetupProfile = () => {
   const [formData, setFormData] = useState({
     full_name: "",
     username: "",
-    pronouns: "",
+    // pronouns dihapus
     bio: "",
     link_tiktok: "",
     link_instagram: "",
@@ -175,26 +175,18 @@ const SetupProfile = () => {
             />
           </div>
 
-          <div className="form-group">
-            <label htmlFor="pronouns">Kata Ganti</label>
-            <input
-              type="text"
-              id="pronouns"
-              placeholder="cth: dia/mereka"
-              value={formData.pronouns}
-              onChange={handleChange}
-            />
-          </div>
+          {/* Input Pronouns DIHAPUS */}
 
           <div className="form-group">
             <label htmlFor="bio">Bio Singkat</label>
-            <textarea
+            {/* Mengubah Textarea menjadi Input Text */}
+            <input
+              type="text"
               id="bio"
-              rows="3"
               placeholder="Ceritakan sedikit tentang diri Anda..."
               value={formData.bio}
               onChange={handleChange}
-            ></textarea>
+            />
           </div>
 
           {/* Social Links (Opsional) */}

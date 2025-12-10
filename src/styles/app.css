@@ -1590,12 +1590,31 @@ footer p {
 /* ============================== */
 /* SOSIAL MEDIA BOX - FINAL       */
 /* ============================== */
+/* ============================== */
+/* SOSIAL MEDIA BOX - FINAL       */
+/* ============================== */
 .social-box-area {
   margin-top: 20px;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 12px;
+  
+  /* TAMBAHAN UTAMA: Agar sejajar dengan kotak resep dibawahnya & tidak mepet pinggir */
+  padding: 0 25px; 
 }
+
+/* Pastikan ini juga diupdate agar konsisten */
+.myprofile-main {
+  background: white;
+  padding: 25px; /* Ini padding kotak profil atas, kita samakan di social box */
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+  position: relative;
+  border-bottom: 1px solid #ddd;
+}
+
+/* ... sisa css lainnya ... */
 
 .social-item {
   border: 1px solid #2e7d32;
