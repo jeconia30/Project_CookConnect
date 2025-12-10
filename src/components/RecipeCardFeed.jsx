@@ -144,10 +144,15 @@ const RecipeCardFeed = ({ recipe }) => {
           <i className={isLiked ? "fas fa-heart" : "far fa-heart"}></i> 
           <span>{formatNumber(likeCount)} Suka</span>
         </button>
-        <Link to={`/recipe/${recipe.id}#comments-section`} className="action-btn" style={{ textDecoration: 'none' }}>
+       <Link 
+          to={`/recipe/${recipe.id}#comments-section`} 
+          className="action-btn" 
+          style={{ textDecoration: 'none' }}
+        >
           <i className="far fa-comment"></i> 
           <span>{recipe.comments || 0} Komentar</span>
         </Link>
+
         <button className="action-btn" onClick={() => alert('Disalin!')}>
           <i className="far fa-share-square"></i>
           <span>Bagikan</span>
