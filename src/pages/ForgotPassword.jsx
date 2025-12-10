@@ -1,20 +1,30 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/app.css';
+import { SharedFooter } from './LandingPage';
 
 const ForgotPassword = () => {
-  const [email, setEmail] = useState('');
+  const [formData, setFormData] = useState({
+    name: '',
+    username: '',
+    email: ''
+  });
   
   const navigate = useNavigate(); 
 
-  const handleEmailChange = (e) => {
-    setEmail(e.target.value);
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
    const handleSubmit = (e) => {
      e.preventDefault();
-     alert(`Link reset telah dikirim ke: ${email}!`);
-     navigate('/reset-password');
+     
+     if(formData.name && formData.username && formData.email) {
+        alert('Data diverifikasi! Silakan buat password baru.');
+        navigate('/reset-password');
+     } else {
+        alert('Mohon lengkapi semua data!');
+     }
   };
 
    return (
@@ -30,25 +40,50 @@ const ForgotPassword = () => {
        <div className="login-container">
          <form id="forgot-form" className="auth-form" onSubmit={handleSubmit}>
          <div className="logo-auth">CookConnect</div>
-         <h2>Lupa Password Anda?</h2>
+         <h2>Lupa Password?</h2>
 
          <p className="auth-instruction">
-           Jangan khawatir. Masukkan email Anda yang terdaftar dan kami akan mengirimkan link untuk mereset password Anda.
+           Masukkan data akun Anda untuk memverifikasi identitas.
          </p>
 
            <div className="form-group">
-             <label htmlFor="forgot-email">Email</label>
+             <label htmlFor="fp-name">Nama Lengkap</label>
+             <input 
+              type="text" 
+              id="fp-name" 
+              name="name"
+              value={formData.name}
+              onChange={handleChange} 
+              required 
+            />
+          </div>
+
+          <div className="form-group">
+             <label htmlFor="fp-username">Username</label>
+             <input 
+              type="text" 
+              id="fp-username" 
+              name="username"
+              value={formData.username}
+              onChange={handleChange} 
+              required 
+            />
+          </div>
+
+           <div className="form-group">
+             <label htmlFor="fp-email">Email</label>
              <input 
               type="email" 
-              id="forgot-email" 
-              value={email}
-              onChange={handleEmailChange} 
+              id="fp-email" 
+              name="email"
+              value={formData.email}
+              onChange={handleChange} 
               required 
             />
           </div>
 
           <button type="submit" className="cta-button auth-button">
-            Kirim Link Reset
+            Reset Password
           </button>
 
           <p className="auth-toggle">
@@ -58,9 +93,7 @@ const ForgotPassword = () => {
         </form>
       </div>
       
-      <footer>
-        <p>&copy; 2025 CookConnect. Developed for Web Programming Class.</p>
-      </footer>
+      <SharedFooter />
     </div>
   );
 };
