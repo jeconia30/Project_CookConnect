@@ -2092,7 +2092,12 @@ footer p {
 
 /* Hero Image */
 .recipe-hero-image {
-  width: 100%; height: 400px; object-fit: cover; border-radius: 12px; margin-bottom: 20px;
+  width: 100%;
+  aspect-ratio: 1 / 1; /* PENTING: Memaksa rasio 1:1 (Kotak) */
+  object-fit: cover;   /* Agar gambar tidak gepeng */
+  border-radius: 12px;
+  margin-bottom: 20px;
+  background-color: #f0f0f0; /* Placeholder warna abu saat loading gbr */
 }
 
 /* Actions Bar */
