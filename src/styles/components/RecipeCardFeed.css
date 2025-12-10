@@ -34,14 +34,19 @@
 .user-info {
   display: flex;
   flex-direction: column;
-  line-height: 1.1;
+  /* Menambah jarak antar baris (Nama ke Username, Username ke Waktu) */
+  gap: 6px; 
+  justify-content: center;
 }
 
 .username {
   font-weight: 700;
   color: #222;
   text-decoration: none;
-  font-size: 0.95rem;
+  font-size: 1rem;
+  /* Jarak ekstra sedikit di bawah nama */
+  margin-bottom: 2px; 
+  line-height: 1.2;
 }
 
 .handle-row {
