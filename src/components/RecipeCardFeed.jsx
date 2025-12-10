@@ -7,40 +7,25 @@ const RecipeCardFeed = ({ recipe }) => {
   if (!recipe) return null;
 
   const authToken = localStorage.getItem("authToken");
+  
+  // 1. Ambil data user yang sedang login untuk cek profil sendiri
+  const currentUserData = JSON.parse(localStorage.getItem('userProfileData') || '{}');
+  const currentUsername = currentUserData.username;
+  
+  // Boolean: apakah ini resep milik user yang sedang login?
+  const isOwnRecipe = currentUsername === recipe.handle;
 
   const parseList = (data) => {
     if (!data) return [];
-
-    if (Array.isArray(data)) {
-      return data.filter(item => item && item.trim() !== "");
-    }
-
+    if (Array.isArray(data)) return data.filter(item => item && item.trim() !== "");
     if (typeof data === 'string') {
       const trimmed = data.trim();
-      
       if (trimmed.startsWith('[') && trimmed.endsWith(']')) {
-        try {
-          return JSON.parse(trimmed);
-        } catch (e) {
-          console.warn("Gagal parse JSON, lanjut ke manual split");
-        }
+        try { return JSON.parse(trimmed); } catch (e) { console.warn("JSON parse fail"); }
       }
-
-      if (trimmed.startsWith('{') && trimmed.endsWith('}')) {
-        return trimmed.slice(1, -1).split(',').map(s => s.replace(/"/g, '').trim());
-      }
-
-      if (trimmed.includes('\n')) {
-        return trimmed.split('\n').filter(s => s.trim() !== "");
-      }
-
-      if (trimmed.includes(',')) {
-        return trimmed.split(',').filter(s => s.trim() !== "");
-      }
-
+      if (trimmed.includes('\n')) return trimmed.split('\n').filter(s => s.trim() !== "");
       return [trimmed];
     }
-
     return [];
   };
 
@@ -86,10 +71,17 @@ const RecipeCardFeed = ({ recipe }) => {
             <Link to={`/profile/${recipe.handle}`} className="username">{recipe.author}</Link>
             <div className="handle-row">
               <span className="handle">@{recipe.handle}</span>
-              <span className="separator">•</span>
-              <button className={`text-btn ${isFollowing ? "grey" : "green"}`} onClick={handleFollow}>
-                {isFollowing ? "Mengikuti" : "Ikuti"}
-              </button>
+              
+              {/* LOGIKA: Sembunyikan tombol jika profil sendiri */}
+              {!isOwnRecipe && (
+                <>
+                  <span className="separator">•</span>
+                  <button className={`text-btn ${isFollowing ? "grey" : "green"}`} onClick={handleFollow}>
+                    {isFollowing ? "Mengikuti" : "Ikuti"}
+                  </button>
+                </>
+              )}
+              
             </div>
             <span className="time">{recipe.time}</span>
           </div>
@@ -97,29 +89,16 @@ const RecipeCardFeed = ({ recipe }) => {
       </div>
 
       <Link to={`/recipe/${recipe.id}`} className="card-content-link">
-        <h2 className="recipe-title">{recipe.title}</h2>
-
         <div className="card-body">
+          {/* Kolom Kiri: Teks */}
           <div className="recipe-text-content">
             
-            {ingredients.length > 0 ? (
-              <div className="preview-section">
-                <strong><i className="fas fa-shopping-basket"></i> Bahan:</strong>
-                <ul className="preview-list">
-                  {ingredients.slice(0, 3).map((ing, i) => (
-                    <li key={i}>{ing}</li>
-                  ))}
-                  {ingredients.length > 3 && <li>...dan lainnya</li>}
-                </ul>
-              </div>
-            ) : (
-              <p className="card-desc-only" style={{fontStyle: 'italic', color: '#999'}}>
-                {recipe.description ? recipe.description : "Tidak ada deskripsi singkat."}
-              </p>
-            )}
+            {/* URUTAN 1: JUDUL */}
+            <h2 className="recipe-title">{recipe.title}</h2>
 
-            {steps.length > 0 && (
-              <div className="preview-section" style={{ marginTop: '10px' }}>
+            {/* URUTAN 2: CARA BUAT */}
+            {steps.length > 0 ? (
+              <div className="preview-section">
                 <strong><i className="fas fa-list"></i> Cara Buat:</strong>
                 <ol className="preview-list">
                   {steps.slice(0, 2).map((step, i) => (
@@ -128,11 +107,28 @@ const RecipeCardFeed = ({ recipe }) => {
                   {steps.length > 2 && <li>...</li>}
                 </ol>
               </div>
-            )}
+            ) : ingredients.length > 0 ? (
+               <div className="preview-section">
+                <strong><i className="fas fa-shopping-basket"></i> Bahan:</strong>
+                <ul className="preview-list">
+                  {ingredients.slice(0, 3).map((ing, i) => (
+                    <li key={i}>{ing}</li>
+                  ))}
+                  {ingredients.length > 3 && <li>...dan lainnya</li>}
+                </ul>
+              </div>
+            ) : null}
+
+            {/* URUTAN 3: DESKRIPSI */}
+            <p className="card-desc-only">
+              {recipe.description ? recipe.description : "Tidak ada deskripsi singkat."}
+            </p>
+
           </div>
 
+          {/* Kolom Kanan: Foto (45% lebar) */}
           <div className="recipe-img-wrapper">
-            <img src={recipe.image || "https://placehold.co/150"} alt={recipe.title} className="recipe-img" />
+            <img src={recipe.image || "https://placehold.co/300"} alt={recipe.title} className="recipe-img" />
           </div>
         </div>
       </Link>
@@ -142,10 +138,17 @@ const RecipeCardFeed = ({ recipe }) => {
           <i className={isLiked ? "fas fa-heart" : "far fa-heart"}></i> 
           <span>{formatNumber(likeCount)} Suka</span>
         </button>
-        <Link to={`/recipe/${recipe.id}#comments-section`} className="action-btn">
+        
+        {/* Hapus garis bawah komentar */}
+        <Link 
+          to={`/recipe/${recipe.id}#comments-section`} 
+          className="action-btn"
+          style={{ textDecoration: 'none' }}
+        >
           <i className="far fa-comment"></i> 
           <span>{recipe.comments || 0} Komentar</span>
         </Link>
+
         <button className="action-btn" onClick={() => alert('Disalin!')}>
           <i className="far fa-share-square"></i>
           <span>Bagikan</span>
