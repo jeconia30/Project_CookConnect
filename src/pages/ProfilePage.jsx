@@ -3,7 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import "../styles/app.css";
 import api from "../api/axiosInstance";
 import RecipeCardProfile from "../components/RecipeCardProfile";
-import { uploadProfileAvatar } from "../services/uploadService"; // Pastikan service ini ada
+import { uploadProfileAvatar } from "../services/uploadService"; 
 
 import defaultProfilePic from "../assets/geprek.jpeg";
 
@@ -12,7 +12,6 @@ const DEFAULT_PROFILE = {
   username: "user",
   bio: "Belum ada bio.",
   photo: defaultProfilePic,
-  pronouns: "",
   tiktok: "",
   instagram: "",
   linkedin: "",
@@ -39,15 +38,12 @@ const ProfilePage = ({ isCurrentUser }) => {
   const [editImagePreview, setEditImagePreview] = useState(null);
   const [uploadingImage, setUploadingImage] = useState(false);
 
-  // --- FETCH DATA (DIPISAH PROFIL & RESEP) ---
   useEffect(() => {
     const userToFetch = isCurrentUser ? "me" : profileUsername;
     const authToken = localStorage.getItem("authToken");
 
     const fetchAllData = async () => {
       setIsLoading(true);
-
-      // 1. AMBIL PROFIL (Terpisah)
       try {
         const profileRes = await api.get(`/users/${userToFetch}`, {
           headers: { Authorization: `Bearer ${authToken}` },
@@ -65,27 +61,20 @@ const ProfilePage = ({ isCurrentUser }) => {
         };
 
         setProfileData(mappedProfile);
-
-        // Set status follow (pastikan boolean)
         setIsFollowing(rawProfile.is_following === true);
       } catch (err) {
         console.error("Gagal ambil profil:", err);
-        // Jangan set ke Default Profile sembarangan, biarkan error terlihat di console
-        // atau handle redirect ke 404 jika perlu
       }
 
-      // 2. AMBIL RESEP (Terpisah - Error di sini tidak merusak profil)
       try {
         const uploadedRes = await api.get(`/users/${userToFetch}/recipes`, {
           headers: { Authorization: `Bearer ${authToken}` },
         });
         setUploadedRecipes(uploadedRes.data.recipes || []);
       } catch (err) {
-        console.error("Gagal ambil resep (Mungkin belum ada resep):", err);
-        setUploadedRecipes([]); // Set kosong saja
+        setUploadedRecipes([]); 
       }
 
-      // 3. AMBIL SAVED RECIPES (Khusus User Sendiri)
       if (isCurrentUser) {
         try {
           const savedRes = await api.get(`/users/me/saved-recipes`, {
@@ -93,7 +82,6 @@ const ProfilePage = ({ isCurrentUser }) => {
           });
           setSavedRecipes(savedRes.data.recipes || []);
         } catch (err) {
-          console.error("Gagal ambil saved recipes:", err);
           setSavedRecipes([]);
         }
       }
@@ -104,7 +92,6 @@ const ProfilePage = ({ isCurrentUser }) => {
     fetchAllData();
   }, [isCurrentUser, profileUsername]);
 
-  // --- HANDLERS ---
   const handleOpenEdit = () => {
     setEditFormData({
       ...profileData,
@@ -131,13 +118,9 @@ const ProfilePage = ({ isCurrentUser }) => {
       try {
         const userId = profileData.id;
         const result = await uploadProfileAvatar(file, userId);
-
         setEditFormData((prev) => ({ ...prev, avatar_url: result.url }));
         setEditImagePreview(result.url);
-
-        alert("Foto berhasil diunggah!");
       } catch (error) {
-        console.error("Upload error:", error);
         alert("Gagal mengupload foto.");
       } finally {
         setUploadingImage(false);
@@ -147,12 +130,11 @@ const ProfilePage = ({ isCurrentUser }) => {
 
   const handleSave = async () => {
     const authToken = localStorage.getItem("authToken");
-
     const payload = {
       full_name: editFormData.name,
       username: editFormData.username,
       bio: editFormData.bio,
-      pronouns: editFormData.pronouns,
+      pronouns: "", // Kosongkan
       avatar_url: editFormData.avatar_url || profileData.avatar_url,
       link_tiktok: editFormData.tiktok,
       link_instagram: editFormData.instagram,
@@ -179,28 +161,20 @@ const ProfilePage = ({ isCurrentUser }) => {
       alert("Profil berhasil diperbarui!");
       setIsEditOpen(false);
     } catch (err) {
-      console.error(err);
       alert("Gagal memperbarui profil.");
     }
   };
 
   const handleDeleteAccount = async () => {
-    if (
-      !window.confirm("Yakin ingin menghapus akun? SEMUA DATA HILANG PERMANEN.")
-    )
-      return;
-
+    if (!window.confirm("Yakin ingin menghapus akun? SEMUA DATA HILANG PERMANEN.")) return;
     const authToken = localStorage.getItem("authToken");
     try {
       await api.delete(`/users/${profileData.id}`, {
         headers: { Authorization: `Bearer ${authToken}` },
       });
-
       localStorage.clear();
-      alert("Akun berhasil dihapus.");
       navigate("/login");
     } catch (error) {
-      console.error("Delete account error:", error);
       alert("Gagal menghapus akun.");
     }
   };
@@ -208,19 +182,13 @@ const ProfilePage = ({ isCurrentUser }) => {
   const handleFollowClick = async () => {
     const authToken = localStorage.getItem("authToken");
     if (!authToken) return alert("Login dulu.");
-
     try {
       const action = isFollowing ? "unfollow" : "follow";
-      await api.post(
-        `/users/${profileData.username}/${action}`,
-        {},
-        {
+      await api.post(`/users/${profileData.username}/${action}`, {}, {
           headers: { Authorization: `Bearer ${authToken}` },
         }
       );
       setIsFollowing(!isFollowing);
-
-      // Update angka secara optimistik
       setProfileData((prev) => ({
         ...prev,
         followers_count: prev.followers_count + (isFollowing ? -1 : 1),
@@ -232,122 +200,63 @@ const ProfilePage = ({ isCurrentUser }) => {
 
   if (isLoading)
     return (
-      <div
-        className="feed-area"
-        style={{ textAlign: "center", marginTop: "20px" }}
-      >
+      <div className="feed-area" style={{ textAlign: "center", marginTop: "20px" }}>
         Memuat Profil...
       </div>
     );
 
   return (
     <div className="feed-area" style={{ maxWidth: "100%", flexGrow: 1 }}>
-      <div
-        className="myprofile-page"
-        style={{ maxWidth: "900px", margin: "0 auto", background: "white" }}
-      >
+      <div className="myprofile-page" style={{ maxWidth: "900px", margin: "0 auto", background: "white" }}>
+        
         {/* HEADER */}
         <div className="myprofile-cover" style={{ height: "190px" }}>
-          <button
-            className="myprofile-back-btn"
-            onClick={() => navigate(-1)}
-            style={{
-              position: "absolute",
-              top: "15px",
-              left: "15px",
-              zIndex: 10,
-            }}
-          >
+          <button className="myprofile-back-btn" onClick={() => navigate(-1)} style={{ position: "absolute", top: "15px", left: "15px", zIndex: 10 }}>
             <i className="fas fa-arrow-left"></i>
           </button>
-          <div
-            className="myprofile-header-text"
-            style={{
-              position: "absolute",
-              top: "15px",
-              left: "50px",
-              zIndex: 10,
-            }}
-          >
+          <div className="myprofile-header-text" style={{ position: "absolute", top: "15px", left: "50px", zIndex: 10 }}>
             <strong>Profil {isCurrentUser ? "Saya" : profileData.name}</strong>
-            <span style={{ fontSize: "12px", display: "block" }}>
-              @{profileData.username}
-            </span>
           </div>
         </div>
 
         {/* INFO UTAMA */}
-        <div
-          className="myprofile-main"
-          style={{ borderBottom: isCurrentUser ? "1px solid #ddd" : "none" }}
-        >
-          <img
-            src={profileData.photo}
-            alt="Profile"
-            className="myprofile-photo"
-          />
+        <div className="myprofile-main" style={{ borderBottom: isCurrentUser ? "1px solid #ddd" : "none" }}>
+          <img src={profileData.photo} alt="Profile" className="myprofile-photo" />
 
           <div className="myprofile-info">
             <h2 className="myprofile-name">{profileData.name}</h2>
-            {profileData.pronouns && (
-              <div style={{ color: "#777", fontSize: "14px" }}>
-                ({profileData.pronouns})
-              </div>
-            )}
-
-            <div style={{ display: "flex", gap: "15px", marginTop: "8px" }}>
-              <div className="myprofile-followers">
-                <strong>{profileData.followers_count}</strong>{" "}
-                <span style={{ color: "#666" }}>Pengikut</span>
-              </div>
-              <div className="myprofile-following">
-                <strong>{profileData.following_count}</strong>{" "}
-                <span style={{ color: "#666" }}>Mengikuti</span>
-              </div>
-            </div>
-
-            <div className="myprofile-username" style={{ marginTop: "5px" }}>
+            
+            {/* USERNAME PINDAH KESINI (Di bawah Nama) */}
+            <div className="myprofile-username" style={{ marginTop: "0px", marginBottom: "10px", color: "#666" }}>
               @{profileData.username}
             </div>
-            <p className="myprofile-bio">{profileData.bio}</p>
+
+            <div style={{ display: "flex", gap: "20px", marginTop: "8px", alignItems: "center" }}>
+              <div className="myprofile-followers" style={{ display: 'flex', gap: '5px' }}>
+                <strong>{profileData.followers_count}</strong> <span style={{ color: "#666" }}>Pengikut</span>
+              </div>
+              <div className="myprofile-following" style={{ display: 'flex', gap: '5px' }}>
+                <strong>{profileData.following_count}</strong> <span style={{ color: "#666" }}>Mengikuti</span>
+              </div>
+            </div>
+
+            <p className="myprofile-bio" style={{ marginTop: "15px" }}>{profileData.bio}</p>
           </div>
 
           {/* TOMBOL AKSI */}
-          <div
-            className="myprofile-buttons"
-            style={{
-              position: isCurrentUser ? "absolute" : "static",
-              top: "25px",
-              right: "25px",
-            }}
-          >
+          <div className="myprofile-buttons" style={{ position: isCurrentUser ? "absolute" : "static", top: "25px", right: "25px" }}>
             {isCurrentUser ? (
               <>
-                <button
-                  className="myprofile-create-btn"
-                  onClick={() => navigate("/create")}
-                >
+                <button className="myprofile-create-btn" onClick={() => navigate("/create")}>
                   Buat Resep
                 </button>
-                <button
-                  className="myprofile-dot-btn"
-                  onClick={() => setMenuOpen(!menuOpen)}
-                >
+                <button className="myprofile-dot-btn" onClick={() => setMenuOpen(!menuOpen)}>
                   ⋮
                 </button>
                 <div className={`myprofile-dropdown ${menuOpen ? "show" : ""}`}>
                   <button onClick={handleOpenEdit}>Edit Profil</button>
-                  <button
-                    onClick={() => {
-                      localStorage.clear();
-                      navigate("/login");
-                    }}
-                  >
-                    Logout
-                  </button>
-                  <button className="danger" onClick={handleDeleteAccount}>
-                    Hapus Akun
-                  </button>
+                  <button onClick={() => { localStorage.clear(); navigate("/login"); }}>Logout</button>
+                  <button className="danger" onClick={handleDeleteAccount}>Hapus Akun</button>
                 </div>
               </>
             ) : (
@@ -368,63 +277,31 @@ const ProfilePage = ({ isCurrentUser }) => {
         </div>
 
         {/* LINK SOSMED */}
+        {/* Tambahkan padding di CSS untuk social-box-area agar sejajar dengan konten bawah */}
         <div className="social-box-area">
           {(profileData.link_tiktok || profileData.tiktok) && (
-            <a
-              href={profileData.link_tiktok || profileData.tiktok}
-              target="_blank"
-              rel="noreferrer"
-              className="social-item"
-            >
+            <a href={profileData.link_tiktok || profileData.tiktok} target="_blank" rel="noreferrer" className="social-item">
               <i className="fab fa-tiktok"></i> TikTok
             </a>
           )}
           {(profileData.link_instagram || profileData.instagram) && (
-            <a
-              href={profileData.link_instagram || profileData.instagram}
-              target="_blank"
-              rel="noreferrer"
-              className="social-item"
-            >
+            <a href={profileData.link_instagram || profileData.instagram} target="_blank" rel="noreferrer" className="social-item">
               <i className="fab fa-instagram"></i> Instagram
             </a>
           )}
           {(profileData.link_linkedin || profileData.linkedin) && (
-            <a
-              href={profileData.link_linkedin || profileData.linkedin}
-              target="_blank"
-              rel="noreferrer"
-              className="social-item"
-            >
+            <a href={profileData.link_linkedin || profileData.linkedin} target="_blank" rel="noreferrer" className="social-item">
               <i className="fab fa-linkedin"></i> LinkedIn
             </a>
           )}
           {(profileData.link_other || profileData.website) && (
-            <a
-              href={profileData.link_other || profileData.website}
-              target="_blank"
-              rel="noreferrer"
-              className="social-item"
-            >
+            <a href={profileData.link_other || profileData.website} target="_blank" rel="noreferrer" className="social-item">
               <i className="fas fa-globe"></i> Website
             </a>
           )}
 
-          {isCurrentUser &&
-            !profileData.link_tiktok &&
-            !profileData.link_instagram &&
-            !profileData.link_linkedin &&
-            !profileData.link_other && (
-              <button
-                onClick={handleOpenEdit}
-                className="social-item"
-                style={{
-                  background: "none",
-                  border: "2px dashed #ccc",
-                  color: "#888",
-                  cursor: "pointer",
-                }}
-              >
+          {isCurrentUser && !profileData.link_tiktok && !profileData.link_instagram && !profileData.link_linkedin && !profileData.link_other && (
+              <button onClick={handleOpenEdit} className="social-item" style={{ background: "none", border: "2px dashed #ccc", color: "#888", cursor: "pointer" }}>
                 <i className="fas fa-plus"></i> Tambah Tautan
               </button>
             )}
@@ -433,30 +310,18 @@ const ProfilePage = ({ isCurrentUser }) => {
         {/* TAB MENU */}
         {isCurrentUser && (
           <div className="tab-menu">
-            <div
-              className={`tab-item ${activeTab === "resep" ? "active" : ""}`}
-              onClick={() => setActiveTab("resep")}
-            >
+            <div className={`tab-item ${activeTab === "resep" ? "active" : ""}`} onClick={() => setActiveTab("resep")}>
               Resep Saya ({uploadedRecipes.length})
             </div>
-            <div
-              className={`tab-item ${activeTab === "saved" ? "active" : ""}`}
-              onClick={() => setActiveTab("saved")}
-            >
+            <div className={`tab-item ${activeTab === "saved" ? "active" : ""}`} onClick={() => setActiveTab("saved")}>
               Disimpan ({savedRecipes.length})
             </div>
-            <div
-              className="tab-underline"
-              style={{ left: activeTab === "resep" ? "0%" : "50%" }}
-            ></div>
+            <div className="tab-underline" style={{ left: activeTab === "resep" ? "0%" : "50%" }}></div>
           </div>
         )}
 
         {/* KONTEN RESEP */}
-        <div
-          className="profile-container"
-          style={{ boxShadow: "none", maxWidth: "100%", padding: "20px 0" }}
-        >
+        <div className="profile-container" style={{ boxShadow: "none", maxWidth: "100%", padding: "20px 0" }}>
           {activeTab === "resep" || !isCurrentUser ? (
             uploadedRecipes.length > 0 ? (
               <div className="recipe-grid-profile">
@@ -470,11 +335,7 @@ const ProfilePage = ({ isCurrentUser }) => {
                   <i className="fas fa-book-open empty-icon"></i>
                   <h3>Belum ada resep.</h3>
                   {isCurrentUser && (
-                    <button
-                      className="cta-button"
-                      onClick={() => navigate("/create")}
-                      style={{ marginTop: "15px" }}
-                    >
+                    <button className="cta-button" onClick={() => navigate("/create")} style={{ marginTop: "15px" }}>
                       Buat Resep Pertama
                     </button>
                   )}
@@ -503,127 +364,52 @@ const ProfilePage = ({ isCurrentUser }) => {
             <div className="modal-content" onClick={(e) => e.stopPropagation()}>
               <div className="modal-header">
                 <h3 className="modal-title">Edit Profil</h3>
-                <button
-                  className="close-btn"
-                  onClick={() => setIsEditOpen(false)}
-                >
-                  ×
-                </button>
+                <button className="close-btn" onClick={() => setIsEditOpen(false)}>×</button>
               </div>
               <div className="modal-body">
                 <div className="modal-image-upload-section">
-                  <img
-                    src={editImagePreview || defaultProfilePic}
-                    alt="Preview"
-                    className="modal-profile-pic-preview"
-                  />
-                  <label
-                    htmlFor="modal-edit-pic"
-                    className="modal-change-pic-btn"
-                  >
-                    <i className="fas fa-camera"></i>{" "}
-                    {uploadingImage ? "Mengupload..." : "Ubah Foto"}
-                    <input
-                      type="file"
-                      id="modal-edit-pic"
-                      hidden
-                      accept="image/*"
-                      onChange={handleEditImageChange}
-                      disabled={uploadingImage}
-                    />
+                  <img src={editImagePreview || defaultProfilePic} alt="Preview" className="modal-profile-pic-preview" />
+                  <label htmlFor="modal-edit-pic" className="modal-change-pic-btn">
+                    <i className="fas fa-camera"></i> {uploadingImage ? "Mengupload..." : "Ubah Foto"}
+                    <input type="file" id="modal-edit-pic" hidden accept="image/*" onChange={handleEditImageChange} disabled={uploadingImage} />
                   </label>
                 </div>
                 <div className="modal-form-group">
                   <label>Nama Lengkap</label>
-                  <input
-                    type="text"
-                    name="name"
-                    value={editFormData.name}
-                    onChange={handleChange}
-                  />
+                  <input type="text" name="name" value={editFormData.name} onChange={handleChange} />
                 </div>
                 <div className="modal-form-group">
                   <label>Username</label>
-                  <input
-                    type="text"
-                    name="username"
-                    value={editFormData.username}
-                    onChange={handleChange}
-                  />
+                  <input type="text" name="username" value={editFormData.username} onChange={handleChange} />
                 </div>
-                <div className="modal-form-group">
-                  <label>Kata Ganti</label>
-                  <input
-                    type="text"
-                    name="pronouns"
-                    value={editFormData.pronouns}
-                    onChange={handleChange}
-                  />
-                </div>
+                
+                {/* Bagian Kata Ganti DIHAPUS */}
+
                 <div className="modal-form-group">
                   <label>Bio</label>
-                  <textarea
-                    name="bio"
-                    rows="3"
-                    value={editFormData.bio}
-                    onChange={handleChange}
-                  ></textarea>
+                  {/* UBAH TEXTAREA JADI INPUT */}
+                  <input type="text" name="bio" value={editFormData.bio} onChange={handleChange} />
                 </div>
                 <h4 className="modal-section-title">Sosial Media</h4>
                 <div className="modal-form-group modal-social-input-wrapper">
                   <i className="fab fa-tiktok"></i>
-                  <input
-                    type="text"
-                    name="tiktok"
-                    placeholder="Link TikTok"
-                    value={editFormData.tiktok}
-                    onChange={handleChange}
-                  />
+                  <input type="text" name="tiktok" placeholder="Link TikTok" value={editFormData.tiktok} onChange={handleChange} />
                 </div>
                 <div className="modal-form-group modal-social-input-wrapper">
                   <i className="fab fa-instagram"></i>
-                  <input
-                    type="text"
-                    name="instagram"
-                    placeholder="Link Instagram"
-                    value={editFormData.instagram}
-                    onChange={handleChange}
-                  />
+                  <input type="text" name="instagram" placeholder="Link Instagram" value={editFormData.instagram} onChange={handleChange} />
                 </div>
                 <div className="modal-form-group modal-social-input-wrapper">
                   <i className="fab fa-linkedin"></i>
-                  <input
-                    type="text"
-                    name="linkedin"
-                    placeholder="Link LinkedIn"
-                    value={editFormData.linkedin}
-                    onChange={handleChange}
-                  />
+                  <input type="text" name="linkedin" placeholder="Link LinkedIn" value={editFormData.linkedin} onChange={handleChange} />
                 </div>
                 <div className="modal-form-group modal-social-input-wrapper">
                   <i className="fas fa-globe"></i>
-                  <input
-                    type="text"
-                    name="website"
-                    placeholder="Link Website"
-                    value={editFormData.website}
-                    onChange={handleChange}
-                  />
+                  <input type="text" name="website" placeholder="Link Website" value={editFormData.website} onChange={handleChange} />
                 </div>
                 <div className="modal-actions">
-                  <button
-                    className="btn-cancel"
-                    onClick={() => setIsEditOpen(false)}
-                  >
-                    Batal
-                  </button>
-                  <button
-                    className="btn-save"
-                    onClick={handleSave}
-                    disabled={uploadingImage}
-                  >
-                    Simpan
-                  </button>
+                  <button className="btn-cancel" onClick={() => setIsEditOpen(false)}>Batal</button>
+                  <button className="btn-save" onClick={handleSave} disabled={uploadingImage}>Simpan</button>
                 </div>
               </div>
             </div>

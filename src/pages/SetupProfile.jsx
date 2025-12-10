@@ -25,7 +25,7 @@ const SetupProfile = () => {
   const [formData, setFormData] = useState({
     full_name: "",
     username: "",
-    pronouns: "",
+    // pronouns dihapus
     bio: "",
     link_tiktok: "",
     link_instagram: "",
@@ -47,13 +47,10 @@ const SetupProfile = () => {
       setImageFile(file);
       setImagePreview(URL.createObjectURL(file));
       
-      // Auto-upload gambar
       setUploadingImage(true);
       try {
         const result = await uploadProfileAvatar(file, userId);
-        // Simpan URL ke formData atau state tersendiri
         formData.avatar_url = result.url;
-        console.log('Avatar uploaded:', result.url);
       } catch (error) {
         alert('Gagal upload avatar: ' + error.message);
       } finally {
@@ -71,7 +68,8 @@ const SetupProfile = () => {
         full_name: formData.full_name,
         username: formData.username,
         bio: formData.bio,
-        pronouns: formData.pronouns,
+        // pronouns dihapus dari payload
+        pronouns: "", 
         link_tiktok: formData.link_tiktok,
         link_instagram: formData.link_instagram,
         link_linkedin: formData.link_linkedin,
@@ -156,26 +154,18 @@ const SetupProfile = () => {
             />
           </div>
 
-          <div className="form-group">
-            <label htmlFor="pronouns">Kata Ganti</label>
-            <input
-              type="text"
-              id="pronouns"
-              placeholder="cth: dia/mereka"
-              value={formData.pronouns}
-              onChange={handleChange}
-            />
-          </div>
+          {/* Input Pronouns DIHAPUS */}
 
           <div className="form-group">
             <label htmlFor="bio">Bio Singkat</label>
-            <textarea
+            {/* Mengubah Textarea menjadi Input Text */}
+            <input
+              type="text"
               id="bio"
-              rows="3"
               placeholder="Ceritakan sedikit tentang diri Anda..."
               value={formData.bio}
               onChange={handleChange}
-            ></textarea>
+            />
           </div>
 
           <div className="form-group social-links-group">
