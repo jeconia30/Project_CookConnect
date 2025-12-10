@@ -6,25 +6,44 @@ import CommentsSection from "../components/CommentsSection";
 const RecipeDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  
+  // State Data
   const [recipe, setRecipe] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null); // ✅ State untuk Error
   const [comments, setComments] = useState([]);
+  
+  // State UI & Loading
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [commentInput, setCommentInput] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  
+  // Data User Login
   const authToken = localStorage.getItem("authToken");
+  const currentUserData = JSON.parse(localStorage.getItem('userProfileData') || '{}');
+  const currentUsername = currentUserData.username; // Username yang sedang login
 
-  // --- STATE INTERAKSI ---
+  // State Interaksi
   const [isLiked, setIsLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(0);
   const [isSaved, setIsSaved] = useState(false);
   const [isFollowing, setIsFollowing] = useState(false);
 
-  // --- FETCH COMMENTS ---
+  // --- FETCH COMMENTS & MAP AVATAR ---
   const fetchComments = async () => {
     try {
       const commentsRes = await api.get(`/comments/recipe/${id}`);
-      setComments(commentsRes.data.comments || []);
+      const rawComments = commentsRes.data.comments || [];
+      
+      // REVISI NO. 3: Mapping data komentar agar foto muncul
+      const mappedComments = rawComments.map(c => ({
+        ...c,
+        // Backend mungkin kirim 'avatar_url', 'photo', atau 'user_avatar'. Kita cek semua.
+        avatar: c.avatar_url || c.photo || c.user_avatar || "https://placehold.co/50",
+        name: c.user_fullname || c.name || "User",
+        username: c.username || "user"
+      }));
+
+      setComments(mappedComments);
     } catch (error) {
       console.error("Gagal ambil komentar:", error);
     }
@@ -42,6 +61,7 @@ const RecipeDetail = () => {
         const apiRecipe = response.data?.data || response.data;
         setRecipe(apiRecipe);
 
+        // Set state awal interaksi
         setIsLiked(apiRecipe.is_liked || false);
         setLikeCount(apiRecipe.like_count || apiRecipe.likes || 0);
         setIsSaved(apiRecipe.is_saved || false);
@@ -51,7 +71,6 @@ const RecipeDetail = () => {
         fetchComments();
       } catch (err) {
         console.error("Error loading recipe:", err);
-        // ✅ JANGAN TAMPILKAN MOCK DATA, TAPI SET ERROR
         setError("Resep tidak ditemukan atau telah dihapus.");
         setRecipe(null);
       } finally {
@@ -62,7 +81,7 @@ const RecipeDetail = () => {
     if (id) fetchRecipe();
   }, [id, authToken]);
 
-  // --- HANDLER FUNCTIONS ---
+  // --- HANDLERS ---
   const handleSubmitComment = async () => {
     if (!authToken) return alert("Login dulu!");
     setIsSubmitting(true);
@@ -70,23 +89,20 @@ const RecipeDetail = () => {
       await api.post(
         `/comments`,
         { recipe_id: id, content: commentInput },
-        {
-          headers: { Authorization: `Bearer ${authToken}` },
-        }
+        { headers: { Authorization: `Bearer ${authToken}` } }
       );
-      // Refresh komentar / tambah manual
-      const userProfile = JSON.parse(localStorage.getItem("userProfileData"));
+      
+      // Optimistic Update: Tambah komentar baru ke list tanpa reload
       const newComment = {
         id: Date.now(),
-        name: userProfile?.full_name || "Anda",
-        username: userProfile?.username || "user",
-        avatar: userProfile?.avatar_url,
+        name: currentUserData?.full_name || "Anda",
+        username: currentUserData?.username || "user",
+        avatar: currentUserData?.avatar_url || currentUserData?.photo || "https://placehold.co/50",
         text: commentInput,
         time: "Baru saja",
       };
       setComments((prev) => [newComment, ...prev]);
       setCommentInput("");
-      alert("Komentar berhasil dikirim!");
     } catch (error) {
       alert("Gagal mengirim komentar.");
     } finally {
@@ -97,23 +113,14 @@ const RecipeDetail = () => {
   const handleAction = async (endpoint, actionName, successCallback) => {
     if (!authToken) return alert("Anda harus login.");
     try {
-      await api.post(
-        endpoint,
-        {},
-        { headers: { Authorization: `Bearer ${authToken}` } }
-      );
+      await api.post(endpoint, {}, { headers: { Authorization: `Bearer ${authToken}` } });
       successCallback();
-    } catch (err) {
-      alert(`Gagal memproses ${actionName}.`);
-    }
+    } catch (err) { alert(`Gagal memproses ${actionName}.`); }
   };
 
   const handleLike = () => {
     const endpoint = isLiked ? `/recipes/${id}/unlike` : `/recipes/${id}/like`;
-    handleAction(endpoint, "Like", () => {
-      setIsLiked(!isLiked);
-      setLikeCount((prev) => prev + (isLiked ? -1 : 1));
-    });
+    handleAction(endpoint, "Like", () => { setIsLiked(!isLiked); setLikeCount((prev) => prev + (isLiked ? -1 : 1)); });
   };
 
   const handleSave = () => {
@@ -123,56 +130,30 @@ const RecipeDetail = () => {
 
   const handleFollow = () => {
     if (!recipe) return;
-    const endpoint = isFollowing
-      ? `/users/${recipe.username}/unfollow`
-      : `/users/${recipe.username}/follow`;
+    const targetUser = recipe.username || recipe.author_username; 
+    const endpoint = isFollowing ? `/users/${targetUser}/unfollow` : `/users/${targetUser}/follow`;
     handleAction(endpoint, "Follow", () => setIsFollowing(!isFollowing));
   };
 
   const handleShare = () => alert("Link berhasil disalin!");
+  const formatNumber = (num) => num >= 1000 ? (num / 1000).toFixed(1).replace(/\.0$/, "") + "K" : num;
 
-  const formatNumber = (num) =>
-    num >= 1000 ? (num / 1000).toFixed(1).replace(/\.0$/, "") + "K" : num;
+  if (isLoading) return <div className="feed-area" style={{ textAlign: "center", marginTop: "50px" }}>Memuat...</div>;
+  if (error || !recipe) return <div className="feed-area" style={{ textAlign: "center", marginTop: "50px", padding: "20px" }}><h2>🚫 Oops!</h2><p>{error || "Resep tidak ditemukan."}</p><button className="cta-button" onClick={() => navigate("/feed")} style={{ marginTop: "20px" }}>Kembali ke Feed</button></div>;
 
-  // --- RENDER LOADING / ERROR ---
-  if (isLoading)
-    return (
-      <div
-        className="feed-area"
-        style={{ textAlign: "center", marginTop: "50px" }}
-      >
-        Memuat...
-      </div>
-    );
+  // --- LOGIKA TAMPILAN ---
+  const displayFullname = recipe.user_fullname || recipe.full_name || recipe.author_name || "Nama Pengguna";
+  const displayUsername = recipe.username || recipe.author_username; // Username pemilik resep
+  const displayAvatar = recipe.avatar_url || recipe.user_avatar || "https://placehold.co/50";
+  
+  // REVISI NO. 1 (Bagian 2): Cek apakah ini resep sendiri
+  const isOwnRecipe = currentUsername === displayUsername;
 
-  // ✅ TAMPILAN JIKA RESEP HILANG/ERROR
-  if (error || !recipe) {
-    return (
-      <div
-        className="feed-area"
-        style={{ textAlign: "center", marginTop: "50px", padding: "20px" }}
-      >
-        <h2>🚫 Oops!</h2>
-        <p>{error || "Resep tidak ditemukan."}</p>
-        <button
-          className="cta-button"
-          onClick={() => navigate("/feed")}
-          style={{ marginTop: "20px" }}
-        >
-          Kembali ke Feed
-        </button>
-      </div>
-    );
-  }
-
-  // --- RENDER UI UTAMA ---
   return (
     <div className="loggedin-body">
-      <main
-        className="feed-container container"
-        style={{ display: "flex", gap: "20px", marginTop: "20px" }}
-      >
+      <main className="feed-container container" style={{ display: "flex", gap: "20px", marginTop: "20px" }}>
         <div className="recipe-detail-container">
+          
           {/* Header */}
           <div className="recipe-detail-header">
             <div className="recipe-title-group">
@@ -181,22 +162,31 @@ const RecipeDetail = () => {
               </button>
               <h1 className="recipe-detail-title">{recipe.title}</h1>
             </div>
+
             <div className="post-header revised">
               <div
                 className="profile-pic-small"
-                style={{ backgroundImage: `url(${recipe.avatar_url})` }}
+                style={{ backgroundImage: `url(${displayAvatar})` }}
               ></div>
               <div className="user-details-column">
                 <div className="user-details-top">
-                  <strong>{recipe.user_fullname}</strong>
-                  <span className="username">@{recipe.username}</span>
-                  <span className="dot-separator">•</span>
-                  <button
-                    className="follow-button text-only"
-                    onClick={handleFollow}
-                  >
-                    {isFollowing ? "Mengikuti" : "Ikuti"}
-                  </button>
+                  {/* Nama Lengkap */}
+                  <strong>{displayFullname}</strong>
+                  
+                  {/* REVISI NO. 1 (Bagian 1): Username dihilangkan, hanya ada titik separator jika tombol follow muncul */}
+                  
+                  {/* Tombol Follow: Hanya muncul jika BUKAN resep sendiri */}
+                  {!isOwnRecipe && (
+                    <>
+                      <span className="dot-separator">•</span>
+                      <button
+                        className="follow-button text-only"
+                        onClick={handleFollow}
+                      >
+                        {isFollowing ? "Mengikuti" : "Ikuti"}
+                      </button>
+                    </>
+                  )}
                 </div>
                 <span className="post-meta">
                   {new Date(recipe.created_at).toLocaleDateString()}
@@ -205,7 +195,7 @@ const RecipeDetail = () => {
             </div>
           </div>
 
-          {/* Image */}
+          {/* REVISI NO. 2: Gambar Resep (Class CSS sudah diupdate jadi 1:1) */}
           <img
             src={recipe.image_url}
             alt={recipe.title}
@@ -214,80 +204,44 @@ const RecipeDetail = () => {
 
           {/* Actions */}
           <div className="post-actions detail-page-actions">
-            <button
-              onClick={handleLike}
-              className={isLiked ? "like-active" : ""}
-            >
+            <button onClick={handleLike} className={isLiked ? "like-active" : ""}>
               <i className={isLiked ? "fas fa-heart" : "far fa-heart"}></i>{" "}
               {formatNumber(likeCount)} Suka
             </button>
-            <a
-              href="#comments-section"
-              style={{ textDecoration: "none", color: "inherit" }}
-            >
+            <a href="#comments-section" style={{ textDecoration: "none", color: "inherit" }}>
               <i className="far fa-comment"></i> {comments.length} Komentar
             </a>
             <button onClick={handleShare}>
               <i className="far fa-share-square"></i> Bagikan
             </button>
-            <button
-              onClick={handleSave}
-              className={isSaved ? "save-active" : ""}
-            >
-              <i
-                className={isSaved ? "fas fa-bookmark" : "far fa-bookmark"}
-              ></i>{" "}
+            <button onClick={handleSave} className={isSaved ? "save-active" : ""}>
+              <i className={isSaved ? "fas fa-bookmark" : "far fa-bookmark"}></i>{" "}
               {isSaved ? "Disimpan" : "Simpan"}
             </button>
           </div>
 
-          <div className="recipe-caption-full">
-            <p>{recipe.description}</p>
-          </div>
+          <div className="recipe-caption-full"><p>{recipe.description}</p></div>
 
-          {/* Stats */}
+          {/* Info Stats (Waktu, Porsi, Level) */}
           <div className="recipe-meta-info">
-            <div>
-              <i className="fas fa-clock"></i> <strong>Waktu</strong>
-              <br />
-              {recipe.total_time} Menit
-            </div>
-            <div>
-              <i className="fas fa-utensils"></i> <strong>Porsi</strong>
-              <br />
-              {recipe.servings} Orang
-            </div>
-            <div>
-              <i className="fas fa-star"></i> <strong>Level</strong>
-              <br />
-              {recipe.difficulty}
-            </div>
+             <div><i className="fas fa-clock"></i> <strong>Waktu</strong><br />{recipe.total_time} Menit</div>
+             <div><i className="fas fa-utensils"></i> <strong>Porsi</strong><br />{recipe.servings} Orang</div>
+             <div><i className="fas fa-star"></i> <strong>Level</strong><br />{recipe.difficulty}</div>
           </div>
 
           {/* Bahan & Langkah */}
           <div className="recipe-main-content-wrapper">
             <div className="recipe-ingredients">
-              <h3>
-                <i className="fas fa-shopping-cart"></i> Bahan-Bahan
-              </h3>
-              <ul>
-                {recipe.ingredients?.map((item, idx) => (
-                  <li key={idx}>{item}</li>
-                ))}
-              </ul>
+              <h3><i className="fas fa-shopping-cart"></i> Bahan-Bahan</h3>
+              <ul>{recipe.ingredients?.map((item, idx) => <li key={idx}>{item}</li>)}</ul>
             </div>
             <div className="recipe-instructions">
-              <h3>
-                <i className="fas fa-list-ol"></i> Langkah-Langkah
-              </h3>
-              <ol>
-                {recipe.steps?.map((step, idx) => (
-                  <li key={idx}>{step}</li>
-                ))}
-              </ol>
+              <h3><i className="fas fa-list-ol"></i> Langkah-Langkah</h3>
+              <ol>{recipe.steps?.map((step, idx) => <li key={idx}>{step}</li>)}</ol>
             </div>
           </div>
 
+          {/* REVISI NO. 3: Komentar (Sudah dimapping fotonya di fungsi fetchComments) */}
           <CommentsSection
             comments={comments}
             commentCount={comments.length}
