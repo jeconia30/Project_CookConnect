@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import api from "../api/axiosInstance";
 import "../styles/components/RecipeCardFeed.css";
+import { showPopup, showToast } from "../utils/swal"; // IMPOR POPUP
 
 const RecipeCardFeed = ({ recipe }) => {
   if (!recipe) return null;
@@ -43,7 +44,10 @@ const RecipeCardFeed = ({ recipe }) => {
 
   // Handlers
   const handleAction = async (endpoint, successCallback) => {
-    if (!authToken) return alert("Login dulu!");
+    if (!authToken) {
+        // GANTI ALERT BIASA DENGAN POPUP
+        return showPopup("Login Dulu", "Anda harus login untuk melakukan aksi ini.", "warning");
+    }
     try {
       await api.post(endpoint, {}, { headers: { Authorization: `Bearer ${authToken}` } });
       successCallback();
@@ -63,6 +67,14 @@ const RecipeCardFeed = ({ recipe }) => {
   const handleFollow = () => {
     const endpoint = isFollowing ? `/users/${displayHandle}/unfollow` : `/users/${displayHandle}/follow`;
     handleAction(endpoint, () => setIsFollowing(!isFollowing));
+  };
+
+  // PENGGANTI ALERT SHARE
+  const handleShare = () => {
+    // Di sini bisa ditambahkan logika copy link ke clipboard beneran jika mau
+    // navigator.clipboard.writeText(window.location.origin + `/recipe/${recipe.id}`);
+    
+    showToast("Link disalin!", "success");
   };
 
   const formatNumber = (num) => (num >= 1000 ? (num / 1000).toFixed(1) + "K" : num);
@@ -153,10 +165,12 @@ const RecipeCardFeed = ({ recipe }) => {
           <span>{recipe.comments || 0} Komentar</span>
         </Link>
 
-        <button className="action-btn" onClick={() => alert('Disalin!')}>
+        {/* BUTTON SHARE DENGAN TOAST */}
+        <button className="action-btn" onClick={handleShare}>
           <i className="far fa-share-square"></i>
           <span>Bagikan</span>
         </button>
+        
         <button className={`action-btn ${isSaved ? "saved" : ""}`} onClick={handleSave}>
           <i className={isSaved ? "fas fa-bookmark" : "far fa-bookmark"}></i>
           <span>{isSaved ? "Disimpan" : "Simpan"}</span>

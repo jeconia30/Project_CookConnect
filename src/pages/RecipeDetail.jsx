@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import api from "../api/axiosInstance";
 import CommentsSection from "../components/CommentsSection";
+import { showPopup, showToast } from "../utils/swal"; // IMPOR POPUP
 
 const RecipeDetail = () => {
   const { id } = useParams();
@@ -34,7 +35,6 @@ const RecipeDetail = () => {
       const commentsRes = await api.get(`/comments/recipe/${id}`);
       const rawComments = commentsRes.data.comments || [];
       
-      // ✅ PERBAIKAN 1: Tambahkan c.avatar (karena backend kirim 'avatar')
       const mappedComments = rawComments.map(c => ({
         ...c,
         avatar: c.avatar || c.avatar_url || c.photo || "https://placehold.co/50",
@@ -57,7 +57,6 @@ const RecipeDetail = () => {
           headers: { Authorization: `Bearer ${authToken}` },
         });
 
-        // Cek struktur response (kadang dibungkus data, kadang langsung)
         const apiRecipe = response.data?.data || response.data;
         setRecipe(apiRecipe);
 
@@ -80,23 +79,21 @@ const RecipeDetail = () => {
   }, [id, authToken]);
 
   useEffect(() => {
-    // Jalankan hanya jika loading selesai DAN ada hash di URL (misal #comments-section)
     if (!isLoading && location.hash) {
-      const element = document.getElementById(location.hash.substring(1)); // Hapus tanda #
+      const element = document.getElementById(location.hash.substring(1)); 
       if (element) {
-        // Beri sedikit delay agar rendering tuntas
         setTimeout(() => {
           element.scrollIntoView({ behavior: "smooth" });
         }, 100);
       }
     }
-  }, [isLoading, location.hash]); // Dependency: jalan saat loading berubah false
+  }, [isLoading, location.hash]); 
 
   if (isLoading) return <div className="feed-area" style={{ textAlign: "center", marginTop: "50px" }}>Memuat...</div>;
   
   // --- HANDLERS ---
   const handleSubmitComment = async () => {
-    if (!authToken) return alert("Login dulu!");
+    if (!authToken) return showPopup("Login Dulu", "Anda harus login untuk berkomentar", "warning");
     setIsSubmitting(true);
     try {
       await api.post(
@@ -105,7 +102,6 @@ const RecipeDetail = () => {
         { headers: { Authorization: `Bearer ${authToken}` } }
       );
       
-      // Optimistic Update
       const newComment = {
         id: Date.now(),
         name: currentUserData?.full_name || "Anda",
@@ -117,18 +113,18 @@ const RecipeDetail = () => {
       setComments((prev) => [newComment, ...prev]);
       setCommentInput("");
     } catch (error) {
-      alert("Gagal mengirim komentar.");
+      showPopup("Gagal", "Gagal mengirim komentar.", "error");
     } finally {
       setIsSubmitting(false);
     }
   };
 
   const handleAction = async (endpoint, actionName, successCallback) => {
-    if (!authToken) return alert("Anda harus login.");
+    if (!authToken) return showPopup("Akses Ditolak", "Anda harus login untuk melakukan aksi ini.", "warning");
     try {
       await api.post(endpoint, {}, { headers: { Authorization: `Bearer ${authToken}` } });
       successCallback();
-    } catch (err) { alert(`Gagal memproses ${actionName}.`); }
+    } catch (err) { showPopup("Gagal", `Gagal memproses ${actionName}.`, "error"); }
   };
 
   const handleLike = () => {
@@ -143,32 +139,25 @@ const RecipeDetail = () => {
 
   const handleFollow = () => {
     if (!recipe) return;
-    // Gunakan displayUsername yang sudah benar
     const targetUser = recipe.username || recipe.author; 
     const endpoint = isFollowing ? `/users/${targetUser}/unfollow` : `/users/${targetUser}/follow`;
     handleAction(endpoint, "Follow", () => setIsFollowing(!isFollowing));
   };
 
-  const handleShare = () => alert("Link berhasil disalin!");
+  // PENGGANTI ALERT SHARE
+  const handleShare = () => {
+    showToast("Link berhasil disalin!", "success");
+  };
+
   const formatNumber = (num) => num >= 1000 ? (num / 1000).toFixed(1).replace(/\.0$/, "") + "K" : num;
 
   if (isLoading) return <div className="feed-area" style={{ textAlign: "center", marginTop: "50px" }}>Memuat...</div>;
   if (error || !recipe) return <div className="feed-area" style={{ textAlign: "center", marginTop: "50px", padding: "20px" }}><h2>🚫 Oops!</h2><p>{error || "Resep tidak ditemukan."}</p><button className="cta-button" onClick={() => navigate("/feed")} style={{ marginTop: "20px" }}>Kembali ke Feed</button></div>;
 
-  // --- ⚠️ PERBAIKAN UTAMA DI SINI ---
-  
-  // 1. Ambil nama lengkap (Prioritas: user_fullname dari backend)
   const displayFullname = recipe.user_fullname || recipe.full_name || recipe.author_name || "Nama Pengguna";
-  
-  // 2. Ambil username (Prioritas: recipe.username, kalau null ambil recipe.author)
-  // Backend kamu mengirim field 'author' yang isinya username.
   const displayUsername = recipe.username || recipe.author || "user"; 
-  
-  // 3. Ambil Avatar
   const displayAvatar = recipe.avatar_url || recipe.avatar || recipe.user_avatar || "https://placehold.co/50";
   
-  // 4. Logic Tombol Ikuti
-  // Pastikan currentUsername dan displayUsername tidak undefined saat dibandingkan
   const isOwnRecipe = (currentUsername && displayUsername) 
     ? currentUsername.trim().toLowerCase() === displayUsername.trim().toLowerCase()
     : false;
@@ -194,13 +183,8 @@ const RecipeDetail = () => {
               ></div>
               <div className="user-details-column">
                 <div className="user-details-top">
-                  {/* Nama Lengkap */}
                   <strong>{displayFullname}</strong>
-                  
-                  {/* Username (Sudah diperbaiki mappingnya) */}
                   <span className="username">@{displayUsername}</span>
-                  
-                  {/* Tombol Follow: Hanya muncul jika BUKAN resep sendiri */}
                   {!isOwnRecipe && (
                     <>
                       <span className="dot-separator">•</span>
@@ -269,39 +253,36 @@ const RecipeDetail = () => {
               </h3>
               <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
                 
-                {/* Link YouTube */}
                 {recipe.video_url && (
                   <a href={recipe.video_url} target="_blank" rel="noopener noreferrer" 
                     style={{
                       display: 'flex', alignItems: 'center', gap: '8px',
                       padding: '10px 16px', borderRadius: '8px',
-                      backgroundColor: '#38761d', /* SEBELUMNYA: #ff0000 */
+                      backgroundColor: '#38761d', 
                       color: 'white', textDecoration: 'none', fontWeight: 'bold'
                     }}>
                     <i className="fab fa-youtube"></i> YouTube
                   </a>
                 )}
 
-                {/* Link TikTok */}
                 {recipe.tiktok_url && (
                   <a href={recipe.tiktok_url} target="_blank" rel="noopener noreferrer" 
                     style={{
                       display: 'flex', alignItems: 'center', gap: '8px',
                       padding: '10px 16px', borderRadius: '8px',
-                      backgroundColor: '#38761d', /* SEBELUMNYA: #000000 */
+                      backgroundColor: '#38761d',
                       color: 'white', textDecoration: 'none', fontWeight: 'bold'
                     }}>
                     <i className="fab fa-tiktok"></i> TikTok
                   </a>
                 )}
 
-                {/* Link Instagram */}
                 {recipe.instagram_url && (
                   <a href={recipe.instagram_url} target="_blank" rel="noopener noreferrer" 
                      style={{
                        display: 'flex', alignItems: 'center', gap: '8px',
                        padding: '10px 16px', borderRadius: '8px',
-                       background: --primary-color, 
+                       backgroundColor: '#38761d', 
                        color: 'white', textDecoration: 'none', fontWeight: 'bold'
                      }}>
                     <i className="fab fa-instagram"></i> Instagram
@@ -310,7 +291,6 @@ const RecipeDetail = () => {
               </div>
             </div>
           )}
-          {/* REVISI NO. 3: Komentar (Sudah dimapping fotonya di fungsi fetchComments) */}
           <CommentsSection
             comments={comments}
             commentCount={comments.length}

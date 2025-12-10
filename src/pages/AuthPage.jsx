@@ -3,6 +3,7 @@ import { useNavigate, Link } from "react-router-dom";
 import api from "../api/axiosInstance";
 import "../styles/app.css";
 import { SharedFooter } from "./LandingPage";
+import { showPopup } from "../utils/swal"; // IMPOR POPUP
 
 const LoginForm = ({ onToggle }) => {
   const navigate = useNavigate();
@@ -30,14 +31,17 @@ const LoginForm = ({ onToggle }) => {
       if (token) {
         localStorage.setItem("authToken", token);
         localStorage.setItem("userProfileData", JSON.stringify(user));
-        alert("Login berhasil!");
+        
+        // GANTI ALERT DENGAN POPUP
+        await showPopup("Berhasil!", "Selamat datang kembali.", "success");
         navigate("/feed");
       } else {
         throw new Error("Token kosong dari server");
       }
     } catch (error) {
       console.error("Login Error:", error.response || error);
-      alert("Login gagal! Cek email/password Anda.");
+      // GANTI ALERT ERROR DENGAN POPUP
+      showPopup("Login Gagal", "Cek email atau password Anda.", "error");
     } finally {
       setIsLoading(false);
     }
@@ -105,12 +109,12 @@ const RegisterForm = ({ onToggle }) => {
     e.preventDefault();
 
     if (formData.password !== formData.confirmPassword) {
-      alert("Password dan Konfirmasi tidak cocok!");
+      showPopup("Oops!", "Password dan Konfirmasi tidak cocok!", "warning");
       return;
     }
 
     if (formData.password.length < 8) {
-      alert("Password minimal 8 karakter!");
+      showPopup("Password Lemah", "Password minimal 8 karakter!", "warning");
       return;
     }
 
@@ -129,7 +133,8 @@ const RegisterForm = ({ onToggle }) => {
       if (token) {
         localStorage.setItem("authToken", token);
         localStorage.setItem("userProfileData", JSON.stringify(user));
-        alert("Registrasi berhasil! Lanjutkan melengkapi profil.");
+        
+        await showPopup("Registrasi Berhasil!", "Silakan lengkapi profil Anda.", "success");
         navigate("/setup-profile");
       } else {
         throw new Error("Token kosong dari server");
@@ -140,7 +145,7 @@ const RegisterForm = ({ onToggle }) => {
       if (error.response?.data?.message) {
         errorMsg = error.response.data.message;
       }
-      alert(`Gagal: ${errorMsg}`);
+      showPopup("Gagal", errorMsg, "error");
     } finally {
       setIsLoading(false);
     }
