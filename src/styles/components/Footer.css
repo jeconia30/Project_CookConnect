@@ -1,17 +1,62 @@
 /* ============================================
-   FOOTER COMPONENT STYLES
+   FOOTER COMPONENT STYLES (MATCHING REFERENCE)
    ============================================ */
 
-footer {
-  text-align: center;
-  padding: 25px 0;
-  border-top: 1px solid #e1e1e1;
+.main-footer {
   background-color: #ffffff;
-  color: #777;
-  font-size: 0.9rem;
+  border-top: 1px solid #e1e1e1; /* Garis tipis di atas */
+  padding: 30px 0;
+  margin-top: auto;
   width: 100%;
-  
-  /* PENTING: Agar footer tidak menimpa konten */
-  margin-top: auto; 
-  position: relative; 
+}
+
+/* Container flexbox untuk memisahkan kiri & kanan */
+.footer-content {
+  display: flex;
+  justify-content: space-between; /* Kiri mentok kiri, Kanan mentok kanan */
+  align-items: center;            /* Rata tengah secara vertikal */
+  padding: 0 20px;                /* Padding kiri kanan agar tidak nempel layar */
+}
+
+/* --- BAGIAN KIRI (SOSIAL MEDIA) --- */
+.footer-socials {
+  display: flex;
+  gap: 20px; /* Jarak antar ikon */
+}
+
+.footer-socials a {
+  color: #38761d; /* Warna HIJAU sesuai gambar */
+  font-size: 1.6rem; /* Ukuran ikon */
+  text-decoration: none;
+  transition: transform 0.2s ease, color 0.2s;
+}
+
+.footer-socials a:hover {
+  transform: translateY(-2px); /* Efek naik dikit pas hover */
+  color: #2b5c16; /* Hijau lebih gelap pas hover */
+}
+
+/* --- BAGIAN KANAN (TEKS) --- */
+.footer-text {
+  text-align: right; /* Teks rata kanan */
+  color: #777;       /* Warna abu-abu */
+  font-size: 0.85rem;
+  line-height: 1.4;  /* Jarak antar baris teks */
+}
+
+.footer-text p {
+  margin: 0; /* Hapus margin bawaan paragraf */
+}
+
+/* --- RESPONSIF (TAMPILAN HP) --- */
+@media (max-width: 600px) {
+  .footer-content {
+    flex-direction: column; /* Jadi atas bawah kalau di HP */
+    gap: 15px;
+    text-align: center;
+  }
+
+  .footer-text {
+    text-align: center; /* Teks jadi tengah di HP */
+  }
 }

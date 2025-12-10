@@ -134,7 +134,8 @@ const ProfilePage = ({ isCurrentUser }) => {
       full_name: editFormData.name,
       username: editFormData.username,
       bio: editFormData.bio,
-      pronouns: "", // Kosongkan
+      pronouns: editFormData.pronouns,
+      // Pastikan avatar_url diambil dari editFormData (hasil upload baru) atau fallback ke data lama
       avatar_url: editFormData.avatar_url || profileData.avatar_url,
       link_tiktok: editFormData.tiktok,
       link_instagram: editFormData.instagram,
@@ -147,19 +148,32 @@ const ProfilePage = ({ isCurrentUser }) => {
         headers: { Authorization: `Bearer ${authToken}` },
       });
 
+      // UPDATE STATE COMPONENT
       setProfileData((prev) => ({
         ...prev,
         ...payload,
         name: payload.full_name,
-        photo: payload.avatar_url || prev.photo,
-        link_tiktok: payload.link_tiktok,
-        link_instagram: payload.link_instagram,
-        link_linkedin: payload.link_linkedin,
-        link_other: payload.link_other,
+        // Pastikan photo diupdate
+        photo: payload.avatar_url || prev.photo, 
       }));
+
+      // [PENTING] UPDATE LOCALSTORAGE AGAR NAVBAR BERUBAH
+      const oldStorage = JSON.parse(localStorage.getItem('userProfileData') || '{}');
+      const newStorage = { 
+          ...oldStorage, 
+          ...payload, 
+          // Pastikan key yang disimpan konsisten, misalnya 'avatar_url' atau 'photo'
+          avatar_url: payload.avatar_url,
+          photo: payload.avatar_url 
+      };
+      localStorage.setItem('userProfileData', JSON.stringify(newStorage));
 
       alert("Profil berhasil diperbarui!");
       setIsEditOpen(false);
+      
+      // Paksa reload halaman agar Navbar mengambil data LocalStorage terbaru
+      window.location.reload(); 
+
     } catch (err) {
       alert("Gagal memperbarui profil.");
     }

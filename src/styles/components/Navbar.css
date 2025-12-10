@@ -1,5 +1,5 @@
 /* ============================================
-   NAVBAR COMPONENT STYLES
+   NAVBAR COMPONENT STYLES (FULL & FIXED)
    ============================================ */
 
 :root {
@@ -26,29 +26,29 @@
   margin: 0 auto;
 }
 
-/* LOGO */
+/* --- LOGO --- */
 .logo {
   font-size: 1.5rem;
   font-weight: 700;
   color: var(--primary-color);
   text-decoration: none;
-  white-space: nowrap; /* Mencegah logo turun baris */
+  white-space: nowrap; 
 }
 .logo-link {
   text-decoration: none;
 }
 
-/* SEARCH BAR BARU */
+/* --- SEARCH BAR --- */
 .search-container {
   position: relative;
-  width: 40%; /* Mengatur lebar pencarian */
+  width: 40%; 
   max-width: 500px;
 }
 
 .search-input {
   width: 100%;
-  padding: 10px 15px 10px 45px; /* Padding kiri besar untuk ikon */
-  border-radius: 25px; /* Bentuk pil/rounded */
+  padding: 10px 15px 10px 45px; /* Padding kiri untuk ikon */
+  border-radius: 25px; 
   border: 1px solid #e1e1e1;
   background-color: var(--bg-light);
   font-size: 0.95rem;
@@ -70,10 +70,10 @@
   transform: translateY(-50%);
   color: var(--text-medium);
   font-size: 1rem;
-  pointer-events: none; /* Agar klik tembus ke input */
+  pointer-events: none; 
 }
 
-/* USER ACTIONS */
+/* --- USER ACTIONS (Notif & Profil) --- */
 .user-actions {
   display: flex;
   align-items: center;
@@ -91,7 +91,42 @@
   color: var(--primary-color);
 }
 
-/* PROFILE & DROPDOWN */
+/* --- NOTIFICATION BADGE (POSISI DIPERBAIKI) --- */
+.notification-button {
+  position: relative; /* Penting agar badge nempel di ikon ini */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.notification-badge {
+  position: absolute;
+  
+  /* Posisi di Samping Kanan Atas (Bahu Ikon) */
+  top: -2px;    /* Sejajar atau sedikit naik dari sisi atas ikon */
+  right: -5px;  /* Geser ke kanan luar */
+  
+  background-color: #e74c3c; /* Merah */
+  color: white;
+  
+  font-size: 0.65rem;
+  font-weight: bold;
+  
+  border-radius: 50%;
+  min-width: 18px; 
+  height: 18px;
+  padding: 0 4px;
+  
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  border: 2px solid #ffffff; /* Garis putih pemisah */
+  box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+  z-index: 10;
+}
+
+/* --- PROFILE & DROPDOWN --- */
 .profile-dropdown-wrapper {
   position: relative;
 }
@@ -104,15 +139,16 @@
   border: 2px solid var(--primary-color);
   background-size: cover;
   background-position: center;
-  /* Jika kamu mau pakai gambar background default: */
-  /* background-image: url('path/to/default.jpg'); */
   cursor: pointer;
+  display: flex; /* Supaya ikon user di tengah kalau gada foto */
+  align-items: center;
+  justify-content: center;
 }
 
 .profile-dropdown-menu {
   display: none;
   position: absolute;
-  top: 110%; /* Sedikit jarak dari foto profil */
+  top: 110%; 
   right: 0;
   background-color: #ffffff;
   border-radius: 8px;
@@ -122,7 +158,6 @@
   z-index: 1001;
 }
 
-/* Tampilkan dropdown saat hover pada wrapper */
 .profile-dropdown-wrapper:hover .profile-dropdown-menu {
   display: block;
 }
@@ -141,11 +176,10 @@
   color: var(--primary-color);
 }
 
-/* RESPONSIVE (HP) */
+/* --- RESPONSIVE (HP) --- */
 @media (max-width: 768px) {
   .logo {
-    display: none; /* Sembunyikan teks logo di HP jika sempit */
-    /* Atau ganti jadi icon saja */
+    display: none; 
   }
   
   .search-container {
