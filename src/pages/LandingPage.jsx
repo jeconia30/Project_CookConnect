@@ -5,10 +5,10 @@ import "../styles/app.css";
 import RecipeCard from "../components/RecipeCard";
 import MemberCard from "../components/MemberCard";
 
-import anggota1 from "../assets/anggota1.jpeg";
-import anggota2 from "../assets/anggota2.jpeg";
-import anggota3 from "../assets/anggota3.jpeg";
-import anggota4 from "../assets/anggota4.jpeg";
+import anggota1 from "../assets/anggota1.png";
+import anggota2 from "../assets/anggota2.png";
+import anggota3 from "../assets/anggota3.png";
+import anggota4 from "../assets/anggota4.png";
 import rendang from "../assets/rendang.jpeg";
 import geprek from "../assets/geprek.jpeg";
 import brownies from "../assets/brownies.jpeg";
@@ -49,26 +49,26 @@ const featuredRecipes = [
 
 const teamMembers = [
   {
-    name: "Nama Anggota 1",
-    role: "Manajer Proyek / Ketua Frontend",
+    name: "Muhammad Adil Busra",
+    role: "Manajer Proyek / Ketua Backend",
     photoSrc: anggota1,
     altText: "Foto Anggota Tim 1",
   },
   {
-    name: "Nama Anggota 2",
-    role: "UI/UX",
+    name: "Leonard Auguste",
+    role: "UI/UX & Frontend",
     photoSrc: anggota2,
     altText: "Foto Anggota Tim 2",
   },
   {
-    name: "Nama Anggota 3",
-    role: "CSS",
+    name: "Kayla Andhara",
+    role: "Frontend",
     photoSrc: anggota3,
     altText: "Foto Anggota Tim 3",
   },
   {
-    name: "Nama Anggota adil",
-    role: "JavaScript",
+    name: "Jeconia Farica Sitorus",
+    role: "UI/UX, Frontend & Backend",
     photoSrc: anggota4,
     altText: "Foto Anggota Tim 4",
   },
@@ -79,9 +79,9 @@ const LandingPageHeader = () => {
     <header className="main-header landing-header-green">
       <div className="container">
         <div className="navbar">
-          <div className="logo">
-            <Link to="/">CookConnect</Link>
-          </div>
+          <Link to="/" className="logo">
+          CookConnect
+          </Link>
           <nav>
             <ul className="nav-links">
               <li>

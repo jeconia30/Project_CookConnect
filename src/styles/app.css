@@ -161,9 +161,17 @@ html {
 
 .logo {
   font-size: 1.5rem;
-  font-weight: 700;
+  
+  /* Angka 700 atau 800 bikin teks jadi BOLD (Tebal) */
+  font-weight: 800; 
+  
+  /* Ini akan otomatis mengambil warna hijau dari :root di atas */
   color: var(--primary-color);
+  
   text-decoration: none;
+  
+  /* Opsional: Memastikan font-nya sama persis dengan body */
+  font-family: inherit; 
 }
 
 .nav-links {
@@ -176,7 +184,7 @@ html {
 
 .nav-links a {
   text-decoration: none;
-  color: var(--text-medium);
+  color: var(--primary-color);
   font-weight: 500;
   transition: color 0.2s;
 }
