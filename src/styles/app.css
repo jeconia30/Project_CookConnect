@@ -18,6 +18,22 @@
   background-color: #ffffff;
 }
 
+/* ============================================
+   UBAH WARNA SELEKSI TEKS (TEXT HIGHLIGHT)
+   ============================================ */
+
+/* Mengubah warna background saat teks diblok/diseleksi */
+::selection {
+  background-color: var(--primary-color); /* Warna Hijau */
+  color: #ffffff; /* Teks menjadi Putih agar kontras */
+}
+
+/* Khusus untuk Firefox (opsional, untuk kompatibilitas lebih baik) */
+::-moz-selection {
+  background-color: var(--primary-color);
+  color: #ffffff;
+}
+
 /* --- GLOBAL RESET & BASE STYLES --- */
 *,
 *::before,
@@ -2405,4 +2421,20 @@ footer p {
 .empty-state i {
   font-size: 3rem;
   margin-bottom: 10px;
+}
+
+/* ============================================
+   MENGHILANGKAN SPINNER (PANAH) INPUT NUMBER
+   ============================================ */
+
+/* Untuk Chrome, Safari, Edge, Opera */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Untuk Firefox */
+input[type="number"] {
+  -moz-appearance: textfield;
 }
