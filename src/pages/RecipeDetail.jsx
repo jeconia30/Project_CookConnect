@@ -79,6 +79,21 @@ const RecipeDetail = () => {
     if (id) fetchRecipe();
   }, [id, authToken]);
 
+  useEffect(() => {
+    // Jalankan hanya jika loading selesai DAN ada hash di URL (misal #comments-section)
+    if (!isLoading && location.hash) {
+      const element = document.getElementById(location.hash.substring(1)); // Hapus tanda #
+      if (element) {
+        // Beri sedikit delay agar rendering tuntas
+        setTimeout(() => {
+          element.scrollIntoView({ behavior: "smooth" });
+        }, 100);
+      }
+    }
+  }, [isLoading, location.hash]); // Dependency: jalan saat loading berubah false
+
+  if (isLoading) return <div className="feed-area" style={{ textAlign: "center", marginTop: "50px" }}>Memuat...</div>;
+  
   // --- HANDLERS ---
   const handleSubmitComment = async () => {
     if (!authToken) return alert("Login dulu!");
@@ -257,11 +272,12 @@ const RecipeDetail = () => {
                 {/* Link YouTube */}
                 {recipe.video_url && (
                   <a href={recipe.video_url} target="_blank" rel="noopener noreferrer" 
-                     style={{
-                       display: 'flex', alignItems: 'center', gap: '8px',
-                       padding: '10px 16px', borderRadius: '8px',
-                       backgroundColor: '#ff0000', color: 'white', textDecoration: 'none', fontWeight: 'bold'
-                     }}>
+                    style={{
+                      display: 'flex', alignItems: 'center', gap: '8px',
+                      padding: '10px 16px', borderRadius: '8px',
+                      backgroundColor: '#38761d', /* SEBELUMNYA: #ff0000 */
+                      color: 'white', textDecoration: 'none', fontWeight: 'bold'
+                    }}>
                     <i className="fab fa-youtube"></i> YouTube
                   </a>
                 )}
@@ -269,11 +285,12 @@ const RecipeDetail = () => {
                 {/* Link TikTok */}
                 {recipe.tiktok_url && (
                   <a href={recipe.tiktok_url} target="_blank" rel="noopener noreferrer" 
-                     style={{
-                       display: 'flex', alignItems: 'center', gap: '8px',
-                       padding: '10px 16px', borderRadius: '8px',
-                       backgroundColor: '#000000', color: 'white', textDecoration: 'none', fontWeight: 'bold'
-                     }}>
+                    style={{
+                      display: 'flex', alignItems: 'center', gap: '8px',
+                      padding: '10px 16px', borderRadius: '8px',
+                      backgroundColor: '#38761d', /* SEBELUMNYA: #000000 */
+                      color: 'white', textDecoration: 'none', fontWeight: 'bold'
+                    }}>
                     <i className="fab fa-tiktok"></i> TikTok
                   </a>
                 )}
@@ -284,7 +301,7 @@ const RecipeDetail = () => {
                      style={{
                        display: 'flex', alignItems: 'center', gap: '8px',
                        padding: '10px 16px', borderRadius: '8px',
-                       background: 'linear-gradient(45deg, #f09433 0%,#e6683c 25%,#dc2743 50%,#cc2366 75%,#bc1888 100%)', 
+                       background: --primary-color, 
                        color: 'white', textDecoration: 'none', fontWeight: 'bold'
                      }}>
                     <i className="fab fa-instagram"></i> Instagram
