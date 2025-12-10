@@ -394,7 +394,8 @@ function CreateRecipe() {
           <button
             type="submit"
             className="save-btn"
-            disabled={isLoading || uploadingImage || !recipeImageUrl}
+            // Hapus checking !recipeImageUrl agar tombol bisa diklik & validasi alert muncul
+            disabled={isLoading || uploadingImage}
           >
             {isLoading ? "Menerbitkan..." : "Terbitkan Resep"}
           </button>
