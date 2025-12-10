@@ -147,6 +147,7 @@ const ProfilePage = ({ isCurrentUser }) => {
         headers: { Authorization: `Bearer ${authToken}` },
       });
 
+      // UPDATE STATE COMPONENT
       setProfileData((prev) => ({
         ...prev,
         ...payload,

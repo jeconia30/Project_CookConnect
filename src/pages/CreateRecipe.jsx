@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../api/axiosInstance";
-import { uploadRecipeImage } from "../services/uploadService"; // Pastikan import ini ada
+import { uploadRecipeImage } from "../services/uploadService"; 
 import "../styles/app.css";
 
 function CreateRecipe() {
@@ -10,10 +10,12 @@ function CreateRecipe() {
 
   // State untuk gambar
   const [uploadingImage, setUploadingImage] = useState(false);
-  const [recipeImage, setRecipeImage] = useState(null); // File object (untuk preview)
-  const [recipeImageUrl, setRecipeImageUrl] = useState(null); // URL dari server (untuk submit)
+  const [recipeImage, setRecipeImage] = useState(null); 
+  const [recipeImageUrl, setRecipeImageUrl] = useState(null); 
 
-  const [ingredients, setIngredients] = useState([""]);
+  // UBAH: State ingredients sekarang menyimpan object { name, quantity }
+  const [ingredients, setIngredients] = useState([{ name: "", quantity: "" }]);
+  
   const [steps, setSteps] = useState([""]);
 
   const [recipeInfo, setRecipeInfo] = useState({
@@ -46,9 +48,10 @@ function CreateRecipe() {
     }));
   };
 
-  const handleIngredientChange = (index, value) => {
+  // UBAH: Handler untuk input bahan yang terpisah (Nama & Kuantitas)
+  const handleIngredientChange = (index, field, value) => {
     const newIngredients = [...ingredients];
-    newIngredients[index] = value;
+    newIngredients[index][field] = value;
     setIngredients(newIngredients);
   };
 
@@ -58,8 +61,9 @@ function CreateRecipe() {
     setSteps(newSteps);
   };
 
+  // UBAH: Menambah baris bahan baru dengan format object kosong
   const handleAddIngredient = () => {
-    setIngredients([...ingredients, ""]);
+    setIngredients([...ingredients, { name: "", quantity: "" }]);
   };
 
   const handleAddStep = () => {
@@ -84,8 +88,6 @@ function CreateRecipe() {
     const file = event.target.files[0];
     if (file) {
       setRecipeImage(file);
-
-      // Auto-upload gambar ke Supabase
       setUploadingImage(true);
       try {
         const result = await uploadRecipeImage(file);
@@ -110,21 +112,24 @@ function CreateRecipe() {
       return;
     }
 
-    // Validasi Gambar
     if (!recipeImageUrl) {
-      alert(
-        "Harap tunggu upload gambar selesai atau pilih gambar terlebih dahulu."
-      );
+      alert("Harap tunggu upload gambar selesai atau pilih gambar terlebih dahulu.");
       setIsLoading(false);
       return;
     }
 
-    const finalIngredients = ingredients.filter((item) => item.trim() !== "");
+    // UBAH: Gabungkan Quantity dan Name menjadi satu string sebelum dikirim ke backend
+    // Format: "200gr Daging Ayam"
+    const finalIngredients = ingredients
+      .filter(item => item.name.trim() !== "" || item.quantity.trim() !== "")
+      .map(item => `${item.quantity.trim()} ${item.name.trim()}`.trim());
+
     const finalSteps = steps.filter((step) => step.trim() !== "");
-    if (!recipeImageUrl) {
-      alert("Gambar resep wajib diupload!");
-      setIsLoading(false);
-      return;
+
+    if (finalIngredients.length === 0) {
+        alert("Mohon isi minimal satu bahan (Nama Bahan).");
+        setIsLoading(false);
+        return;
     }
 
     try {
@@ -137,7 +142,11 @@ function CreateRecipe() {
         total_time: parseInt(details.totalTime) || 0,
         servings: parseInt(details.servingSize) || 0,
         difficulty: details.difficulty,
+        
+        // UPDATE BAGIAN INI:
         video_url: recipeInfo.linkYoutube || null,
+        tiktok_url: recipeInfo.linkTiktok || null,     // Tambahkan ini
+        instagram_url: recipeInfo.linkInstagram || null // Tambahkan ini
       };
 
       await api.post("/recipes", payload, {
@@ -195,28 +204,36 @@ function CreateRecipe() {
             disabled={uploadingImage}
           />
           <label htmlFor="recipe-image-upload" className="upload-label">
-            <span className="camera-icon">📸</span>
+            
+            {/* LOGIKA TAMPILAN GAMBAR */}
             {recipeImage ? (
-              <img
-                src={URL.createObjectURL(recipeImage)}
-                alt="Preview Resep"
-                style={{
-                  maxWidth: "100px",
-                  maxHeight: "100px",
-                  borderRadius: "8px",
-                  objectFit: "cover",
-                  marginTop: "10px",
-                }}
-              />
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                <img
+                  src={URL.createObjectURL(recipeImage)}
+                  alt="Preview Resep"
+                  style={{
+                    maxWidth: "100%", 
+                    maxHeight: "200px", 
+                    borderRadius: "8px",
+                    objectFit: "cover",
+                    marginBottom: "10px",
+                    boxShadow: "0 2px 8px rgba(0,0,0,0.1)"
+                  }}
+                />
+                {uploadingImage && (
+                  <p className="selected-image-name" style={{ color: '#e67e22' }}>⏳ Sedang mengupload...</p>
+                )}
+                {recipeImageUrl && !uploadingImage && (
+                  <p className="selected-image-name" style={{ color: '#38761d' }}>✓ Foto siap diterbitkan! (Klik untuk ganti)</p>
+                )}
+              </div>
             ) : (
-              <p>Klik untuk mengunggah foto [cth: .jpg, .png]</p>
+              <>
+                <span className="camera-icon">📸</span>
+                <p>Klik untuk mengunggah foto [cth: .jpg, .png]</p>
+              </>
             )}
-            {uploadingImage && (
-              <p className="selected-image-name">Mengupload...</p>
-            )}
-            {recipeImageUrl && (
-              <p className="selected-image-name">✓ Foto berhasil diunggah!</p>
-            )}
+
           </label>
         </div>
         <label className="label">Judul Resep</label>
@@ -276,7 +293,7 @@ function CreateRecipe() {
               required
             >
               <option value="" disabled hidden>
-                Pilih tingkat kesulitan
+                Pilih...
               </option>
               <option value="Mudah">Mudah</option>
               <option value="Sedang">Sedang</option>
@@ -288,16 +305,26 @@ function CreateRecipe() {
         <div className="list">
           {ingredients.map((item, index) => (
             <div className="row" key={index}>
+              {/* INPUT 1: KUANTITAS (Kecil di kiri) */}
+              <input
+                className="input"
+                style={{ width: "25%", minWidth: "80px" }} 
+                type="text"
+                value={item.quantity}
+                onChange={(e) => handleIngredientChange(index, "quantity", e.target.value)}
+                placeholder="Takaran" 
+              />
+              
+              {/* INPUT 2: NAMA BAHAN (Lebar di kanan) */}
               <input
                 className="input flex-grow"
                 type="text"
-                value={item}
-                onChange={(e) => handleIngredientChange(index, e.target.value)}
-                placeholder={
-                  index === 0 ? "Cth: 200gr Daging Ayam" : `Bahan ${index + 1}`
-                }
+                value={item.name}
+                onChange={(e) => handleIngredientChange(index, "name", e.target.value)}
+                placeholder={index === 0 ? "Nama Bahan (cth: Daging Ayam)" : `Nama Bahan ${index + 1}`}
                 required
               />
+              
               {ingredients.length > 1 && (
                 <div
                   className="trash-box"
@@ -384,7 +411,6 @@ function CreateRecipe() {
           <button
             type="submit"
             className="save-btn"
-            // Hapus checking !recipeImageUrl agar tombol bisa diklik & validasi alert muncul
             disabled={isLoading || uploadingImage}
           >
             {isLoading ? "Menerbitkan..." : "Terbitkan Resep"}

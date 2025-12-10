@@ -1,5 +1,5 @@
 /* ============================================
-   FINAL src/styles/app.css (Konsolidasi Total & FIX Profile.jsx)
+   FINAL src/styles/app.css (Konsolidasi Total)
    ============================================ */
 
 :root {
@@ -16,6 +16,20 @@
   font-weight: 400;
   color: #333;
   background-color: #ffffff;
+}
+
+/* ============================================
+   UBAH WARNA SELEKSI TEKS (TEXT HIGHLIGHT)
+   ============================================ */
+
+::selection {
+  background-color: var(--primary-color);
+  color: #ffffff;
+}
+
+::-moz-selection {
+  background-color: var(--primary-color);
+  color: #ffffff;
 }
 
 /* --- GLOBAL RESET & BASE STYLES --- */
@@ -125,7 +139,6 @@ html {
   transition: box-shadow 0.3s;
 }
 
-/* Navbar Landing (HIJAU + Logo Putih) */
 .header-landing-green {
   background-color: var(--primary-color);
   box-shadow: none;
@@ -143,9 +156,7 @@ html {
 .header-landing-green .nav-links a:hover {
   color: #ffffff;
 }
-/* End Navbar Landing Fix */
 
-/* Tambahan untuk Logged-in Navbar saat scroll */
 .main-header.scrolled {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
@@ -796,53 +807,46 @@ footer p {
   PENAMBAHAN STYLE FOKUS (ON CLICK/TAB)
   ============================================ */
 
-/* Style Fokus untuk Input Field (termasuk Judul, Deskripsi, Waktu, Porsi, Bahan, Langkah, Link Video) */
 .input:focus {
-    outline: none !important; /* Menghilangkan border default browser (biasanya biru) */
-    border: 1px solid var(--primary-color) !important; /* Border tebal 2px warna primary */
+    outline: none !important; 
+    border: 1px solid var(--primary-color) !important;
 }
 
-/* Style Fokus untuk Select Input (Dropdown Kesulitan) */
 .select-input:focus {
     outline: none !important;
     border: 1px solid var(--primary-color) !important;
 }
 
 /* ============================================
-   CREATE RECIPE PAGE STYLES
+   CREATE RECIPE PAGE STYLES (DIPERBARUI UNTUK JARAK)
    ============================================ */
 
-/* Style untuk Wrapper Halaman (Latar Belakang Abu-abu) */
+/* Style untuk Wrapper Halaman */
 .form-body {
-      background-color: #f0f0f0; /* Warna abu-abu muda */
+      background-color: #f0f0f0; 
       min-height: 100vh; 
       width: 100%;
       padding: 20px 0;
+      display: flex;
+      flex-direction: column;
 }
 
-/* Kontainer Utama Formulir (Kotak Putih) */
+/* Kontainer Utama Formulir */
 .form-container {
    background-color: #ffffff;
-  max-width: 800px;        /* Lebar maksimal agar enak dibaca */
-  width: 90%;              /* Responsif di HP */
-  margin: 40px auto;       /* 40px jarak Atas/Bawah, Auto Kiri/Kanan (Tengah) */
-  padding: 40px;           /* Jarak isi konten ke pinggir kotak */
-  border-radius: 12px;     /* Sudut melengkung */
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08); /* Bayangan halus */
+  max-width: 800px;
+  width: 90%;
+  margin: 40px auto;
+  padding: 40px;
+  border-radius: 12px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
 }
 
-/* Pastikan body belakangnya warnanya beda supaya kotaknya kontras */
-.form-body {
-  background-color: #f8f9fa; /* Abu-abu muda */
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-}
 /* Input Field Umum */
 .input {
    width: 100%;
    padding: 10px;
-   border: 1px solid #ccc; /* Border abu-abu tipis untuk semua input */
+   border: 1px solid #ccc;
    border-radius: 10px;
    font-size: 16px;
    color: black !important;
@@ -855,22 +859,25 @@ footer p {
    opacity: 1 !important;
 }
 
-/* Label dan Judul */
-.label,
-.sub-label,
-.header-title {
+/* Label Diperbaiki Jaraknya */
+.label {
    color: black !important;
-   font-weight: bold; 
+   font-weight: bold;
+   display: block;          
+   margin-top: 25px;        /* Jarak ke atas */
+   margin-bottom: 10px;     /* Jarak ke bawah */
+}
+
+/* Fix label pertama agar tidak turun terlalu jauh */
+.form-header + .label {
+    margin-top: 10px;
 }
 
 .sub-label {
    font-weight: 500;
    font-size: 14px; 
    margin-bottom: 5px;
-}
-
-.header-subtitle {
-   color: #555 !important;
+   color: black !important;
 }
 
 /* Header Form */
@@ -881,7 +888,7 @@ footer p {
    margin-bottom: 20px;
    padding-bottom: 10px;
    border-bottom: 1px solid #eee;
-  background-color: white !important; /* Memastikan header solid putih */
+   background-color: white !important;
 }
 
 .back-arrow {
@@ -900,11 +907,13 @@ footer p {
    font-size: 20px;
    font-weight: bold;
    margin: 0;
+   color: black !important;
 }
 
 .header-subtitle {
    font-size: 12px;
    margin: 0;
+   color: #555 !important;
 }
 
 .sub-header {
@@ -916,7 +925,8 @@ footer p {
 .detail-row {
    display: flex;
    justify-content: space-between;
-   gap: 10px;
+   gap: 20px; /* Jarak antar kolom diperlebar */
+   margin-bottom: 10px;
 }
 
 .detail-col {
@@ -925,12 +935,11 @@ footer p {
    flex: 1;
 }
 
-/* Select Input (Dropdown Kesulitan) */
+/* Select Input */
 .select-input {
    height: 44px;
    line-height: normal;
    appearance: none;
-   /* Ikon panah ke bawah */
    background: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%22292.4%22%3E%3Cpath%20fill%3D%22%23000%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13%205.1L146.2%20209.7%2018.8%2074.5a17.6%2017.6%200%200%200-13-5.1%2017.6%2017.6%200%200%200-13%205.1l-10.8%2011.6a17.6%2017.6%200%200%200%200%2024.8l128%20129a17.6%2017.6%200%200%200%2024.8%200l128-129a17.6%2017.6%200%200%200%200-24.8L287%2069.4z%22%2F%3E%3C%2Fsvg%3E') no-repeat right 10px center;
    background-size: 10px;
    padding-right: 30px;
@@ -954,46 +963,48 @@ footer p {
 .list {
    display: flex;
    flex-direction: column;
-   gap: 10px;
+   gap: 15px; /* Jarak vertikal item diperlebar */
+   margin-bottom: 10px;
 }
 
 .row {
    display: flex;
    align-items: center;
-   gap: 10px;
+   gap: 15px; /* Jarak horizontal input diperlebar */
 }
 
 .flex-grow {
    flex: 1;
 }
 
-/* Ikon Hapus (Tempat Sampah) */
+/* Ikon Hapus */
 .trash-box {
    min-width: 32px;
    height: 42px;
    display: flex;
    align-items: center;
    justify-content: center;
-   border: 1px solid #ccc; /* Border abu-abu */
+   border: 1px solid #ccc;
    border-radius: 10px;
    cursor: pointer;
    font-size: 16px;
 }
 
-/* Tombol Tambah Bahan/Langkah */
+/* Tombol Tambah */
 .add-btn {
-   padding: 8px 12px;
+   padding: 10px 15px;
    background: var(--primary-color) !important;
    color: white !important;
    border-radius: 10px;
    border: none;
    cursor: pointer;
    font-size: 14px;
-   align-self: flex-start; /* Tidak melebar */
+   align-self: flex-start;
    font-weight: bold;
+   margin-top: 5px;
 }
 
-/* Tombol Aksi Batal dan Terbitkan Resep */
+/* Tombol Aksi */
 .button-row {
    display: flex;
    justify-content: flex-end; 
@@ -1014,11 +1025,11 @@ footer p {
     width: auto; 
     padding: 10px 20px;
     font-size: 16px;
-    background: var(--primary-color) !important; /* Gunakan !important di sini */
+    background: var(--primary-color) !important; 
     color: white !important; 
 }
 
-/* Image Upload Box (Pengganti Button File) */
+/* Image Upload Box */
 .hidden-file-input {
       width: 0.1px;
       height: 0.1px;
@@ -1040,6 +1051,7 @@ footer p {
    flex-direction: column;
    align-items: center;
    justify-content: center;
+   margin-bottom: 10px; /* Jarak ke bawah */
 }
 
 .upload-label {
@@ -1070,10 +1082,10 @@ footer p {
    margin-top: 10px;
 }
 
-/* Style untuk Input Link Video dengan Ikon */
+/* Style untuk Input Link Video */
 .link-input-wrapper {
    position: relative; 
-   margin-bottom: 10px; 
+   margin-bottom: 20px; /* Jarak ke bawah diperlebar */
 }
 
 .link-icon {
@@ -1082,12 +1094,12 @@ footer p {
    top: 50%; 
    transform: translateY(-50%);
    font-size: 20px;
-   color: #8d8d8d; /* Warna ikon abu-abu */
+   color: #8d8d8d;
    pointer-events: none; 
 }
 
 .link-input {
-   padding-left: 45px; /* Memberi ruang untuk ikon */
+   padding-left: 45px;
 }
 
 
@@ -1296,7 +1308,6 @@ footer p {
   }
 }
 
-/* BUTTONS RIGHT */
 .myprofile-buttons {
   display: flex;
   flex-direction: row;
@@ -1307,7 +1318,6 @@ footer p {
   top: 25px;
 }
 
-/* BUAT RESEP BTN - GREEN */
 .myprofile-create-btn {
   padding: 8px 16px;
   background: #2e7d32;
@@ -1324,7 +1334,6 @@ footer p {
   background: #256628;
 }
 
-/* DOT BTN */
 .myprofile-dot-btn {
   background: white;
   border: 2px solid #ccc;
@@ -1339,7 +1348,6 @@ footer p {
   background: #f2f2f2;
 }
 
-/* DROPDOWN */
 .myprofile-dropdown {
   position: absolute;
   top: 55px;
@@ -1536,6 +1544,12 @@ footer p {
   }
 }
 
+@media (max-width: 768px) {
+  .social-box-area {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
 @media (max-width: 576px) {
   .hero-section {
     padding: 50px 20px;
@@ -1561,6 +1575,10 @@ footer p {
   .hero-text-content h2 {
     font-size: 2rem;
   }
+  
+  .social-box-area {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* ============================================
@@ -1583,7 +1601,6 @@ footer p {
     padding: 0 20px;
 }
 
-/* Sidebar */
 .sidebar-area {
     width: 280px;
     flex-shrink: 0;
@@ -1615,30 +1632,22 @@ footer p {
    RECIPE DETAIL PAGE STYLES (RE-ADDED)
    ========================================= */
 
-/* --- PASTIKAN INI ADA DI PALING BAWAH APP.CSS --- */
-
-/* 1. BACKGROUND HALAMAN (ABU-ABU) */
 .loggedin-body {
-  background-color: #f0f2f5 !important; /* Pakai !important biar maksa warnanya keluar */
+  background-color: #f0f2f5 !important;
   min-height: 100vh;
 }
 
-/* 2. KOTAK RESEP (PUTIH & TIMBUL) */
 .recipe-detail-container {
-  background-color: #ffffff !important; /* Warna kertas putih */
+  background-color: #ffffff !important;
   border-radius: 16px;
   padding: 40px;
-  
-  /* Efek Timbul (Shadow & Border) */
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08); 
   border: 1px solid #e0e0e0; 
-  
   flex: 1;
   margin-bottom: 20px;
   position: relative;
 }
 
-/* Fix untuk Mobile biar gak dempet */
 @media (max-width: 768px) {
   .recipe-detail-container {
     padding: 20px;
@@ -1649,55 +1658,41 @@ footer p {
 
 .recipe-detail-header { margin-bottom: 20px; }
 
-/* --- HEADER BAGIAN ATAS (JUDUL & BACK BUTTON) --- */
-
 .recipe-title-group {
-  /* Pastikan pakai Flexbox */
   display: flex !important;       
-  flex-direction: row !important; /* Wajib baris ke samping */
-  align-items: center !important; /* Rata tengah vertikal */
+  flex-direction: row !important;
+  align-items: center !important;
   justify-content: flex-start !important;
-  
-  /* Jarak aman biar gak dempet/tertimpa */
   gap: 15px !important; 
-  
   margin-bottom: 20px;
-  position: relative; /* Pastikan container jadi patokan */
+  position: relative;
 }
 
 .back-button {
-  /* Matikan posisi absolute kalau ada sisa lama */
   position: static !important; 
   transform: none !important;
-  
-  /* Style tombol */
   background: transparent;
   border: none;
-  font-size: 2rem; /* Ukuran panah */
+  font-size: 2rem;
   line-height: 1;
   color: #333;
   cursor: pointer;
   padding: 0;
   margin: 0;
-  
-  /* Biar gak ketarik lebar */
   flex-shrink: 0; 
   width: auto;
   height: auto;
 }
 
 .recipe-detail-title {
-  /* Matikan posisi absolute kalau ada sisa lama */
   position: static !important;
-  
   font-size: 2rem;
-  font-weight: 800; /* Tebal */
+  font-weight: 800;
   color: #222;
   margin: 0;
   line-height: 1.2;
 }
 
-/* User Profile Section */
 .post-header.revised {
   display: flex; align-items: center; gap: 12px; margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid #eee;
 }
@@ -1709,46 +1704,48 @@ footer p {
 .user-details-column { display: flex; flex-direction: column; }
 
 .user-details-top {
-  display: flex;
-  align-items: center;
+  display: flex !important;
+  flex-direction: row !important;
+  
+  /* UBAH DARI center KE baseline AGAR TEKS RATA BAWAH */
+  align-items: baseline !important; 
+  
   gap: 8px;
-  margin-bottom: 5px;
+  margin-bottom: 2px;
+  flex-wrap: wrap;
 }
 
-/* Nama User (Tebal Hitam) */
+/* Pastikan reset margin untuk elemen di dalamnya */
 .user-details-top strong {
-  font-weight: 700;
+  margin: 0 !important;
+  font-size: 1.1rem;
   color: #222;
+  line-height: 1; 
 }
 
-/* Username (Tipis Abu-abu) */
 .user-details-top .username {
-  font-weight: 400;
-  color: #777;
-}
-.username { color: #666; }
-
-.follow-button.follow.small {
-  padding: 2px 8px; font-size: 0.75rem; background: #e8f5e9; color: #38761d; border: 1px solid #38761d; border-radius: 4px; cursor: pointer;
+  margin: 0 !important;
+  font-size: 0.95rem;
+  color: #666;
 }
 
-/* Tombol Ikuti (Teks Hijau Tanpa Kotak) */
 .follow-button.text-only {
   background: transparent !important;
   border: none !important;
-  color: #38761d !important; /* Hijau CookConnect */
-  font-weight: 600;
-  font-size: 0.9rem;
+  color: #38761d !important;
+  font-weight: 700;
+  font-size: 0.95rem;
   cursor: pointer;
-  padding: 0;
-  margin-left: 5px; /* Jarak dikit dari username */
+  
+  /* Reset padding/margin agar tombol tidak punya "ruang hantu" */
+  padding: 0 !important;
+  margin: 0 !important;
+  line-height: 1 !important; 
+  
+  /* Tweak sedikit posisi vertikal jika font button beda jenis */
+  position: relative;
 }
 
-.follow-button.text-only:hover {
-  text-decoration: underline; /* Garis bawah pas di-hover */
-}
-
-/* Spacer dot antar elemen (opsional) */
 .dot-separator {
   color: #ccc;
   font-size: 0.8rem;
@@ -1756,7 +1753,6 @@ footer p {
 
 .post-meta { font-size: 0.8rem; color: #999; margin-top: 2px; }
 
-/* Hero Image */
 .recipe-hero-image {
   width: 100%;
   aspect-ratio: 1 / 1; /* PENTING: Memaksa rasio 1:1 (Kotak) */
@@ -1766,7 +1762,6 @@ footer p {
   background-color: #f0f0f0; /* Placeholder warna abu saat loading gbr */
 }
 
-/* Actions Bar */
 .post-actions.detail-page-actions {
   display: flex; justify-content: space-around; padding: 15px 0; border-top: 1px solid #eee; border-bottom: 1px solid #eee; margin-bottom: 25px;
 }
@@ -1778,27 +1773,19 @@ footer p {
 .like-active { color: #e91e63 !important; }
 .save-active { color: #38761d !important; }
 
-/* Info Stats */
 .recipe-meta-info {
   display: flex; justify-content: space-between; background: #f9f9f9; padding: 20px; border-radius: 10px; margin: 20px 0; text-align: center;
 }
 
 .recipe-meta-info i { font-size: 1.5rem; color: #38761d; margin-bottom: 5px; display: block;}
 
-/* Ingredients & Steps */
 .recipe-main-content-wrapper { margin-top: 30px; }
 .recipe-ingredients, .recipe-instructions { margin-bottom: 30px; }
 .recipe-ingredients h3, .recipe-instructions h3 { color: #38761d; margin-bottom: 15px; }
 .recipe-ingredients ul, .recipe-instructions ol { padding-left: 20px; line-height: 1.8; color: #444; }
 
-/* Video Links */
-.video-link-list { list-style: none; padding: 0; display: flex; gap: 10px; flex-wrap: wrap; }
-.video-link-list a { padding: 10px 15px; border-radius: 5px; color: white; text-decoration: none; display: flex; align-items: center; gap: 8px; font-size: 0.9rem; }
-.video-link-tiktok { background: #000; } 
-.video-link-youtube { background: #ff0000; }
-
 /* =========================================
-   HANYA TAMBAHAN: STYLE POP-UP EDIT PROFILE
+   MODAL STYLES (EDIT PROFILE)
    ========================================= */
 
 .modal-overlay {
@@ -1807,7 +1794,7 @@ footer p {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.6); /* Latar belakang gelap */
+  background-color: rgba(0, 0, 0, 0.6);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -1904,11 +1891,6 @@ footer p {
   color: white;
 }
 
-/* =========================================
-   TAMBAHAN STYLE UNTUK ISI MODAL (LENGKAP)
-   ========================================= */
-
-/* --- AREA UPLOAD FOTO DI MODAL --- */
 .modal-image-upload-section {
   display: flex;
   flex-direction: column;
@@ -1946,7 +1928,6 @@ footer p {
   background-color: #e0e0e0;
 }
 
-/* --- INPUT SOSIAL MEDIA DI MODAL --- */
 .modal-section-title {
   font-size: 1rem;
   font-weight: 700;
@@ -1955,13 +1936,11 @@ footer p {
   margin-bottom: 15px;
 }
 
-/* Wrapper biar ikon ada di dalam input */
 .modal-social-input-wrapper {
   position: relative;
   margin-bottom: 12px;
 }
 
-/* Ikonnya */
 .modal-social-input-wrapper i {
   position: absolute;
   left: 12px;
@@ -1971,38 +1950,32 @@ footer p {
   font-size: 1.1rem;
 }
 
-/* Inputnya dikasih padding kiri biar teks gak nabrak ikon */
 .modal-social-input-wrapper input {
   width: 100%;
-  padding: 10px 10px 10px 40px !important; /* Padding kiri 40px */
+  padding: 10px 10px 10px 40px !important;
   border: 1px solid #ddd;
   border-radius: 8px;
   font-size: 0.95rem;
 }
-/* =========================================================
-   FIX: FORCE WHITE INPUTS IN MODAL (Override Dark Mode)
-   ========================================================= */
 
-/* Paksa semua input dan textarea di dalam modal jadi PUTIH */
+/* Force White Background in Modals */
 .modal-form-group input, 
 .modal-form-group textarea,
 .modal-social-input-wrapper input {
-  background-color: #ffffff !important; /* Latar Putih Mutlak */
-  color: #333333 !important;            /* Teks Hitam Mutlak */
-  border: 1px solid #ccc !important;    /* Pastikan border tetap terlihat */
+  background-color: #ffffff !important;
+  color: #333333 !important;
+  border: 1px solid #ccc !important;
 }
 
-/* Pastikan saat diklik (Focus) warnanya tidak berubah aneh */
 .modal-form-group input:focus, 
 .modal-form-group textarea:focus,
 .modal-social-input-wrapper input:focus {
   background-color: #ffffff !important;
   color: #333333 !important;
-  border-color: #38761d !important; /* Border hijau saat ngetik */
+  border-color: #38761d !important;
   box-shadow: 0 0 0 3px rgba(56, 118, 29, 0.1) !important;
 }
 
-/* Pastikan placeholder (teks bayangan) warnanya abu-abu normal */
 .modal-form-group input::placeholder,
 .modal-form-group textarea::placeholder,
 .modal-social-input-wrapper input::placeholder {
@@ -2057,10 +2030,10 @@ footer p {
   font-size: 1.1rem;
 }
 
-.icon-indicator.comment { background: #e8f5e9; color: #38761d; } /* Green */
-.icon-indicator.like { background: #ffebee; color: #e74c3c; }    /* Red/Pink */
-.icon-indicator.follow { background: #e3f2fd; color: #007bff; }  /* Blue */
-.icon-indicator.save { background: #fff3e0; color: #ff9800; }    /* Orange */
+.icon-indicator.comment { background: #e8f5e9; color: #38761d; } 
+.icon-indicator.like { background: #ffebee; color: #e74c3c; }    
+.icon-indicator.follow { background: #e3f2fd; color: #007bff; }  
+.icon-indicator.save { background: #fff3e0; color: #ff9800; }    
 
 .notification-text {
   flex-grow: 1;
