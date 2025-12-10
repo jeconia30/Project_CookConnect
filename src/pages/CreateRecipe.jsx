@@ -166,7 +166,8 @@ function CreateRecipe() {
 
   return (
     <div className="form-body">
-      <div className="form-container">
+      <form className="form-container" onSubmit={handleSubmit}>
+        {" "}
         <div className="form-header">
           <span
             className="back-arrow"
@@ -183,7 +184,6 @@ function CreateRecipe() {
             </p>
           </div>
         </div>
-
         <label className="label">Foto Utama Resep (Wajib)</label>
         <div className="image-upload-box">
           <input
@@ -219,7 +219,6 @@ function CreateRecipe() {
             )}
           </label>
         </div>
-
         <label className="label">Judul Resep</label>
         <input
           className="input"
@@ -230,7 +229,6 @@ function CreateRecipe() {
           placeholder="Cth: Ayam Geprek Sambal Matah"
           required
         />
-
         <label className="label">Deskripsi Singkat (Caption) - Opsional</label>
         <input
           className="input"
@@ -240,7 +238,6 @@ function CreateRecipe() {
           onChange={handleRecipeInfoChange}
           placeholder="Cth: Resep andalan keluarga yang pedasnya nagih!"
         />
-
         <label className="label sub-header">Detail Resep</label>
         <div className="detail-row">
           <div className="detail-col">
@@ -287,7 +284,6 @@ function CreateRecipe() {
             </select>
           </div>
         </div>
-
         <label className="label">Bahan-Bahan (Minimal 1)</label>
         <div className="list">
           {ingredients.map((item, index) => (
@@ -320,7 +316,6 @@ function CreateRecipe() {
             + Tambah Bahan
           </button>
         </div>
-
         <label className="label">Langkah-Langkah (Minimal 1)</label>
         <div className="list">
           {steps.map((step, index) => (
@@ -351,9 +346,7 @@ function CreateRecipe() {
             + Tambah Langkah
           </button>
         </div>
-
         <label className="label">Link Video (Opsional)</label>
-
         <div className="link-input-wrapper">
           <i className="fab fa-youtube link-icon youtube-icon"></i>
           <input
@@ -364,7 +357,6 @@ function CreateRecipe() {
             onChange={handleRecipeInfoChange}
           />
         </div>
-
         <div className="link-input-wrapper">
           <i className="fab fa-tiktok link-icon tiktok-icon"></i>
           <input
@@ -375,7 +367,6 @@ function CreateRecipe() {
             onChange={handleRecipeInfoChange}
           />
         </div>
-
         <div className="link-input-wrapper">
           <i className="fab fa-instagram link-icon instagram-icon"></i>
           <input
@@ -386,7 +377,6 @@ function CreateRecipe() {
             onChange={handleRecipeInfoChange}
           />
         </div>
-
         <div className="button-row">
           <button type="button" className="cancel-btn" onClick={handleCancel}>
             Batal
@@ -400,7 +390,7 @@ function CreateRecipe() {
             {isLoading ? "Menerbitkan..." : "Terbitkan Resep"}
           </button>
         </div>
-      </div>
+      </form>
     </div>
   );
 }
