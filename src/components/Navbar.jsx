@@ -1,3 +1,4 @@
+// src/components/Navbar.jsx
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import api from '../api/axiosInstance';
@@ -18,8 +19,19 @@ const NavbarLoggedin = () => {
         if (storedData.id) {
           const response = await api.get(`/notifications/${storedData.id}`);
           const notifs = response.data;
-          // Set jumlah notifikasi awal dari API
-          setUnreadCount(notifs.length); 
+
+          // --- LOGIKA BARU ---
+          // 1. Ambil waktu terakhir user mengecek notifikasi dari localStorage
+          const lastCheckKey = `last_notif_check_${storedData.id}`;
+          const lastCheckTime = localStorage.getItem(lastCheckKey);
+
+          // 2. Hitung notifikasi yang tanggalnya LEBIH BARU dari waktu terakhir cek
+          const unread = notifs.filter(n => {
+            if (!lastCheckTime) return true; // Kalau belum pernah cek, anggap semua belum dibaca
+            return new Date(n.created_at) > new Date(lastCheckTime);
+          }).length;
+
+          setUnreadCount(unread); 
         }
       } catch (e) {
         console.error("Gagal mengambil data navbar:", e);
@@ -27,7 +39,7 @@ const NavbarLoggedin = () => {
     };
 
     fetchData();
-  }, []);
+  }, []); // Dependency array kosong agar jalan saat mount (login/refresh)
 
   const profilePhoto = userData.avatar_url || userData.photo || null;
   const username = userData.username || "user";
@@ -42,9 +54,15 @@ const NavbarLoggedin = () => {
     }
   };
 
-  // ✅ FUNGSI BARU: Hilangkan notifikasi saat diklik
+  // ✅ FUNGSI BARU: Hilangkan notifikasi & SIMPAN statusnya
   const handleNotificationClick = () => {
     setUnreadCount(0);
+    
+    if (userData.id) {
+      // Simpan waktu sekarang sebagai waktu terakhir user melihat notifikasi
+      const lastCheckKey = `last_notif_check_${userData.id}`;
+      localStorage.setItem(lastCheckKey, new Date().toISOString());
+    }
   };
 
   return (
@@ -67,7 +85,7 @@ const NavbarLoggedin = () => {
         </div>
 
         <div className="user-actions">
-          {/* ✅ TAMBAHKAN onClick={handleNotificationClick} DI SINI */}
+          {/* Tambahkan onClick disini */}
           <Link 
             to="/notifications" 
             className="action-icon notification-button"
@@ -75,7 +93,7 @@ const NavbarLoggedin = () => {
           >
             <i className="fas fa-bell"></i>
             
-            {/* Hanya tampilkan badge jika unreadCount > 0 */}
+            {/* Logic Badge: Hanya muncul jika unreadCount > 0 */}
             {unreadCount > 0 && (
               <span className="notification-badge">
                 {unreadCount > 99 ? '99+' : unreadCount}
@@ -111,7 +129,11 @@ const NavbarLoggedin = () => {
               <Link to="/profile/me">Lihat Profil</Link>
               <Link to="/create">Buat Resep</Link>
               <Link to="/login" onClick={() => {
-                  localStorage.clear(); 
+                  // Jangan clear semua localStorage agar status notif tetap tersimpan
+                  // Hapus item spesifik auth saja
+                  localStorage.removeItem('authToken');
+                  localStorage.removeItem('userProfileData');
+                  // Jangan hapus `last_notif_check_...`
               }}>Logout</Link>
             </div>
           </div>

@@ -18,6 +18,13 @@ const NotificationPage = () => {
 
         const response = await api.get(`/notifications/${userId}`);
         setNotifications(response.data);
+
+        // ✅ LOGIKA BARU DI SINI:
+        // Update waktu terakhir cek notifikasi di localStorage saat halaman dibuka.
+        // Ini memastikan badge merah di Navbar hilang otomatis jika user membuka halaman ini.
+        const lastCheckKey = `last_notif_check_${userId}`;
+        localStorage.setItem(lastCheckKey, new Date().toISOString());
+
       } catch (error) {
         console.error("Gagal mengambil notifikasi:", error);
       } finally {
