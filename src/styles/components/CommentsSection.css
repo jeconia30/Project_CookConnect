@@ -78,7 +78,10 @@
   border-radius: 50%;
   background-color: #eee;
   flex-shrink: 0;
-  background-size: cover; /* Tambahan biar gambar pas */
+  background-size: cover; 
+  background-position: center; /* ✅ TAMBAHAN: Agar muka pas di tengah */
+  border: 1px solid #ddd;      /* Opsional: Biar lebih rapi */
+  cursor: pointer;             /* Opsional: Menandakan bisa diklik */
 }
 
 .comment-content {
