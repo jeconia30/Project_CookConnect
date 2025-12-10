@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import api from "../api/axiosInstance";
 import "../styles/app.css";
+import { SharedFooter } from "./LandingPage";
 
 const LoginForm = ({ onToggle }) => {
   const navigate = useNavigate();
@@ -24,7 +25,6 @@ const LoginForm = ({ onToggle }) => {
         password: formData.password,
       });
 
-      // ✅ PERBAIKAN UTAMA: Akses .data.data
       const { token, user } = response.data.data;
 
       if (token) {
@@ -50,67 +50,27 @@ const LoginForm = ({ onToggle }) => {
 
       <div className="form-group">
         <label htmlFor="login-email">Email/Username</label>
-        <input
-          type="text"
-          id="login-email"
-          value={formData.email}
-          onChange={handleChange}
-          required
-        />
+        <input type="text" id="login-email" value={formData.email} onChange={handleChange} required />
       </div>
 
       <div className="form-group">
         <label htmlFor="login-password">Password</label>
         <div className="password-wrapper">
-          <input
-            type={showPassword ? "text" : "password"}
-            id="login-password"
-            value={formData.password}
-            onChange={handleChange}
-            required
-          />
-          <i
-            className={`fas ${
-              showPassword ? "fa-eye" : "fa-eye-slash"
-            } password-toggle-icon`}
-            onClick={() => setShowPassword(!showPassword)}
-            style={{ cursor: "pointer" }}
-          ></i>
+          <input type={showPassword ? "text" : "password"} id="login-password" value={formData.password} onChange={handleChange} required />
+          <i className={`fas ${showPassword ? "fa-eye" : "fa-eye-slash"} password-toggle-icon`} onClick={() => setShowPassword(!showPassword)} style={{ cursor: "pointer" }}></i>
         </div>
       </div>
 
       <div className="form-extra">
-        <Link to="/forgot-password" className="forgot-password">
-          {" "}
-          Lupa Password?
-        </Link>
+        <Link to="/forgot-password" className="forgot-password">Lupa Password?</Link>
       </div>
 
-      <button
-        type="submit"
-        className="cta-button auth-button"
-        disabled={isLoading}
-      >
+      <button type="submit" className="cta-button auth-button" disabled={isLoading}>
         {isLoading ? "Memproses..." : "Login"}
       </button>
 
-      <div className="auth-divider">
-        <span>ATAU</span>
-      </div>
-
-      <a
-        href="#"
-        className="cta-button google-auth-button"
-        onClick={(e) => e.preventDefault()}
-      >
-        <i className="fab fa-google"></i> Login dengan Google
-      </a>
-
       <p className="auth-toggle">
-        Belum punya akun?{" "}
-        <a href="#" onClick={onToggle}>
-          Daftar di sini
-        </a>
+        Belum punya akun? <a href="#" onClick={onToggle}>Daftar di sini</a>
       </p>
     </form>
   );
@@ -164,7 +124,6 @@ const RegisterForm = ({ onToggle }) => {
         password: formData.password,
       });
 
-      // ✅ PERBAIKAN UTAMA: Akses .data.data
       const { token, user } = response.data.data;
 
       if (token) {
@@ -194,24 +153,12 @@ const RegisterForm = ({ onToggle }) => {
 
       <div className="form-group">
         <label htmlFor="reg-name">Nama Lengkap</label>
-        <input
-          type="text"
-          id="reg-name"
-          required
-          onChange={handleChange}
-          placeholder="Contoh: Budi Santoso"
-        />
+        <input type="text" id="reg-name" required onChange={handleChange} placeholder="Contoh: Budi Santoso" />
       </div>
 
       <div className="form-group">
         <label htmlFor="reg-username">Username</label>
-        <input
-          type="text"
-          id="reg-username"
-          required
-          onChange={handleChange}
-          placeholder="Contoh: budi_123 (huruf kecil & angka)"
-        />
+        <input type="text" id="reg-username" required onChange={handleChange} placeholder="Contoh: budi_123" />
       </div>
 
       <div className="form-group">
@@ -222,78 +169,30 @@ const RegisterForm = ({ onToggle }) => {
       <div className="form-group">
         <label htmlFor="reg-password">Password (Min. 8 Karakter)</label>
         <div className="password-wrapper">
-          <input
-            type={showPassword ? "text" : "password"}
-            id="reg-password"
-            required
-            onChange={handleChange}
-          />
-          <i
-            className={`fas ${
-              showPassword ? "fa-eye" : "fa-eye-slash"
-            } password-toggle-icon`}
-            onClick={() => setShowPassword(!showPassword)}
-            style={{ cursor: "pointer" }}
-          ></i>
+          <input type={showPassword ? "text" : "password"} id="reg-password" required onChange={handleChange} />
+          <i className={`fas ${showPassword ? "fa-eye" : "fa-eye-slash"} password-toggle-icon`} onClick={() => setShowPassword(!showPassword)} style={{ cursor: "pointer" }}></i>
         </div>
       </div>
 
       <div className="form-group">
         <label htmlFor="reg-password-confirm">Konfirmasi Password</label>
         <div className="password-wrapper">
-          <input
-            type={showConfirm ? "text" : "password"}
-            id="reg-password-confirm"
-            required
-            onChange={handleChange}
-          />
-          <i
-            className={`fas ${
-              showConfirm ? "fa-eye" : "fa-eye-slash"
-            } password-toggle-icon`}
-            onClick={() => setShowConfirm(!showConfirm)}
-            style={{ cursor: "pointer" }}
-          ></i>
+          <input type={showConfirm ? "text" : "password"} id="reg-password-confirm" required onChange={handleChange} />
+          <i className={`fas ${showConfirm ? "fa-eye" : "fa-eye-slash"} password-toggle-icon`} onClick={() => setShowConfirm(!showConfirm)} style={{ cursor: "pointer" }}></i>
         </div>
       </div>
 
       <p className="auth-policy">
         Dengan mendaftar, Anda menyetujui{" "}
-        <Link to="/terms" target="_blank">
-          Syarat & Ketentuan
-        </Link>{" "}
-        serta{" "}
-        <Link to="/privacy" target="_blank">
-          Kebijakan Privasi
-        </Link>{" "}
-        kami.
+        <Link to="/terms-privacy" style={{color: '#38761d', fontWeight: 'bold'}}>Syarat, Ketentuan & Kebijakan Privasi</Link> kami.
       </p>
 
-      <button
-        type="submit"
-        className="cta-button auth-button"
-        disabled={isLoading}
-      >
+      <button type="submit" className="cta-button auth-button" disabled={isLoading}>
         {isLoading ? "Memproses..." : "Register"}
       </button>
 
-      <div className="auth-divider">
-        <span>ATAU</span>
-      </div>
-      <a
-        href="https://accounts.google.com/"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="cta-button google-auth-button"
-      >
-        <i className="fab fa-google"></i> Daftar dengan Google
-      </a>
-
       <p className="auth-toggle">
-        Sudah punya akun?{" "}
-        <a href="#" onClick={onToggle}>
-          Login di sini
-        </a>
+        Sudah punya akun? <a href="#" onClick={onToggle}>Login di sini</a>
       </p>
     </form>
   );
@@ -318,16 +217,10 @@ const AuthPage = () => {
       </header>
 
       <div className="login-container">
-        {isLogin ? (
-          <LoginForm onToggle={toggleForm} />
-        ) : (
-          <RegisterForm onToggle={toggleForm} />
-        )}
+        {isLogin ? <LoginForm onToggle={toggleForm} /> : <RegisterForm onToggle={toggleForm} />}
       </div>
 
-      <footer>
-        <p>&copy; 2025 CookConnect. Developed for Web Programming Class.</p>
-      </footer>
+      <SharedFooter />
     </div>
   );
 };
