@@ -2,6 +2,9 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/app.css';
 import { SharedFooter } from './LandingPage';
+// ✅ IMPORT API DAN POPUP
+import api from '../api/axiosInstance';
+import { showPopup } from '../utils/swal';
 
 const ForgotPassword = () => {
   const [formData, setFormData] = useState({
@@ -9,6 +12,7 @@ const ForgotPassword = () => {
     username: '',
     email: ''
   });
+  const [isLoading, setIsLoading] = useState(false); // ✅ State loading
   
   const navigate = useNavigate(); 
 
@@ -16,14 +20,44 @@ const ForgotPassword = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-   const handleSubmit = (e) => {
+   const handleSubmit = async (e) => { // ✅ Ubah jadi async
      e.preventDefault();
      
-     if(formData.name && formData.username && formData.email) {
-        alert('Data diverifikasi! Silakan buat password baru.');
-        navigate('/reset-password');
-     } else {
-        alert('Mohon lengkapi semua data!');
+     // Validasi Frontend Sederhana
+     if(!formData.name || !formData.username || !formData.email) {
+        showPopup("Gagal", "Mohon lengkapi semua data!", "warning");
+        return;
+     }
+
+     setIsLoading(true); // Mulai Loading
+
+     try {
+        // ✅ Panggil API Backend
+        const response = await api.post('/auth/verify-user', {
+            full_name: formData.name,
+            username: formData.username,
+            email: formData.email
+        });
+
+        // Jika Sukses (Code 200)
+        await showPopup("Berhasil!", "Data terverifikasi. Silakan buat password baru.", "success");
+        
+        // Arahkan ke Reset Password
+        // Kita bawa 'email' di state agar nanti pas reset password backend tahu user mana yg direset
+        navigate('/reset-password', { state: { email: formData.email } });
+
+     } catch (error) {
+        console.error(error);
+        // ✅ Tampilkan Pop-up Salah
+        const errorMsg = error.response?.data?.message || "Data tidak ditemukan.";
+        
+        showPopup(
+            "Identitas Salah", 
+            `${errorMsg} Silakan coba lagi atau hubungi admin.`, 
+            "error"
+        );
+     } finally {
+        setIsLoading(false); // Selesai Loading
      }
   };
 
@@ -52,6 +86,7 @@ const ForgotPassword = () => {
               type="text" 
               id="fp-name" 
               name="name"
+              placeholder="Masukkan nama lengkap sesuai profil"
               value={formData.name}
               onChange={handleChange} 
               required 
@@ -64,6 +99,7 @@ const ForgotPassword = () => {
               type="text" 
               id="fp-username" 
               name="username"
+              placeholder="Contoh: user123"
               value={formData.username}
               onChange={handleChange} 
               required 
@@ -76,14 +112,15 @@ const ForgotPassword = () => {
               type="email" 
               id="fp-email" 
               name="email"
+              placeholder="email@example.com"
               value={formData.email}
               onChange={handleChange} 
               required 
             />
           </div>
 
-          <button type="submit" className="cta-button auth-button">
-            Reset Password
+          <button type="submit" className="cta-button auth-button" disabled={isLoading}>
+            {isLoading ? "Memeriksa..." : "Verifikasi & Lanjut"}
           </button>
 
           <p className="auth-toggle">
