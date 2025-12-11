@@ -51,6 +51,26 @@ const RecipeDetail = () => {
     }
   };
 
+  const handleDelete = async () => {
+    const confirmed = await showConfirm(
+      "Hapus Resep?",
+      "Resep yang dihapus tidak dapat dikembalikan.",
+      "Ya, Hapus"
+    );
+
+    if (confirmed) {
+      try {
+        await api.delete(`/recipes/${id}`, {
+          headers: { Authorization: `Bearer ${authToken}` },
+        });
+        await showPopup("Terhapus", "Resep berhasil dihapus.", "success");
+        navigate("/profile/me"); // Balik ke profil sendiri
+      } catch (error) {
+        showPopup("Gagal", "Gagal menghapus resep.", "error");
+      }
+    }
+  };
+
   useEffect(() => {
     const fetchRecipe = async () => {
       setIsLoading(true);
@@ -247,6 +267,42 @@ const RecipeDetail = () => {
                 <i className="fas fa-arrow-left"></i>
               </button>
               <h1 className="recipe-detail-title">{recipe.title}</h1>
+
+              {/* ✅ TAMBAHAN: Tombol Aksi Pemilik */}
+              {isOwnRecipe && (
+                <div
+                  style={{ marginLeft: "auto", display: "flex", gap: "10px" }}
+                >
+                  <button
+                    onClick={() => navigate(`/edit-recipe/${id}`)}
+                    style={{
+                      border: "none",
+                      background: "#f0f0f0",
+                      padding: "8px 12px",
+                      borderRadius: "8px",
+                      cursor: "pointer",
+                      color: "#333",
+                    }}
+                    title="Edit Resep"
+                  >
+                    <i className="fas fa-edit"></i>
+                  </button>
+                  <button
+                    onClick={handleDelete}
+                    style={{
+                      border: "none",
+                      background: "#ffebee",
+                      padding: "8px 12px",
+                      borderRadius: "8px",
+                      cursor: "pointer",
+                      color: "#d32f2f",
+                    }}
+                    title="Hapus Resep"
+                  >
+                    <i className="fas fa-trash"></i>
+                  </button>
+                </div>
+              )}
             </div>
 
             <div className="post-header revised">
